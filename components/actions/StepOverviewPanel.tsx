@@ -159,7 +159,7 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(to top, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.75) 45%, transparent 100%)',
+              background: 'linear-gradient(to top, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.90) 55%, rgba(255,255,255,0.50) 75%, transparent 100%)',
             }}
           />
 

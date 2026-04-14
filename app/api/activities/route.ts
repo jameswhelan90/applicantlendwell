@@ -3,33 +3,40 @@ import { ActivityType, AIActivity, ActivityTriggerPayload } from '@/types/tasks'
 
 // ─── Activity descriptions per type ────────────────────────────────────────
 
-const ACTIVITY_CONFIG: Record<ActivityType, { description: string; durationMs: [number, number] }> = {
+const ACTIVITY_CONFIG: Record<ActivityType, { description: string; completionDescription: string; durationMs: [number, number] }> = {
   document_scan: {
     description: 'Scanning document',
+    completionDescription: 'Document scanned — ready for lender review',
     durationMs: [2000, 5000],
   },
   credit_check: {
     description: 'Checking credit information',
+    completionDescription: 'Credit check complete — no issues found',
     durationMs: [3000, 8000],
   },
   income_verify: {
     description: 'Verifying income details',
+    completionDescription: 'Income verified — figures are within expected range',
     durationMs: [2000, 4000],
   },
   address_verify: {
     description: 'Validating address',
+    completionDescription: 'Address confirmed and validated',
     durationMs: [1000, 3000],
   },
   application_readiness: {
     description: 'Calculating application readiness',
+    completionDescription: 'Application readiness updated',
     durationMs: [1000, 2000],
   },
   identity_check: {
     description: 'Verifying identity',
+    completionDescription: 'Identity confirmed — all checks passed',
     durationMs: [2000, 4000],
   },
   employment_verify: {
     description: 'Confirming employment details',
+    completionDescription: 'Employment details confirmed',
     durationMs: [2000, 4000],
   },
 };
@@ -222,10 +229,18 @@ async function simulateProcessing(sessionId: string, activityId: string, duratio
       activity.progress = Math.round((i / steps) * 100);
       broadcastActivity(sessionId, { ...activity });
     } else {
-      // Complete (with small chance of needing review for demo purposes)
+      // Complete — update description to completion message
       const needsReview = Math.random() < 0.1;
       activity.status = needsReview ? 'needs_review' : 'complete';
       activity.progress = 100;
+      if (activity.type && ACTIVITY_CONFIG[activity.type]) {
+        const completionDesc = ACTIVITY_CONFIG[activity.type].completionDescription;
+        // Append document name suffix if original description had one
+        const suffix = activity.description.includes(': ')
+          ? ` (${activity.description.split(': ').slice(1).join(': ')})`
+          : '';
+        activity.description = completionDesc + suffix;
+      }
       broadcastActivity(sessionId, { ...activity });
     }
   }

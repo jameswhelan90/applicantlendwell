@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { AIActivity } from '@/types/tasks';
-import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
+import { CheckCircle2, Loader2, AlertCircle, X } from 'lucide-react';
 import { useActivityStream } from '@/hooks/useActivityStream';
 
 // AI Logo rendered inline as an SVG component to avoid any public-path issues
@@ -69,28 +69,40 @@ export function AIActivityIndicator() {
   const [panelOpen, setPanelOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Track whether the pill should be visible — stays true briefly after processing ends for fade-out
-  const [pillVisible, setPillVisible] = useState(false);
-  const [pillActivity, setPillActivity] = useState<AIActivity | null>(null);
-  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Track last seen completed activity count to detect new completions
+  const prevCompletedCountRef = useRef(0);
+  const autoCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Whether there are unread completed activities (since panel was last opened)
+  const [unreadComplete, setUnreadComplete] = useState(false);
+
+  const isProcessing = !!processingActivity;
+  const completedActivities = activities.filter((a) => a.status === 'complete' || a.status === 'needs_review');
+
+  // Detect newly completed activities → auto-open panel briefly
   useEffect(() => {
-    if (processingActivity) {
-      // New or ongoing processing — show immediately
-      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
-      setPillActivity(processingActivity);
-      setPillVisible(true);
-    } else if (pillVisible) {
-      // Processing just ended — fade out after a short hold
-      fadeTimerRef.current = setTimeout(() => {
-        setPillVisible(false);
-      }, 2000);
+    const currentCount = completedActivities.length;
+    if (currentCount > prevCompletedCountRef.current && prevCompletedCountRef.current > 0) {
+      // Something just completed — auto-open the panel
+      setPanelOpen(true);
+      setUnreadComplete(true);
+
+      // Auto-close after 5 seconds (unless user is interacting)
+      if (autoCloseTimerRef.current) clearTimeout(autoCloseTimerRef.current);
+      autoCloseTimerRef.current = setTimeout(() => {
+        setPanelOpen(false);
+      }, 5000);
     }
-    return () => {
-      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [processingActivity]);
+    prevCompletedCountRef.current = currentCount;
+  }, [completedActivities.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Clear unread badge when panel is opened
+  useEffect(() => {
+    if (panelOpen) {
+      setUnreadComplete(false);
+      if (autoCloseTimerRef.current) clearTimeout(autoCloseTimerRef.current);
+    }
+  }, [panelOpen]);
 
   // Close panel on outside click
   useEffect(() => {
@@ -104,176 +116,277 @@ export function AIActivityIndicator() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [panelOpen]);
 
-  const isProcessing = !!processingActivity;
-  const hasAnyActivity = activities.length > 0;
-
-  // Always render the component - show icon button even when no activities
-  // This ensures users can always access the activity panel
+  const mostRecentCompleted = completedActivities[0] ?? null;
 
   return (
-    <div ref={panelRef} className="relative flex items-center">
+    <div ref={panelRef} className="relative flex items-center gap-2">
 
-      {/* ── Inline activity pill ── */}
-      <button
-        onClick={() => setPanelOpen((o) => !o)}
-        aria-label="View LendWell activity"
-        className="flex items-center gap-2 transition-all duration-500"
+      {/* ── Processing pill — slides in when AI is working ── */}
+      <div
+        aria-live="polite"
         style={{
-          opacity: pillVisible ? 1 : 0,
-          pointerEvents: pillVisible ? 'auto' : 'none',
-          maxWidth: pillVisible ? '280px' : '0px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: isProcessing ? '5px 12px 5px 8px' : '0px',
+          maxWidth: isProcessing ? '240px' : '0px',
           overflow: 'hidden',
-          backgroundColor: 'transparent',
-          border: 'none',
-          padding: 0,
+          opacity: isProcessing ? 1 : 0,
+          backgroundColor: isProcessing ? '#EDECFD' : 'transparent',
+          borderRadius: '999px',
+          border: isProcessing ? '1px solid rgba(49,38,227,0.15)' : 'none',
+          transition: 'max-width 300ms ease, opacity 300ms ease, padding 300ms ease',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
         }}
       >
-        {/* Logo + optional spinner ring + offline indicator */}
-        <span className="relative flex-shrink-0 flex items-center justify-center" style={{ width: 28, height: 28 }}>
-          <AILogo size={22} />
-          {isProcessing && (
-            <span
-              className="absolute inset-0 rounded-full animate-spin"
-              style={{
-                border: '1.5px solid transparent',
-                borderTopColor: '#3126E3',
-                borderRightColor: 'rgba(71,63,230,0.25)',
-              }}
-            />
-          )}
-          {/* Offline indicator dot */}
-          {!isConnected && (
-            <span
-              className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2"
-              style={{ backgroundColor: '#CC013D', borderColor: '#ffffff' }}
-              title="Connection lost"
-            />
-          )}
-        </span>
-
-        {/* Task label — truncated */}
-        <span
-          className="text-xs font-semibold whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-500"
+        <Loader2
           style={{
-            color: isProcessing ? '#182026' : '#6B7280',
-            maxWidth: '180px',
+            width: '13px',
+            height: '13px',
+            color: '#3126E3',
+            flexShrink: 0,
+            animation: 'spin 1s linear infinite',
           }}
-        >
-          {isProcessing ? pillActivity?.description : 'Application Intelligence'}
+        />
+        <span style={{ fontSize: '12px', fontWeight: '600', color: '#3126E3' }}>
+          {processingActivity?.description ?? ''}
         </span>
-      </button>
+      </div>
 
-      {/* ── Icon-only button when idle (always visible for access to panel) ── */}
-      {!pillVisible && (
-        <button
-          onClick={() => setPanelOpen((o) => !o)}
-          aria-label="View LendWell activity"
-          className="relative flex items-center justify-center w-8 h-8 transition-colors hover:bg-muted/60"
-          style={{ borderRadius: '999px' }}
-        >
-          <AILogo size={18} />
-          {/* Offline indicator dot */}
-          {!isConnected && (
-            <span
-              className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full border-2"
-              style={{ backgroundColor: '#CC013D', borderColor: '#ffffff' }}
-              title="Connection lost"
-            />
-          )}
-        </button>
-      )}
+      {/* ── Icon button — always visible ── */}
+      <button
+        onClick={() => setPanelOpen((o) => !o)}
+        aria-label={isProcessing ? 'LendWell AI is working' : 'View AI activity'}
+        aria-expanded={panelOpen}
+        style={{
+          position: 'relative',
+          width: '34px',
+          height: '34px',
+          borderRadius: '50%',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+          backgroundColor: isProcessing
+            ? 'rgba(49,38,227,0.10)'
+            : panelOpen
+            ? 'rgba(49,38,227,0.08)'
+            : 'rgba(49,38,227,0.06)',
+          transition: 'background-color 200ms ease',
+        }}
+      >
+        {/* Pulse ring when processing */}
+        {isProcessing && (
+          <span
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '50%',
+              backgroundColor: 'rgba(49,38,227,0.12)',
+              animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+            }}
+          />
+        )}
+
+        <AILogo size={18} />
+
+        {/* Unread badge — green dot for new completions */}
+        {unreadComplete && !isProcessing && (
+          <span
+            style={{
+              position: 'absolute',
+              top: '1px',
+              right: '1px',
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: '#6CAD0A',
+              border: '1.5px solid #ffffff',
+            }}
+          />
+        )}
+
+        {/* Offline indicator */}
+        {!isConnected && (
+          <span
+            style={{
+              position: 'absolute',
+              top: '1px',
+              right: '1px',
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: '#CC013D',
+              border: '1.5px solid #ffffff',
+            }}
+            title="Connection lost"
+          />
+        )}
+      </button>
 
       {/* ── Dropdown panel ── */}
       {panelOpen && (
         <div
-          className="absolute right-0 z-50 rounded-xl shadow-xl overflow-hidden"
+          className="absolute right-0 z-50 overflow-hidden"
           style={{
             top: 'calc(100% + 10px)',
-            width: '300px',
+            width: '320px',
             backgroundColor: '#ffffff',
-            border: '1px solid hsl(220 15% 92%)',
+            borderRadius: '16px',
+            border: '1px solid rgba(0,0,0,0.08)',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
           }}
         >
           {/* Panel header */}
           <div
-            className="flex items-center gap-2.5 px-4 py-3 border-b"
-            style={{ borderColor: 'hsl(220 15% 92%)' }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '14px 16px 12px',
+              borderBottom: '1px solid rgba(0,0,0,0.06)',
+            }}
           >
-            <AILogo size={18} />
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold" style={{ color: '#182026' }}>
-                LendWell is working in the background
+            <div
+              style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(49,38,227,0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <AILogo size={16} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: '13px', fontWeight: '700', color: '#182026', margin: 0 }}>
+                LendWell Intelligence
               </p>
-              <p className="text-[10px] mt-0.5" style={{ color: isConnected ? '#3C6006' : '#7B0024' }}>
-                {isConnected ? 'Connected' : 'Disconnected'}
+              <p style={{ fontSize: '11px', fontWeight: '500', color: isConnected ? '#3C6006' : '#7B0024', margin: 0, marginTop: '1px' }}>
+                {isProcessing ? 'Working…' : isConnected ? 'Up to date' : 'Disconnected'}
               </p>
             </div>
+            <button
+              onClick={() => setPanelOpen(false)}
+              aria-label="Close activity panel"
+              style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                border: 'none',
+                backgroundColor: 'transparent',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#9CA3AF',
+              }}
+            >
+              <X style={{ width: '14px', height: '14px' }} />
+            </button>
           </div>
 
           {/* Connection error banner */}
           {connectionError && (
             <div
-              className="px-4 py-2 flex items-center gap-2 text-xs"
-              style={{ backgroundColor: '#FFEAF1', color: '#7B0024' }}
+              style={{
+                padding: '8px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                backgroundColor: '#FFEAF1',
+                fontSize: '12px',
+                color: '#7B0024',
+              }}
             >
-              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-              <span className="flex-1">{connectionError}</span>
+              <AlertCircle style={{ width: '13px', height: '13px', flexShrink: 0 }} />
+              <span style={{ flex: 1 }}>{connectionError}</span>
               <button
                 onClick={retryConnection}
-                className="text-xs font-medium underline hover:no-underline"
+                style={{ fontSize: '11px', fontWeight: '600', color: '#7B0024', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 Retry
               </button>
             </div>
           )}
 
-          <div className="px-4 py-2 max-h-72 overflow-y-auto">
+          {/* Activity list */}
+          <div style={{ padding: '8px 0', maxHeight: '280px', overflowY: 'auto' }}>
             {activities.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-3">
-                We&apos;ll update you here as we process your information.
+              <p style={{ fontSize: '13px', fontWeight: '500', color: '#9CA3AF', padding: '12px 16px', margin: 0 }}>
+                AI activity will appear here as you complete sections.
               </p>
             ) : (
-              <div className="divide-y divide-border/50">
-                {activities.map((activity) => {
-                  const isPro = activity.status === 'processing';
-                  const isCom = activity.status === 'complete';
-                  const isErr = activity.status === 'error';
-                  const isReview = activity.status === 'needs_review';
-                  return (
-                    <div key={activity.id} className="flex items-start gap-3 py-2.5">
-                      <div className="mt-0.5 flex-shrink-0">
-                        {isPro ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: '#3126E3' }} />
-                        ) : isCom ? (
-                          <CheckCircle2 className="w-3.5 h-3.5" style={{ color: '#6CAD0A' }} />
-                        ) : isErr ? (
-                          <AlertCircle className="w-3.5 h-3.5" style={{ color: '#CC013D' }} />
-                        ) : isReview ? (
-                          <AlertCircle className="w-3.5 h-3.5" style={{ color: '#E07900' }} />
-                        ) : (
-                          <div className="w-3.5 h-3.5 rounded-full border border-muted-foreground/30" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p
-                          className="text-sm leading-snug font-medium"
-                          style={{ color: isPro ? '#182026' : isErr ? '#7B0024' : '#5A7387' }}
-                        >
-                          {activity.description}
-                        </p>
-                        {activity.errorMessage && (
-                          <p className="text-xs mt-0.5" style={{ color: '#7B0024' }}>{activity.errorMessage}</p>
-                        )}
-                        <TimeLabel timestamp={activity.timestamp} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              activities.map((activity) => (
+                <ActivityRow key={activity.id} activity={activity} />
+              ))
             )}
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function ActivityRow({ activity }: { activity: AIActivity }) {
+  const isPro = activity.status === 'processing';
+  const isCom = activity.status === 'complete';
+  const isErr = activity.status === 'error';
+  const isReview = activity.status === 'needs_review';
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: '12px',
+        padding: '10px 16px',
+        backgroundColor: isPro ? 'rgba(49,38,227,0.03)' : 'transparent',
+      }}
+    >
+      {/* Status icon */}
+      <div style={{ marginTop: '1px', flexShrink: 0 }}>
+        {isPro ? (
+          <Loader2 style={{ width: '14px', height: '14px', color: '#3126E3', animation: 'spin 1s linear infinite' }} />
+        ) : isCom ? (
+          <CheckCircle2 style={{ width: '14px', height: '14px', color: '#6CAD0A' }} />
+        ) : isErr ? (
+          <AlertCircle style={{ width: '14px', height: '14px', color: '#CC013D' }} />
+        ) : isReview ? (
+          <AlertCircle style={{ width: '14px', height: '14px', color: '#E07900' }} />
+        ) : (
+          <div style={{ width: '14px', height: '14px', borderRadius: '50%', border: '1.5px solid #CBD5E1' }} />
+        )}
+      </div>
+
+      {/* Content */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{
+          fontSize: '13px',
+          fontWeight: isPro ? '600' : '500',
+          color: isPro ? '#182026' : isErr ? '#7B0024' : isReview ? '#653701' : '#5A7387',
+          margin: 0,
+          lineHeight: '1.4',
+        }}>
+          {activity.description}
+        </p>
+        {activity.errorMessage && (
+          <p style={{ fontSize: '11px', color: '#7B0024', margin: '2px 0 0' }}>{activity.errorMessage}</p>
+        )}
+        {/* Progress bar for in-progress activities */}
+        {isPro && activity.progress !== undefined && activity.progress > 0 && (
+          <div style={{ marginTop: '6px', height: '3px', backgroundColor: '#E1E8EE', borderRadius: '999px', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${activity.progress}%`, backgroundColor: '#3126E3', borderRadius: '999px', transition: 'width 300ms ease' }} />
+          </div>
+        )}
+        <TimeLabel timestamp={activity.timestamp} />
+      </div>
     </div>
   );
 }
@@ -285,5 +398,5 @@ function TimeLabel({ timestamp }: { timestamp: Date | string }) {
     setLabel(formatTime(timestamp));
   }, [timestamp]);
   if (!label) return null;
-  return <p className="text-xs text-muted-foreground/60 mt-0.5 font-medium">{label}</p>;
+  return <p style={{ fontSize: '11px', color: '#9CA3AF', margin: '2px 0 0', fontWeight: '500' }}>{label}</p>;
 }
