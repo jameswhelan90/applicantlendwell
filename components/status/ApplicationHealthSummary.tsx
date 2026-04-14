@@ -130,31 +130,13 @@ export function ApplicationHealthSummary() {
     <div className="space-y-5">
       {/* Progress section */}
       <div>
-        <div className="flex items-baseline justify-between mb-2">
-          <p className="text-xs font-semibold text-muted-foreground">
-            Application readiness
-          </p>
-          <span className="text-2xl font-bold text-foreground tabular-nums">
-            {readinessScore}%
-          </span>
-        </div>
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-700"
-            style={{ width: `${readinessScore}%`, backgroundColor: '#3126E3' }}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground mt-2">
-          {readinessScore === 100 ? (
-            <span className="font-semibold" style={{ color: '#3C6006' }}>Complete - ready to submit</span>
-          ) : readinessScore >= 75 ? (
-            'Almost there'
-          ) : readinessScore >= 50 ? (
-            'Halfway there'
-          ) : (
-            'Getting started'
-          )}
+        <p className="text-xs font-semibold text-muted-foreground mb-1">Application progress</p>
+        <p className="text-2xl font-bold text-foreground tabular-nums">
+          {complete} <span className="text-base font-medium text-muted-foreground">of {sections.length} sections completed</span>
         </p>
+        {readinessScore === 100 && (
+          <p className="text-xs font-semibold mt-1" style={{ color: '#3C6006' }}>All sections complete — ready to submit</p>
+        )}
       </div>
 
       {/* Section pills with hover previews */}

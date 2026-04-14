@@ -442,23 +442,72 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
     setSelectedJourneyStep(sectionId);
   }, []);
 
+  // ── Conditional step logic ────────────────────────────────────────────────
+  // Returns true if the step should be shown given the current form data.
+  const shouldShowStep = useCallback((stepId: StepId, data: ApplicationData): boolean => {
+    const isJoint = data.applicationMode === 'joint';
+    const isRemortgage = data.buyerType === 'remortgage';
+    const isBtl = data.buyerType === 'buy_to_let';
+    const isSelfEmployed = data.employmentStatus === 'self_employed' || data.employmentStatus === 'limited_company';
+    const isGiftedDeposit = data.depositSource === 'gift';
+
+    const conditionalMap: Partial<Record<StepId, boolean>> = {
+      // Remortgage-only steps
+      intent_remortgage:    isRemortgage,
+      intent_upload_mortgage: isRemortgage,
+      // Buy-to-let-only steps
+      intent_btl:           isBtl,
+      intent_upload_rental: isBtl,
+      // Self-employed steps
+      emp_self_employed:    isSelfEmployed,
+      emp_upload_tax:       isSelfEmployed,
+      emp_upload_payslips:  !isSelfEmployed,
+      // Joint application steps
+      hh_second_applicant:         isJoint,
+      hh_second_applicant_contact: isJoint,
+      hh_upload_joint_id:          isJoint,
+      emp_second_applicant:        isJoint,
+      emp_upload_joint:            isJoint,
+      inc_second_applicant:        isJoint,
+      inc_upload_joint_bank:       isJoint,
+      // Gifted deposit steps
+      dep_gift_details:   isGiftedDeposit,
+      dep_upload_gift:    isGiftedDeposit,
+      dep_upload_giftor:  isGiftedDeposit,
+    };
+
+    // If not in the map, always show
+    if (!(stepId in conditionalMap)) return true;
+    return conditionalMap[stepId] ?? true;
+  }, []);
+
   const goToNextStep = useCallback(() => {
-    const idx = ALL_STEPS.indexOf(currentStep);
-    if (idx < ALL_STEPS.length - 1) {
-      setCurrentStep(ALL_STEPS[idx + 1]);
-    } else {
-      setIsModalOpen(false);
+    const data = state.data;
+    let idx = ALL_STEPS.indexOf(currentStep);
+    while (idx < ALL_STEPS.length - 1) {
+      idx += 1;
+      const nextStep = ALL_STEPS[idx];
+      if (shouldShowStep(nextStep, data)) {
+        setCurrentStep(nextStep);
+        return;
+      }
     }
-  }, [currentStep]);
+    setIsModalOpen(false);
+  }, [currentStep, state.data, shouldShowStep]);
 
   const goToPrevStep = useCallback(() => {
-    const idx = ALL_STEPS.indexOf(currentStep);
-    if (idx > 0) {
-      setCurrentStep(ALL_STEPS[idx - 1]);
-    } else {
-      setIsModalOpen(false);
+    const data = state.data;
+    let idx = ALL_STEPS.indexOf(currentStep);
+    while (idx > 0) {
+      idx -= 1;
+      const prevStep = ALL_STEPS[idx];
+      if (shouldShowStep(prevStep, data)) {
+        setCurrentStep(prevStep);
+        return;
+      }
     }
-  }, [currentStep]);
+    setIsModalOpen(false);
+  }, [currentStep, state.data, shouldShowStep]);
 
   // ── Data updates ───────────────────────────────────────────────────────
 
