@@ -1,4 +1,5 @@
 import { streamText, convertToModelMessages, UIMessage } from 'ai';
+import { anthropic } from '@ai-sdk/anthropic';
 
 export const maxDuration = 30;
 
@@ -52,7 +53,7 @@ Guidelines:
 - If asked about something outside your expertise, acknowledge it and stay focused on the application`;
 
     const result = streamText({
-      model: 'anthropic/claude-sonnet-4-20250514',
+      model: anthropic('claude-sonnet-4-20250514'),
       system: systemPrompt,
       messages: await convertToModelMessages(messages),
       abortSignal: req.signal,
