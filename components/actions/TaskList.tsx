@@ -1,7 +1,8 @@
 'use client';
 
-import { useApplication, ALL_STEPS, STEP_SECTION, STEP_LABELS } from '@/context/ApplicationContext';
+import { useApplication, ALL_STEPS, STEP_SECTION, STEP_LABELS, SECTION_LABELS } from '@/context/ApplicationContext';
 import { SectionId } from '@/types/tasks';
+import { Check, ChevronRight } from 'lucide-react';
 
 // ─── Immediate tasks helper ────────────────────────────────────────────────
 
@@ -35,10 +36,21 @@ function getImmediateTasks(
   return tasks.slice(0, 3);
 }
 
+// ─── Heading helper ────────────────────────────────────────────────────────
+
+function getEncouragingHeading(completedCount: number, totalCount: number, isComplete: boolean): string {
+  if (isComplete) return 'You\'re all set!';
+  if (completedCount === 0) return 'Let\'s get started';
+  if (completedCount === 1) return 'Great first step!';
+  if (completedCount / totalCount < 0.5) return 'You\'re making progress';
+  if (completedCount / totalCount < 0.8) return 'More than halfway there!';
+  return 'Almost done!';
+}
+
 // ─── Main Component ────────────────────────────────────────────────────────
 
 export function TaskList() {
-  const { state, readinessScore, currentSectionId, goToSection } = useApplication();
+  const { state, readinessScore, goToSection } = useApplication();
 
   const sections = state.sections.filter((s) => s.id !== 'collect_keys');
   const isComplete = readinessScore === 100;
@@ -46,17 +58,10 @@ export function TaskList() {
   const completedCount = sections.filter((s) => s.status === 'complete').length;
   const totalCount = sections.length;
 
-  const milestoneLabel = isComplete
-    ? `All ${totalCount} sections completed`
-    : completedCount === 0
-    ? `0 of ${totalCount} sections completed`
+  const heading = getEncouragingHeading(completedCount, totalCount, isComplete);
+  const subheading = isComplete
+    ? `All ${totalCount} sections completed — ready to submit`
     : `${completedCount} of ${totalCount} sections completed`;
-
-  const progressPercent = Math.round((completedCount / totalCount) * 100);
-
-  const incompleteSections = sections
-    .filter((s) => s.status !== 'complete')
-    .slice(0, 4);
 
   const immediateTasks = getImmediateTasks(state);
 
@@ -73,117 +78,144 @@ export function TaskList() {
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
         {/* ── Header ── */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-          <span style={{ fontSize: '15px', fontWeight: '600', color: '#182026' }}>
-            Application Readiness
-          </span>
-          <span style={{ fontSize: '13px', fontWeight: '500', color: '#5A7387' }}>
-            {milestoneLabel}
-          </span>
+        <div>
+          <h2
+            className="font-display font-medium"
+            style={{ fontSize: '22px', color: '#182026', letterSpacing: '-0.01em', marginBottom: '4px' }}
+          >
+            {heading}
+          </h2>
+          <p style={{ fontSize: '13px', fontWeight: '500', color: '#5A7387' }}>
+            {subheading}
+          </p>
         </div>
 
-        {/* ── Progress bar ── */}
+        {/* ── Segmented progress bars ── */}
         <div
-          style={{
-            width: '100%',
-            height: '4px',
-            borderRadius: '999px',
-            backgroundColor: '#F1F5F9',
-            overflow: 'hidden',
-          }}
+          style={{ display: 'flex', gap: '4px', height: '6px' }}
           role="progressbar"
-          aria-valuenow={progressPercent}
+          aria-valuenow={completedCount}
           aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Application completion progress"
+          aria-valuemax={totalCount}
+          aria-label="Application section progress"
         >
-          <div
-            style={{
-              height: '100%',
-              width: `${progressPercent}%`,
-              borderRadius: '999px',
-              backgroundColor: '#3126E3',
-              transition: 'width 600ms ease',
-            }}
-          />
+          {sections.map((section) => (
+            <div
+              key={section.id}
+              style={{
+                flex: 1,
+                borderRadius: '999px',
+                backgroundColor: section.status === 'complete' ? '#3126E3' : '#E1E8EE',
+                transition: 'background-color 500ms ease',
+              }}
+            />
+          ))}
         </div>
 
         {/* ── Separator ── */}
-        <div style={{ height: '1px', backgroundColor: '#E1E8EE', margin: '-4px 0' }} />
+        <div style={{ height: '1px', backgroundColor: '#E1E8EE' }} />
 
-        {/* ── Remaining sections ── */}
-        {!isComplete && incompleteSections.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <span style={{ fontSize: '11px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-              Remaining
-            </span>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-              {incompleteSections.map((section) => (
-                <button
-                  key={section.id}
-                  type="button"
-                  onClick={() => goToSection(section.id)}
-                  className="focus-ring transition-interaction"
+        {/* ── Checklist rows ── */}
+        {!isComplete && immediateTasks.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            <p style={{ fontSize: '11px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>
+              Up next
+            </p>
+            {immediateTasks.map((task, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => goToSection(task.sectionId)}
+                className="focus-ring row-interactive"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  width: '100%',
+                  textAlign: 'left',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '10px 8px',
+                  borderRadius: '8px',
+                }}
+              >
+                {/* Circle indicator */}
+                <div
                   style={{
-                    fontSize: '12px',
-                    fontWeight: '500',
-                    color: '#42535F',
-                    backgroundColor: '#F7F8FC',
-                    border: '1px solid #E1E8EE',
-                    borderRadius: '999px',
-                    padding: '4px 12px',
-                    cursor: 'pointer',
+                    flexShrink: 0,
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    border: '1.5px solid #CBD5E1',
+                    backgroundColor: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
-                >
-                  {section.label}
-                </button>
-              ))}
-            </div>
+                />
+                <span style={{ flex: 1, fontSize: '13px', color: '#182026', fontWeight: '600' }}>
+                  {task.label}
+                </span>
+                <ChevronRight style={{ flexShrink: 0, width: '14px', height: '14px', color: '#9CA3AF' }} />
+              </button>
+            ))}
           </div>
         )}
 
-        {/* ── Next tasks ── */}
-        {!isComplete && immediateTasks.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <span style={{ fontSize: '11px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-              Next to complete
-            </span>
-            <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              {immediateTasks.map((task, idx) => (
-                <li key={idx}>
-                  <button
-                    type="button"
-                    onClick={() => goToSection(task.sectionId)}
-                    className="focus-ring row-interactive"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      width: '100%',
-                      textAlign: 'left',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: '6px 8px',
-                      borderRadius: '6px',
-                    }}
-                  >
-                    <span
-                      style={{
-                        flexShrink: 0,
-                        width: '5px',
-                        height: '5px',
-                        borderRadius: '50%',
-                        backgroundColor: '#3126E3',
-                      }}
-                    />
-                    <span style={{ fontSize: '13px', color: '#182026', fontWeight: '500' }}>
-                      {task.label}
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+        {/* ── All sections checklist (when no immediate tasks, show section list) ── */}
+        {!isComplete && immediateTasks.length === 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                type="button"
+                onClick={() => goToSection(section.id)}
+                className="focus-ring row-interactive"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  width: '100%',
+                  textAlign: 'left',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '10px 8px',
+                  borderRadius: '8px',
+                }}
+              >
+                <div
+                  style={{
+                    flexShrink: 0,
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    border: section.status === 'complete' ? 'none' : '1.5px solid #CBD5E1',
+                    backgroundColor: section.status === 'complete' ? '#6CAD0A' : '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {section.status === 'complete' && (
+                    <Check style={{ width: '11px', height: '11px', color: '#ffffff', strokeWidth: 2.5 }} />
+                  )}
+                </div>
+                <span style={{
+                  flex: 1,
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  color: section.status === 'complete' ? '#5A7387' : '#182026',
+                  textDecoration: section.status === 'complete' ? 'line-through' : 'none',
+                }}>
+                  {SECTION_LABELS[section.id as SectionId]}
+                </span>
+                {section.status !== 'complete' && (
+                  <ChevronRight style={{ flexShrink: 0, width: '14px', height: '14px', color: '#9CA3AF' }} />
+                )}
+              </button>
+            ))}
           </div>
         )}
 

@@ -109,7 +109,7 @@ function TextInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full px-4 py-3 rounded-md border text-sm font-medium transition-colors outline-none focus:border-[#473FE6] focus:ring-2 focus:ring-[#473FE6]/20"
+        className="w-full px-4 py-3 rounded-lg border text-sm font-medium transition-colors outline-none"
         style={{ borderColor: 'hsl(220 15% 90%)', backgroundColor: '#ffffff', color: '#182026' }}
       />
     </div>
@@ -369,7 +369,7 @@ function CountrySelect({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 rounded-md border text-sm font-medium transition-colors outline-none"
+        className="w-full flex items-center justify-between px-4 py-3 rounded-lg border text-sm font-medium transition-colors outline-none"
         style={{
           borderColor: open ? '#473FE6' : 'hsl(220 15% 90%)',
           backgroundColor: '#ffffff',

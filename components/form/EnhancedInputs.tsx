@@ -601,7 +601,7 @@ export function SearchableSelect({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={searchPlaceholder}
-                className="w-full pl-9 pr-3 py-2 rounded-md border text-sm outline-none focus:border-[#473FE6]"
+                className="w-full pl-9 pr-3 py-2 rounded-lg border text-sm outline-none"
                 style={{
                   borderColor: 'hsl(220 15% 90%)',
                   backgroundColor: '#F9FAFB',

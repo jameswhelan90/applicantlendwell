@@ -98,12 +98,12 @@ export function NextActionCard() {
           }}
         />
 
-        {/* Dark gradient overlay — transparent top, dark bottom */}
+        {/* Light gradient overlay — transparent top, white bottom */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.08) 35%, rgba(0,0,0,0.62) 60%, rgba(0,0,0,0.88) 100%)',
+            background: 'linear-gradient(to top, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.75) 45%, transparent 100%)',
           }}
         />
 
@@ -114,19 +114,19 @@ export function NextActionCard() {
           <div style={{ marginBottom: '16px' }}>
             <h2
               className="font-display font-medium text-balance leading-tight"
-              style={{ fontSize: '26px', color: '#ffffff', marginBottom: '8px', letterSpacing: '-0.01em' }}
+              style={{ fontSize: '26px', color: '#182026', marginBottom: '8px', letterSpacing: '-0.01em' }}
             >
               Welcome to LendWell
             </h2>
             <p
               className="font-medium leading-relaxed"
-              style={{ fontSize: '14px', color: 'rgba(255,255,255,0.80)', maxWidth: '320px' }}
+              style={{ fontSize: '14px', color: '#5A7387', maxWidth: '320px' }}
             >
               Your dedicated adviser team is ready to guide you through every step of your mortgage journey.
             </p>
           </div>
 
-          {/* Frosted glass pill badges */}
+          {/* Pill badges */}
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
             <span
               style={{
@@ -135,12 +135,12 @@ export function NextActionCard() {
                 gap: '6px',
                 padding: '6px 14px',
                 borderRadius: '999px',
-                backgroundColor: 'rgba(255,255,255,0.15)',
+                backgroundColor: 'rgba(255,255,255,0.90)',
                 backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255,255,255,0.20)',
+                border: '1px solid rgba(0,0,0,0.08)',
                 fontSize: '12px',
                 fontWeight: '600',
-                color: '#ffffff',
+                color: '#182026',
               }}
             >
               <Clock className="w-3.5 h-3.5" />
@@ -152,28 +152,28 @@ export function NextActionCard() {
                 alignItems: 'center',
                 padding: '6px 14px',
                 borderRadius: '999px',
-                backgroundColor: 'rgba(255,255,255,0.15)',
+                backgroundColor: 'rgba(255,255,255,0.90)',
                 backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255,255,255,0.20)',
+                border: '1px solid rgba(0,0,0,0.08)',
                 fontSize: '12px',
                 fontWeight: '600',
-                color: '#ffffff',
+                color: '#182026',
               }}
             >
               Expert advisers
             </span>
           </div>
 
-          {/* White CTA button — full width */}
+          {/* Indigo CTA button — full width */}
           <button
             onClick={() => openModal(firstStep)}
             className="btn-interactive"
             style={{
               width: '100%',
               padding: '14px',
-              backgroundColor: '#ffffff',
-              color: '#182026',
-              borderRadius: '999px',
+              backgroundColor: '#3126E3',
+              color: '#ffffff',
+              borderRadius: '8px',
               border: 'none',
               fontSize: '15px',
               fontWeight: '700',

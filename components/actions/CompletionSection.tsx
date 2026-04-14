@@ -153,8 +153,8 @@ export function CompletionSection({ isFullyComplete }: CompletionSectionProps) {
           {/* Header text */}
           <div className="text-center">
             <h2
-              className="text-3xl font-bold mb-4"
-              style={{ color: '#3C6006', fontFamily: 'inherit' }}
+              className="font-display font-medium mb-4"
+              style={{ fontSize: '30px', color: '#3C6006', letterSpacing: '-0.01em' }}
             >
               Your Application is Ready
             </h2>
@@ -298,8 +298,8 @@ export function CompletionSection({ isFullyComplete }: CompletionSectionProps) {
         {/* Header text */}
         <div className="relative z-10 text-center">
           <h2
-            className="text-3xl font-bold mb-4"
-            style={{ color: '#182026', fontFamily: 'inherit' }}
+            className="font-display font-medium mb-4"
+            style={{ fontSize: '30px', color: '#182026', letterSpacing: '-0.01em' }}
           >
             Collect Your Keys
           </h2>

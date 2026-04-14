@@ -1331,7 +1331,7 @@ export function DocumentsUploadSection() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-bold mb-2" style={{ color: '#182026' }}>
+            <h2 className="font-display font-medium mb-2" style={{ fontSize: '28px', color: '#182026', letterSpacing: '-0.01em' }}>
               Upload your documents
             </h2>
             <p 
