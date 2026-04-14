@@ -229,10 +229,11 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
               onClick={handleStartClick}
               className="w-full py-3 font-semibold text-sm flex items-center justify-center gap-2 btn-interactive"
               style={{
-                backgroundColor: isComplete ? '#F7F8FC' : '#3126E3',
-                color: isComplete ? '#374151' : '#ffffff',
+                backgroundColor: isComplete ? 'rgba(255,255,255,0.65)' : '#3126E3',
+                color: isComplete ? '#5A7387' : '#ffffff',
                 borderRadius: '8px',
-                border: isComplete ? '1px solid #E1E8EE' : 'none',
+                border: 'none',
+                boxShadow: isComplete ? 'none' : undefined,
               }}
             >
               {isComplete ? 'Review section' : isInProgress ? 'Continue section' : 'Start section'}
@@ -293,8 +294,8 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
           onClick={handleStartClick}
           className="w-full py-3 font-semibold text-sm flex items-center justify-center gap-2 btn-interactive"
           style={{
-            backgroundColor: isComplete ? '#F7F8FC' : '#3126E3',
-            color: isComplete ? '#374151' : '#ffffff',
+            backgroundColor: isComplete ? 'rgba(255,255,255,0.65)' : '#3126E3',
+            color: isComplete ? '#5A7387' : '#ffffff',
             borderRadius: '999px',
             border: 'none',
           }}

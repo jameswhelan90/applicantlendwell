@@ -65,9 +65,9 @@ export function JourneyTracker({ compact = false }: JourneyTrackerProps) {
                   className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all"
                   style={{
                     backgroundColor: isComplete
-                      ? '#6CAD0A'
-                      : isSelected
                       ? '#3126E3'
+                      : isSelected
+                      ? 'rgba(49,38,227,0.10)'
                       : '#F7F8FC',
                     border: isUpcoming ? '1px solid #E5E7EB' : 'none',
                   }}
@@ -77,29 +77,29 @@ export function JourneyTracker({ compact = false }: JourneyTrackerProps) {
                   ) : (
                     <span
                       className="text-[11px] font-semibold leading-none"
-                      style={{ color: isSelected ? '#ffffff' : '#9CA3AF' }}
+                      style={{ color: isSelected ? '#3126E3' : '#9CA3AF' }}
                     >
                       {index + 1}
                     </span>
                   )}
                 </div>
 
-                {/* Label - color follows semantic palette */}
+                {/* Label */}
                 <span
                   className="text-sm leading-snug"
                   style={{
-                    color: isComplete ? '#3C6006' : isSelected ? '#182026' : '#6B7280',
+                    color: isComplete || isSelected ? '#182026' : '#6B7280',
                     fontWeight: '600',
                   }}
                 >
                   {SECTION_LABELS[section.id as SectionId]}
                 </span>
 
-                {/* Active indicator dot - matches step state palette */}
+                {/* Active indicator dot */}
                 {(isSelected || isComplete) && (
                   <span
                     className="ml-auto w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: isComplete ? '#6CAD0A' : '#3126E3' }}
+                    style={{ backgroundColor: '#3126E3' }}
                   />
                 )}
               </button>
