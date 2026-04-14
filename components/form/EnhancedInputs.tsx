@@ -86,7 +86,7 @@ export function CurrencyInput({
           style={{
             backgroundColor: isFocused ? '#ffffff' : 'rgba(255,255,255,0.7)',
             color: '#182026',
-            boxShadow: isFocused ? '0 0 0 2px #3126E3' : 'none',
+            boxShadow: isFocused ? '0 0 0 2px rgba(24,32,38,0.25)' : 'none',
             border: 'none',
           }}
         />
@@ -188,7 +188,7 @@ export function DOBInput({
   const getInputStyle = (focused: boolean) => ({
     backgroundColor: focused ? '#ffffff' : 'rgba(255,255,255,0.7)',
     color: '#182026',
-    boxShadow: focused ? '0 0 0 2px #3126E3' : 'none',
+    boxShadow: focused ? '0 0 0 2px rgba(24,32,38,0.25)' : 'none',
     border: 'none',
   });
 
@@ -569,7 +569,7 @@ export function SearchableSelect({
         style={{
           backgroundColor: isOpen ? '#ffffff' : 'rgba(255,255,255,0.7)',
           color: selectedOption ? '#182026' : '#9CA3AF',
-          boxShadow: isOpen ? '0 0 0 2px #3126E3' : 'none',
+          boxShadow: isOpen ? '0 0 0 2px rgba(24,32,38,0.25)' : 'none',
           border: 'none',
         }}
       >
