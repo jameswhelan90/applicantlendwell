@@ -1,0 +1,117 @@
+'use client';
+
+import { useApplication, SECTION_LABELS, SECTION_FIRST_STEP } from '@/context/ApplicationContext';
+import { JourneySection, SectionId } from '@/types/tasks';
+import { Check } from 'lucide-react';
+
+interface JourneyTrackerProps {
+  compact?: boolean;
+}
+
+export function JourneyTracker({ compact = false }: JourneyTrackerProps) {
+  const { state, selectedJourneyStep, selectJourneyStep } = useApplication();
+  const { sections } = state;
+
+  const handleSectionClick = (section: JourneySection) => {
+    // Only update the sidebar selection to show the section overview panel — do not open the form modal
+    selectJourneyStep(section.id);
+  };
+
+  return (
+    <nav
+      aria-label="Application journey"
+      style={{
+        paddingTop: '14px',
+        paddingBottom: '10px',
+        paddingLeft: '12px',
+        paddingRight: '12px',
+        backgroundColor: 'transparent',
+        borderRadius: '12px', /* med component */
+        width: '100%',
+        borderWidth: '1px',
+        borderColor: 'rgba(0, 0, 0, 0.08)',
+        borderStyle: 'solid',
+      }}
+    >
+      <p
+        style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '0', textTransform: 'none', marginBottom: '12px', marginLeft: '4px', marginRight: '4px', color: '#182026' }}
+      >
+        Your Journey
+      </p>
+
+      <ol className="space-y-1">
+        {sections.map((section, index) => {
+          const isComplete = section.status === 'complete';
+          const isSelected = section.id === selectedJourneyStep;
+          const isUpcoming = section.status === 'not_started' && !isSelected;
+
+          return (
+            <li key={section.id}>
+              <div
+                onClick={() => handleSectionClick(section)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') handleSectionClick(section);
+                }}
+                className={`flex items-center gap-3 py-2.5 cursor-pointer nav-interactive ${
+                  isSelected
+                    ? 'bg-white'
+                    : ''
+                }`}
+                style={
+                  isSelected
+                    ? { boxShadow: '0px 2px 8px 0px rgba(24, 32, 38, 0.12)', paddingRight: '20px', paddingLeft: '10px', borderRadius: '999px' }
+                    : { paddingLeft: '10px', paddingRight: '12px', borderRadius: '999px' }
+                }
+              >
+                {/* Step indicator */}
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all"
+                  style={{
+                    backgroundColor: isComplete
+                      ? '#6CAD0A'
+                      : isSelected
+                      ? '#3126E3'
+                      : '#F7F8FC',
+                    border: isUpcoming ? '1px solid #E5E7EB' : 'none',
+                  }}
+                >
+                  {isComplete ? (
+                    <Check className="w-3.5 h-3.5 text-white stroke-[2.5]" />
+                  ) : (
+                    <span
+                      className="text-[11px] font-semibold leading-none"
+                      style={{ color: isSelected ? '#ffffff' : '#9CA3AF' }}
+                    >
+                      {index + 1}
+                    </span>
+                  )}
+                </div>
+
+                {/* Label - color follows semantic palette */}
+                <span
+                  className="text-sm leading-snug"
+                  style={{
+                    color: isComplete ? '#3C6006' : isUpcoming ? '#9CA3AF' : '#182026',
+                    fontWeight: isSelected ? '700' : '600',
+                  }}
+                >
+                  {SECTION_LABELS[section.id as SectionId]}
+                </span>
+
+                {/* Active indicator dot - matches step state palette */}
+                {(isSelected || isComplete) && (
+                  <span
+                    className="ml-auto w-1.5 h-1.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: isComplete ? '#6CAD0A' : '#3126E3' }}
+                  />
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
+  );
+}

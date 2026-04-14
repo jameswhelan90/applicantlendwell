@@ -1,0 +1,315 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Custom Fonts ─────────────────────────────────────────── */
+
+/* NeuSans — large headings and branded content (Medium weight only) */
+@font-face {
+  font-family: 'NeuSans';
+  src: url('/fonts/NeuSans-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Satoshi — body copy and smaller headings (Medium weight minimum) */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Variable.woff2') format('woff2'),
+       url('/fonts/Satoshi-Variable.woff') format('woff');
+  font-weight: 500 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    /* Fonts */
+    --font-sans: 'Satoshi', system-ui, sans-serif;
+    --font-display: 'NeuSans', system-ui, sans-serif;
+
+    /* ─── LendWell Semantic Color System ─────────────────────────────── */
+    
+    /* Core / Neutral UI (Primary palette) */
+    --background: 0 0% 100%;                    /* Primary.Mono #FFFFFF */
+    --background-subtle: 220 33% 98%;           /* Primary.Fill-Soft #F7F8FC */
+    --foreground: 207 17% 12%;                  /* Primary.Text #182026 */
+    
+    /* Surfaces */
+    --card: 0 0% 100%;                          /* Primary.Mono #FFFFFF */
+    --card-foreground: 207 17% 12%;             /* Primary.Text #182026 */
+    --surface-subtle: 220 33% 98%;              /* Primary.Fill-Soft #F7F8FC */
+    --surface-muted: 210 24% 91%;               /* Primary.Fill-Medium #E1E8EE */
+    
+    /* Text hierarchy */
+    --text-primary: 207 17% 12%;                /* Primary.Text #182026 */
+    --text-secondary: 204 18% 31%;              /* Primary.Text-Soft #42535F */
+    --text-muted: 207 20% 44%;                  /* Primary.Color #5A7387 */
+    
+    /* Brand / Interactive (Indigo palette) */
+    --primary: 243 74% 52%;                     /* Indigo.Color #3126E3 */
+    --primary-foreground: 0 0% 100%;            /* White */
+    --primary-hover: 242 72% 58%;               /* Indigo.Color-Soft #473FE6 */
+    --primary-soft: 243 86% 96%;                /* Indigo.Fill-Soft #EDECFD */
+    --primary-medium: 243 100% 92%;             /* Indigo.Fill-Medium #D9D7FF */
+    --brand-text: 243 83% 12%;                  /* Indigo.Text #090736 */
+    
+    /* Secondary */
+    --secondary: 220 33% 98%;                   /* Primary.Fill-Soft #F7F8FC */
+    --secondary-foreground: 207 17% 12%;        /* Primary.Text #182026 */
+    
+    /* Muted */
+    --muted: 210 24% 91%;                       /* Primary.Fill-Medium #E1E8EE */
+    --muted-foreground: 207 20% 44%;            /* Primary.Color #5A7387 */
+    
+    /* Success (Success palette) */
+    --success: 87 89% 36%;                      /* Success.Color #6CAD0A */
+    --success-foreground: 0 0% 100%;            /* White */
+    --success-text: 87 88% 20%;                 /* Success.Text-Soft #3C6006 */
+    --success-bg: 83 93% 92%;                   /* Success.Fill-Soft #EEFDD9 */
+    --success-bg-strong: 83 88% 76%;            /* Success.Fill-Medium #CEF88C */
+    --success-border: 83 88% 76%;               /* Success.Fill-Medium #CEF88C */
+    
+    /* Warning (Warning palette) */
+    --warning: 32 100% 44%;                     /* Warning.Color #E07900 */
+    --warning-foreground: 0 0% 100%;            /* White */
+    --warning-text: 32 98% 20%;                 /* Warning.Text-Soft #653701 */
+    --warning-bg: 33 100% 95%;                  /* Warning.Fill-Soft #FFF6EA */
+    --warning-bg-strong: 33 100% 84%;           /* Warning.Fill-Medium #FFDAAF */
+    --warning-border: 33 100% 84%;              /* Warning.Fill-Medium #FFDAAF */
+    
+    /* Destructive / Danger (Danger palette) */
+    --destructive: 345 99% 40%;                 /* Danger.Color #CC013D */
+    --destructive-foreground: 0 0% 100%;        /* White */
+    --destructive-text: 345 100% 24%;           /* Danger.Text-Soft #7B0024 */
+    --destructive-bg: 345 100% 95%;             /* Danger.Fill-Soft #FFEAF1 */
+    --destructive-bg-strong: 345 100% 88%;      /* Danger.Fill-Medium #FFC1D3 */
+    --destructive-border: 345 100% 88%;         /* Danger.Fill-Medium #FFC1D3 */
+    
+    /* Accent - Violet (for AI/assistant UI) */
+    --accent-violet: 273 100% 40%;              /* Violet.Color #7400CB */
+    --accent-violet-soft: 273 100% 96%;         /* Violet.Fill-Soft #F6EBFF */
+    --accent-violet-text: 273 98% 24%;          /* Violet.Text-Soft #460674 */
+    
+    /* Accent - Linen (for documents/warmth) */
+    --accent-linen: 41 29% 36%;                 /* Linen.Color #756941 */
+    --accent-linen-soft: 38 31% 92%;            /* Linen.Fill-Soft #F2ECE4 */
+    
+    /* Chrome */
+    --border: 210 24% 91%;                      /* Primary.Fill-Medium #E1E8EE */
+    --border-strong: 207 23% 75%;               /* Primary.Fill #B5C3CE */
+    --input: 220 33% 98%;                       /* Primary.Fill-Soft #F7F8FC */
+    --ring: 243 74% 52%;                        /* Indigo.Color #3126E3 (focusRing) */
+    --radius: 8px;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Smooth progress bar transitions */
+  .transition-width {
+    transition-property: width;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 700ms;
+  }
+
+  * {
+    @apply border-border;
+  }
+}
+
+/* ─── Interaction System ─────────────────────────────────────────── */
+/* Following Linear/Stripe/Notion interaction patterns */
+
+@layer utilities {
+  /* ─── DESIGN POLICY: Minimum Font Weight 500 (Medium) ────────────── */
+  /* All text throughout the application must use font-weight >= 500 (medium).
+     Light (300) and Regular (400) weights are disabled system-wide.
+     This ensures consistent visual hierarchy and improved readability.
+     Available weights: 500, 600, 700, 800, 900. */
+  
+  /* ─── Transition Tokens ─────────────────────────────────────────── */
+  .transition-interaction {
+    transition-property: background-color, border-color, box-shadow, transform, opacity;
+    transition-duration: 120ms;
+    transition-timing-function: ease-out;
+  }
+
+  .transition-pressed {
+    transition-property: transform, background-color;
+    transition-duration: 80ms;
+    transition-timing-function: ease-out;
+  }
+
+  /* ─── Shadow Elevation Tokens ───────────────────────────────────── */
+  .shadow-layer-1 {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .shadow-layer-2 {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .shadow-layer-3 {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .shadow-inset-subtle {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+
+  /* ─── Focus Ring (Keyboard Navigation Only) ─────────────────────── */
+  .focus-ring {
+    outline: none;
+  }
+
+  .focus-ring:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: inherit;
+  }
+
+  /* ─── Interactive Button States ─────────────────────────────────── */
+  .btn-interactive {
+    @apply transition-interaction focus-ring;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .btn-interactive:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    filter: brightness(0.96);
+  }
+
+  .btn-interactive:active {
+    transform: scale(0.98);
+    filter: brightness(0.94);
+    @apply transition-pressed;
+  }
+
+  /* ─── Interactive Card States ───────────────────────────────────── */
+  .card-interactive {
+    @apply transition-interaction focus-ring;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid hsl(var(--border));
+  }
+
+  .card-interactive:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    border-color: hsl(var(--border) / 0.8);
+  }
+
+  .card-interactive:active {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+    filter: brightness(0.98);
+    @apply transition-pressed;
+  }
+
+  /* ─── Interactive Row States (List items, nav items) ────────────── */
+  .row-interactive {
+    @apply transition-interaction focus-ring;
+  }
+
+  .row-interactive:hover {
+    background-color: hsl(var(--muted) / 0.5);
+  }
+
+  .row-interactive:active {
+    background-color: hsl(var(--muted) / 0.7);
+    @apply transition-pressed;
+  }
+
+  /* ─── Sidebar Navigation Item States ────────────────────────────── */
+  .nav-interactive {
+    @apply transition-interaction focus-ring;
+  }
+
+  .nav-interactive:hover {
+    background-color: hsl(var(--primary) / 0.04);
+  }
+
+  .nav-interactive:active {
+    background-color: hsl(var(--primary) / 0.08);
+    @apply transition-pressed;
+  }
+
+  /* ─── Upload Drop Zone States ───────────────────────────────────── */
+  .dropzone-interactive {
+    @apply transition-interaction focus-ring;
+    border: 2px dashed hsl(var(--border));
+  }
+
+  .dropzone-interactive:hover,
+  .dropzone-interactive.dragging {
+    border-color: hsl(var(--primary));
+    background-color: hsl(var(--primary) / 0.03);
+  }
+
+  /* ─── Progress Step States ──────────────────────────────────────── */
+  .step-interactive {
+    @apply transition-interaction focus-ring;
+  }
+
+  .step-interactive:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+  }
+
+  .step-interactive:active {
+    transform: translateY(0);
+    @apply transition-pressed;
+  }
+
+  /* ─── Chat Action Button States ─────────────────────────────────── */
+  .chat-action {
+    @apply transition-interaction focus-ring;
+  }
+
+  .chat-action:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    filter: brightness(0.96);
+  }
+
+  .chat-action:active {
+    transform: scale(0.98);
+    @apply transition-pressed;
+  }
+
+  /* ─── Icon Button States ────────────────────────────────────────── */
+  .icon-btn {
+    @apply transition-interaction focus-ring;
+  }
+
+  .icon-btn:hover {
+    background-color: hsl(var(--muted) / 0.6);
+  }
+
+  .icon-btn:active {
+    transform: scale(0.95);
+    @apply transition-pressed;
+  }
+
+  /* ─── Expand/Collapse Affordance Enhancement ────────────────────── */
+  .expand-affordance {
+    @apply transition-interaction;
+    opacity: 0.4;
+  }
+
+  .group:hover .expand-affordance,
+  .expand-affordance:hover {
+    opacity: 1;
+  }
+
+  /* ─── Badge Hover Enhancement ───────────────────────────────────── */
+  .badge-interactive {
+    @apply transition-interaction;
+  }
+
+  .group:hover .badge-interactive {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+}

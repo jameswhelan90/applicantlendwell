@@ -1,0 +1,115 @@
+'use client';
+
+import { useApplication } from '@/context/ApplicationContext';
+import { getProgressSummary } from '@/utils/taskHelpers';
+
+import { JourneyTracker } from '@/components/progress/JourneyTracker';
+import { StepOverviewPanel } from '@/components/actions/StepOverviewPanel';
+import { NextActionCard } from '@/components/actions/NextActionCard';
+import { TaskList } from '@/components/actions/TaskList';
+import { AIActivityIndicator } from '@/components/status/AIActivityIndicator';
+import { ApplicationFormModal } from '@/components/form/ApplicationFormModal';
+import { FloatingChat } from '@/components/chat/FloatingChat';
+import { ContextualAssistant } from '@/components/intelligence/ContextualAssistant';
+import { ActivityProvider } from '@/context/ActivityContext';
+
+export default function MortgageApplication() {
+  const { state, selectedJourneyStep } = useApplication();
+
+  // Override welcome section title for the main page
+  const pageTitle = selectedJourneyStep === 'welcome' 
+    ? "Let's kick start your mortgage journey"
+    : undefined;
+
+  return (
+    <ActivityProvider>
+    <div className="min-h-screen bg-background" style={{ backgroundColor: '#F7F8FC' }}>
+      {/* Header — full-width sticky band with inset rounded card */}
+      <header
+        className="sticky top-0 z-20 w-full"
+        style={{ backgroundColor: '#F7F8FC', paddingTop: '12px', paddingLeft: '12px', paddingRight: '12px' }}
+      >
+        <div
+          className="w-full px-6 py-4 flex items-center justify-between"
+          style={{ backgroundColor: '#ffffff', borderRadius: '12px' }}
+        >
+          <div className="flex items-center gap-3">
+            <img src="/images/logotype.svg" alt="Lendwell" className="h-5 w-auto" />
+            <span className="w-px h-4 bg-border" style={{ display: 'none' }} />
+            <span className="text-sm font-semibold" style={{ color: '#182026', display: 'none' }}>
+              Mortgage Application
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <AIActivityIndicator />
+            <span className="w-px h-4 bg-border" />
+            <div className="flex items-center gap-2" style={{ borderRadius: '9999px' }}>
+              <div
+                className="w-7 h-7 rounded-full flex items-center justify-center font-semibold"
+                style={{ backgroundColor: 'rgba(71, 63, 230, 0.10)', color: '#473FE6', fontSize: '10px' }}
+              >
+                SM
+              </div>
+              <span className="text-sm font-semibold hidden sm:block" style={{ color: '#182026' }}>
+                Sarah Murphy
+              </span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Page — two-column master-detail layout */}
+      <main className="w-full" style={{ backgroundColor: '#F7F8FC' }}>
+        <div className="flex items-start min-h-[calc(100vh-57px)]">
+
+          {/* Left sidebar — journey navigation */}
+          <aside className="hidden lg:block w-80 flex-shrink-0 sticky top-[69px] self-start px-6 py-6" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
+            <nav style={{ paddingTop: '0px', paddingBottom: '12px', paddingRight: '12px' }}>
+              <JourneyTracker />
+            </nav>
+          </aside>
+
+          {/* Main content — step overview + action cards */}
+          <div className="flex-1 min-w-0 px-6" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
+            <div className={`mx-auto space-y-8 ${selectedJourneyStep === 'documents' ? 'max-w-6xl' : 'max-w-3xl'}`} style={{ paddingTop: '24px' }}>
+
+              {/* Step overview panel — updates based on selected journey step */}
+              <StepOverviewPanel sectionId={selectedJourneyStep} overrideTitle={pageTitle} />
+
+              {/* Application readiness + next action cards — visible below step overview (hidden on documents page) */}
+              {selectedJourneyStep !== 'documents' && (
+                <div className="space-y-8" style={{ marginTop: '24px', paddingTop: '24px' }}>
+                  <TaskList />
+
+                  {/* Mobile sidebar */}
+                  <div className="lg:hidden pt-2">
+                    <JourneyTracker />
+                  </div>
+                </div>
+              )}
+
+              {/* Mobile sidebar for documents page */}
+              {selectedJourneyStep === 'documents' && (
+                <div className="lg:hidden pt-2">
+                  <JourneyTracker />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Full-screen form modal */}
+      <ApplicationFormModal />
+
+      {/* Floating chat button + window — button hidden on documents page (bottom bar replaces it) */}
+      <FloatingChat hideButton={selectedJourneyStep === 'documents'} />
+
+      {/* LendWell assistant — positioned bottom-right, visible during form completion */}
+      <ContextualAssistant />
+    </div>
+    </ActivityProvider>
+  );
+}
+
