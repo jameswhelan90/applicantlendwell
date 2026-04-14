@@ -70,75 +70,119 @@ export function NextActionCard() {
   const firstStep = SECTION_FIRST_STEP[sectionId];
   const isWelcome = sectionId === 'welcome';
 
-  // Special welcome card — horizontal hero with team photo
+  // Special welcome card — full-bleed photo with gradient overlay
   if (isWelcome) {
     return (
       <div
-        className="overflow-hidden flex items-stretch"
+        className="relative overflow-hidden"
         style={{
-          minHeight: '260px',
-          borderRadius: '16px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
-          border: '1px solid rgba(0,0,0,0.06)',
+          borderRadius: '20px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+          minHeight: '440px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
         }}
       >
-        {/* Left content */}
+        {/* Full-bleed background photo */}
+        <img
+          src="/images/Bristol1.jpg"
+          alt="Mortgage advisor team"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center 30%',
+          }}
+        />
+
+        {/* Dark gradient overlay — transparent top, dark bottom */}
         <div
-          className="flex flex-col justify-between"
-          style={{ maxWidth: '55%', backgroundColor: '#ffffff', padding: '28px 24px' }}
-        >
-          <div className="space-y-2">
-            <p className="text-xs font-semibold" style={{ color: '#5A7387', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-              Welcome
-            </p>
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.08) 35%, rgba(0,0,0,0.62) 60%, rgba(0,0,0,0.88) 100%)',
+          }}
+        />
+
+        {/* Content — sits above gradient */}
+        <div style={{ position: 'relative', zIndex: 1, padding: '28px' }}>
+
+          {/* Title + description */}
+          <div style={{ marginBottom: '16px' }}>
             <h2
               className="font-display font-medium text-balance leading-tight"
-              style={{ fontSize: '22px', color: '#182026' }}
+              style={{ fontSize: '26px', color: '#ffffff', marginBottom: '8px', letterSpacing: '-0.01em' }}
             >
-              Let&apos;s get your mortgage journey started
+              Welcome to LendWell
             </h2>
-            <p className="text-sm font-medium leading-relaxed" style={{ color: '#5A7387' }}>
-              Meet your adviser and learn about the process
+            <p
+              className="font-medium leading-relaxed"
+              style={{ fontSize: '14px', color: 'rgba(255,255,255,0.80)', maxWidth: '320px' }}
+            >
+              Your dedicated adviser team is ready to guide you through every step of your mortgage journey.
             </p>
           </div>
 
+          {/* Frosted glass pill badges */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 14px',
+                borderRadius: '999px',
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.20)',
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#ffffff',
+              }}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              15 min to complete
+            </span>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '6px 14px',
+                borderRadius: '999px',
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.20)',
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#ffffff',
+              }}
+            >
+              Expert advisers
+            </span>
+          </div>
+
+          {/* White CTA button — full width */}
           <button
             onClick={() => openModal(firstStep)}
-            className="w-fit flex items-center gap-2 font-semibold text-sm btn-interactive"
+            className="btn-interactive"
             style={{
-              backgroundColor: '#3126E3',
-              color: '#ffffff',
-              borderRadius: '8px',
-              padding: '10px 20px',
+              width: '100%',
+              padding: '14px',
+              backgroundColor: '#ffffff',
+              color: '#182026',
+              borderRadius: '999px',
+              border: 'none',
+              fontSize: '15px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              letterSpacing: '-0.01em',
             }}
           >
-            Start here
-            <ArrowRight className="w-4 h-4" />
+            Begin your application
           </button>
-        </div>
-
-        {/* Right side — team photo */}
-        <div className="flex-1 relative overflow-hidden" style={{ maxWidth: '45%' }}>
-          <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Bristol1-LccOjH08cdx6tLEzIFNynaSCoWK6y7.jpg"
-            alt="Mortgage advisor team"
-            className="w-full h-full object-cover"
-          />
-          {/* Time badge */}
-          <div
-            className="absolute flex items-center gap-1.5 rounded-full"
-            style={{
-              top: '16px',
-              right: '16px',
-              padding: '6px 12px',
-              backgroundColor: 'rgba(255,255,255,0.95)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255,255,255,0.6)',
-            }}
-          >
-            <Clock className="w-3.5 h-3.5" style={{ color: '#3126E3' }} />
-            <span className="text-xs font-semibold" style={{ color: '#3126E3' }}>2 min</span>
-          </div>
         </div>
       </div>
     );
