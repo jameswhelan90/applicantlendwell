@@ -131,7 +131,7 @@ function TextInput({
         placeholder={placeholder}
         className="w-full px-4 py-3 rounded-lg text-sm font-medium transition-all outline-none"
         style={{
-          backgroundColor: isFocused ? '#ffffff' : showAutofill ? 'rgba(71,63,230,0.04)' : '#EDEFF3',
+          backgroundColor: isFocused ? '#ffffff' : showAutofill ? 'rgba(71,63,230,0.04)' : 'rgba(255,255,255,0.7)',
           color: '#182026',
           boxShadow: isFocused ? '0 0 0 2px #3126E3' : 'none',
           border: 'none',
@@ -407,7 +407,7 @@ function CountrySelect({
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-all outline-none"
         style={{
-          backgroundColor: open ? '#ffffff' : '#EDEFF3',
+          backgroundColor: open ? '#ffffff' : 'rgba(255,255,255,0.7)',
           boxShadow: open ? '0 0 0 2px #3126E3' : 'none',
           border: 'none',
           color: selected ? '#182026' : '#9CA3AF',

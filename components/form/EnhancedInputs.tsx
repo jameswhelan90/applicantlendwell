@@ -84,7 +84,7 @@ export function CurrencyInput({
           placeholder={placeholder}
           className="w-full pl-8 pr-4 py-3 rounded-lg text-sm transition-all outline-none"
           style={{
-            backgroundColor: isFocused ? '#ffffff' : '#EDEFF3',
+            backgroundColor: isFocused ? '#ffffff' : 'rgba(255,255,255,0.7)',
             color: '#182026',
             boxShadow: isFocused ? '0 0 0 2px #3126E3' : 'none',
             border: 'none',
@@ -186,7 +186,7 @@ export function DOBInput({
   const [monthFocused, setMonthFocused] = useState(false);
   const [yearFocused, setYearFocused] = useState(false);
   const getInputStyle = (focused: boolean) => ({
-    backgroundColor: focused ? '#ffffff' : '#EDEFF3',
+    backgroundColor: focused ? '#ffffff' : 'rgba(255,255,255,0.7)',
     color: '#182026',
     boxShadow: focused ? '0 0 0 2px #3126E3' : 'none',
     border: 'none',
@@ -303,7 +303,7 @@ export function NumberStepper({
           aria-label="Decrease"
           className="w-12 h-12 rounded-lg flex items-center justify-center transition-all"
           style={{
-            backgroundColor: value <= min ? '#F3F4F6' : '#EDEFF3',
+            backgroundColor: value <= min ? '#F3F4F6' : 'rgba(255,255,255,0.7)',
             color: value <= min ? '#D1D5DB' : '#374151',
             cursor: value <= min ? 'not-allowed' : 'pointer',
             border: 'none',
@@ -314,7 +314,7 @@ export function NumberStepper({
         <div
           className="flex-1 text-center py-3 rounded-lg text-lg font-semibold"
           style={{
-            backgroundColor: '#EDEFF3',
+            backgroundColor: 'rgba(255,255,255,0.7)',
             color: '#182026',
             border: 'none',
           }}
@@ -328,7 +328,7 @@ export function NumberStepper({
           aria-label="Increase"
           className="w-12 h-12 rounded-lg flex items-center justify-center transition-all"
           style={{
-            backgroundColor: value >= max ? '#F3F4F6' : '#EDEFF3',
+            backgroundColor: value >= max ? '#F3F4F6' : 'rgba(255,255,255,0.7)',
             color: value >= max ? '#D1D5DB' : '#374151',
             cursor: value >= max ? 'not-allowed' : 'pointer',
             border: 'none',
@@ -395,7 +395,7 @@ export function DependantAgesInput({
               placeholder="0"
               className="w-full px-3 py-3 rounded-lg text-sm text-center transition-all outline-none"
               style={{
-                backgroundColor: '#EDEFF3',
+                backgroundColor: 'rgba(255,255,255,0.7)',
                 color: '#182026',
                 border: 'none',
               }}
@@ -567,7 +567,7 @@ export function SearchableSelect({
         aria-haspopup="listbox"
         className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm transition-all outline-none"
         style={{
-          backgroundColor: isOpen ? '#ffffff' : '#EDEFF3',
+          backgroundColor: isOpen ? '#ffffff' : 'rgba(255,255,255,0.7)',
           color: selectedOption ? '#182026' : '#9CA3AF',
           boxShadow: isOpen ? '0 0 0 2px #3126E3' : 'none',
           border: 'none',

@@ -164,7 +164,7 @@ export function AddressAutocomplete({
           placeholder={placeholder}
           className="w-full pl-9 pr-10 py-3 rounded-lg text-sm font-medium transition-all outline-none"
           style={{
-            backgroundColor: isFocused ? '#ffffff' : '#EDEFF3',
+            backgroundColor: isFocused ? '#ffffff' : 'rgba(255,255,255,0.7)',
             color: '#182026',
             boxShadow: isFocused ? '0 0 0 2px #3126E3' : 'none',
             border: 'none',
