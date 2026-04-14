@@ -78,8 +78,8 @@ function StepDotsIndicator() {
               onMouseEnter={() => setHoveredIdx(idx)}
               onMouseLeave={() => setHoveredIdx(null)}
               style={{
-                width: isCurrent ? '20px' : '14px',
-                height: '3px',
+                width: isCurrent ? '26px' : '18px',
+                height: '4px',
                 borderRadius: '999px',
                 backgroundColor: isCompleted || isCurrent ? '#3126E3' : 'rgba(24,32,38,0.12)',
                 opacity: isCompleted ? 0.45 : 1,
