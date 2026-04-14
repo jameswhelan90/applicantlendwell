@@ -834,10 +834,10 @@ function WelcomeStep() {
   useStepFooter(() => completeStep('welcome'));
 
   const messages = [
-    "Hi there! I'm Sarah, your dedicated mortgage advisor.",
-    "I'm here to guide you through every step of your mortgage journey and make the process as smooth as possible.",
-    "Over the next few minutes, we'll gather some essential information. Don't worry — your data is secure, and I'll explain everything along the way.",
-    "Ready to get started? Just click 'Continue' below whenever you're ready.",
+    "Hi there! I'm Sarah, your dedicated mortgage adviser.",
+    "I'm here to guide you through every step of your mortgage journey and make the whole process as smooth as possible.",
+    "Over the next few minutes, we'll gather some key information. Your data is kept secure, and I'll explain everything as we go.",
+    "Ready? Just click 'Continue' below whenever you're ready.",
   ];
 
   // Start the conversation
@@ -903,7 +903,7 @@ function WelcomeStep() {
               Sarah Mitchell
             </p>
             <p className="text-xs font-medium" style={{ color: '#9CA3AF' }}>
-              Your Mortgage Advisor
+              Your mortgage adviser
             </p>
           </div>
         </div>
@@ -971,7 +971,7 @@ function WelcomeStep() {
 
 function OrientationStep() {
   const { completeStep } = useApplication();
-  useStepFooter(() => completeStep('orientation'), 'Start Application');
+  useStepFooter(() => completeStep('orientation'), 'Start application');
 
   return (
     <div className="text-center py-8">
@@ -988,8 +988,7 @@ function OrientationStep() {
         Let&apos;s get you mortgage-ready
       </h1>
       <p className="text-base text-muted-foreground leading-relaxed max-w-md mx-auto mb-8">
-        We&apos;ll guide you through each step of your application. Your progress is saved automatically, 
-        and you can return at any time.
+        We&apos;ll guide you through each step of your application. Your progress saves automatically, so you can come back any time.
       </p>
       <div
         className="space-y-3 text-left max-w-sm mx-auto"
@@ -1000,8 +999,8 @@ function OrientationStep() {
         }}
       >
         {[
-          'Answer questions about yourself and your finances',
-          'Upload documents when prompted',
+          'Answer a few questions about yourself and your finances',
+          'Upload supporting documents when prompted',
           'LendWell will verify everything automatically',
         ].map((item, idx) => (
           <div key={idx} className="flex items-start gap-3">
@@ -1032,7 +1031,7 @@ interface SectionIntroProps {
   buttonText?: string;
 }
 
-function SectionIntroPanel({ stepId, icon, title, description, bullets, buttonText = 'Start Section' }: SectionIntroProps) {
+function SectionIntroPanel({ stepId, icon, title, description, bullets, buttonText = 'Start section' }: SectionIntroProps) {
   const { completeStep } = useApplication();
   useStepFooter(() => completeStep(stepId), buttonText);
 
@@ -1082,12 +1081,12 @@ function IntroAboutYouStep() {
     <SectionIntroPanel
       stepId="intro_about_you"
       icon={<User className="w-7 h-7" style={{ color: '#3126E3' }} />}
-      title="About You"
-      description="We need to collect some personal details that lenders require to assess your mortgage application."
+      title="About you"
+      description="We'll ask for some personal details that lenders need to assess your application."
       bullets={[
-        'Confirm your identity and contact details',
-        'Tell us about your household',
-        'Provide residency and address information',
+        'Your identity and contact details',
+        'Your household situation',
+        'Your address and residency information',
       ]}
     />
   );
@@ -1098,12 +1097,12 @@ function IntroPropertyMortgageStep() {
     <SectionIntroPanel
       stepId="intro_property_mortgage"
       icon={<Home className="w-7 h-7" style={{ color: '#3126E3' }} />}
-      title="Property & Mortgage"
-      description="This section helps lenders understand your property goals and mortgage requirements."
+      title="Property & mortgage"
+      description="Tell us about the property you have in mind and how you plan to fund it."
       bullets={[
-        'Tell us what you want to buy or refinance',
-        'Share the estimated property value',
-        'Provide details about your deposit',
+        'What you want to buy or remortgage',
+        'The estimated property value',
+        'Your deposit and where it comes from',
       ]}
     />
   );
@@ -1114,12 +1113,12 @@ function IntroEmploymentIncomeStep() {
     <SectionIntroPanel
       stepId="intro_employment_income"
       icon={<Briefcase className="w-7 h-7" style={{ color: '#3126E3' }} />}
-      title="Employment & Income"
-      description="Lenders need to understand your income stability and financial commitments to assess affordability."
+      title="Employment & income"
+      description="We'll cover your job or business, how much you earn, and your regular monthly outgoings."
       bullets={[
-        'Tell us about your job or business',
-        'Share your income sources',
-        'Provide details about monthly commitments',
+        'Your employment type and employer details',
+        'Your income from all sources',
+        'Your regular monthly commitments',
       ]}
     />
   );
@@ -1131,11 +1130,11 @@ function IntroDocumentsStep() {
       stepId="intro_documents"
       icon={<FileText className="w-7 h-7" style={{ color: '#3126E3' }} />}
       title="Documents"
-      description="We need to verify the information you have provided with supporting documents."
+      description="We'll need some supporting documents to verify the information you've given us."
       bullets={[
-        'Upload identity documents (passport or driving licence)',
-        'Provide income evidence (payslips or tax returns)',
-        'Share bank statements to confirm your finances',
+        'Photo ID — passport or driving licence',
+        'Income evidence — payslips or tax returns',
+        'Bank statements to confirm your finances',
       ]}
     />
   );
@@ -1146,14 +1145,14 @@ function IntroAgreementsStep() {
     <SectionIntroPanel
       stepId="intro_agreements"
       icon={<CheckCircle2 className="w-7 h-7" style={{ color: '#3126E3' }} />}
-      title="Finishing Up"
-      description="You are almost there. Once everything is submitted, LendWell will help prepare your application for lenders."
+      title="Finishing up"
+      description="Almost there. Read through the declarations, add your signature, and your application will be ready to send."
       bullets={[
         'Review the final details of your application',
-        'Provide consent for lenders to review your information',
-        'Understand what happens next as your application is prepared',
+        'Confirm your consent for lenders to see your information',
+        'Sign and submit',
       ]}
-      buttonText="Review & Complete"
+      buttonText="Review & complete"
     />
   );
 }
@@ -1169,8 +1168,8 @@ function IdNameStep() {
   return (
     <div>
       <StepHeading
-        title="What is your name?"
-        description="We will use your legal name throughout your mortgage application."
+        title="What's your name?"
+        description="We use your legal name throughout the application."
       />
       <div className="grid grid-cols-2 gap-x-4">
         <TextInput label="First name" value={d.firstName} onChange={(v) => setField('firstName', v)} placeholder="Sarah" autoFocus autofillSource={af.firstName} />
@@ -1188,8 +1187,8 @@ function IdDobStep() {
   return (
     <div>
       <StepHeading
-        title="When were you born?"
-        description="Your date of birth helps us verify your identity and check mortgage eligibility."
+        title="What's your date of birth?"
+        description="We use this to verify your identity and confirm you're eligible for a mortgage."
       />
       <DOBInput 
         label="Date of birth" 
@@ -1209,10 +1208,10 @@ function IdContactStep() {
   return (
     <div>
       <StepHeading
-        title="Contact details"
-        description="We will only contact you about your mortgage application."
+        title="How can we reach you?"
+        description="We'll only contact you about your mortgage application."
       />
-      <TextInput label="Phone number" value={d.phone} onChange={(v) => setField('phone', v)} placeholder="+44 7700 900000" type="tel" autoFocus autofillSource={af.phone} />
+      <TextInput label="Mobile number" value={d.phone} onChange={(v) => setField('phone', v)} placeholder="+44 7700 900000" type="tel" autoFocus autofillSource={af.phone} />
       <TextInput label="Email address" value={d.email} onChange={(v) => setField('email', v)} placeholder="sarah@example.com" type="email" autofillSource={af.email} />
     </div>
   );
@@ -1226,8 +1225,8 @@ function IdNationalityStep() {
   return (
     <div>
       <StepHeading
-        title="Nationality and residency"
-        description="Lenders need to verify your right to reside and work in the UK or Ireland."
+        title="What's your nationality and residency status?"
+        description="Lenders need to confirm your right to live and work in the UK or Ireland."
       />
       <div className="mb-6">
         <SearchableSelect 
@@ -1264,15 +1263,15 @@ function IdNiPpsStep() {
   return (
     <div>
       <StepHeading
-        title="National Insurance or PPS number"
-        description="Your NI number (UK) or PPS number (Ireland) is used for identity verification and credit checks."
+        title="What's your NI or PPS number?"
+        description="Your National Insurance number (UK) or PPS number (Ireland) is used for identity verification and credit checks."
       />
       <TextInput
         label="NI / PPS number"
         value={d.nationalInsuranceNumber}
         onChange={(v) => setField('nationalInsuranceNumber', v)}
         placeholder="QQ 12 34 56 C"
-        hint="Format: 2 letters, 6 numbers, 1 letter (e.g., QQ 12 34 56 C)"
+        hint="UK format: 2 letters, 6 numbers, 1 letter — e.g. QQ 12 34 56 C"
         autoFocus
         autofillSource={af.nationalInsuranceNumber}
       />
@@ -1288,8 +1287,8 @@ function IdAddressStep() {
   return (
     <div>
       <StepHeading
-        title="Current address"
-        description="Where you live now. Most lenders require at least 3 years of address history."
+        title="Where do you live now?"
+        description="Most lenders need at least three years of address history."
       />
       <AddressAutocomplete
         label="Address"
@@ -1326,24 +1325,24 @@ function IdAddressHistoryStep() {
   return (
     <div>
       <StepHeading
-        title="Previous address"
-        description="If you have been at your current address less than 3 years, please provide your previous address."
+        title="What was your previous address?"
+        description="If you've lived at your current address for less than three years, we'll need the one before."
       />
       <AddressAutocomplete
         label="Previous address"
         value={d.previousAddress}
         onChange={(address) => setField('previousAddress', address)}
         placeholder="Start typing your previous address…"
-        hint="Only needed if you moved in less than 3 years ago"
+        hint="Only needed if you moved in less than three years ago"
         autoFocus
       />
       {/* Contextual document prompt after identity questions */}
       <div className="mt-8 pt-6" style={{ borderTop: '1px solid #E5E7EB' }}>
-        <p className="text-xs font-semibold text-muted-foreground mb-3">While you&apos;re here...</p>
-        <InlineDocumentPrompt 
-          requirementId="req-passport" 
-          title="Upload your photo ID now"
-          description="Passport or driving licence helps verify your identity"
+        <p className="text-xs font-semibold text-muted-foreground mb-3">While you&apos;re here…</p>
+        <InlineDocumentPrompt
+          requirementId="req-passport"
+          title="Upload your photo ID"
+          description="Passport or driving licence — we'll need this to verify your identity"
         />
       </div>
     </div>
@@ -1358,7 +1357,7 @@ function IdUploadPhotoStep() {
     <div>
       <StepHeading
         title="Upload your photo ID"
-        description="A valid passport or driving licence helps verify your identity."
+        description="A valid passport or driving licence. We need this to confirm who you are."
       />
       <InlineDocumentPrompt requirementId="req-passport" />
     </div>
@@ -1375,11 +1374,11 @@ function HhCircumstancesStep() {
   return (
     <div>
       <StepHeading
-        title="Personal circumstances"
-        description="This information helps lenders understand your financial responsibilities."
+        title="What's your relationship status?"
+        description="Lenders use this to understand your financial responsibilities."
       />
       <SelectInput
-        label="Marital / relationship status"
+        label="Relationship status"
         value={d.maritalStatus}
         onChange={(v) => setField('maritalStatus', v)}
         columns={2}
@@ -1387,7 +1386,7 @@ function HhCircumstancesStep() {
         options={[
           { value: 'single', label: 'Single' },
           { value: 'married', label: 'Married' },
-          { value: 'civil_partnership', label: 'Civil Partnership' },
+          { value: 'civil_partnership', label: 'Civil partnership' },
           { value: 'divorced', label: 'Divorced' },
           { value: 'widowed', label: 'Widowed' },
           { value: 'cohabiting', label: 'Cohabiting' },
@@ -1406,7 +1405,7 @@ function HhApplicationModeStep() {
     <div>
       <StepHeading
         title="Are you applying alone or with someone?"
-        description="Joint applications can increase borrowing power. Your co-applicant will need to provide their details too."
+        description="A joint application can increase how much you can borrow. Your co-applicant will need to provide their own details."
       />
       <SelectInput
         label=""
@@ -1441,8 +1440,8 @@ function HhSecondApplicantStep() {
   return (
     <div>
       <StepHeading
-        title="Second applicant details"
-        description="We need some basic information about your co-applicant."
+        title="Tell us about your co-applicant"
+        description="We need their basic details to include them in the application."
       />
       <div className="grid grid-cols-2 gap-x-4">
         <TextInput label="First name" value={d.secondApplicantFirstName} onChange={(v) => setField('secondApplicantFirstName', v)} placeholder="John" autoFocus />
@@ -1472,11 +1471,11 @@ function HhSecondApplicantContactStep() {
   return (
     <div>
       <StepHeading
-        title="Second applicant contact details"
-        description="We may need to contact your co-applicant directly."
+        title="How can we reach your co-applicant?"
+        description="We may need to contact them directly during the application."
       />
       <TextInput label="Email address" value={d.secondApplicantEmail} onChange={(v) => setField('secondApplicantEmail', v)} placeholder="john@example.com" type="email" autoFocus />
-      <TextInput label="Phone number" value={d.secondApplicantPhone} onChange={(v) => setField('secondApplicantPhone', v)} placeholder="+44 7700 900001" type="tel" />
+      <TextInput label="Mobile number" value={d.secondApplicantPhone} onChange={(v) => setField('secondApplicantPhone', v)} placeholder="+44 7700 900001" type="tel" />
     </div>
   );
 }
@@ -1500,8 +1499,8 @@ function HhUploadJointIdStep() {
   return (
     <div>
       <StepHeading
-        title="Second applicant photo ID"
-        description="We need a valid passport or driving licence for your co-applicant."
+        title="Co-applicant photo ID"
+        description="Upload a valid passport or driving licence for your co-applicant."
       />
       <InlineDocumentPrompt 
         requirementId="req-joint-passport" 
@@ -1536,8 +1535,8 @@ function HhDependantsStep() {
   return (
     <div>
       <StepHeading
-        title="Dependants"
-        description="Do you have any children or other dependants who rely on you financially?"
+        title="Do you have any dependants?"
+        description="Children under 18 or anyone else who relies on you financially."
       />
       <div className="mb-6">
         <NumberStepper
@@ -1546,7 +1545,7 @@ function HhDependantsStep() {
           onChange={(v) => setField('dependants', v.toString())}
           min={0}
           max={10}
-          hint="Children under 18 or others who rely on you financially"
+          hint="Include children under 18 and anyone else financially dependent on you"
         />
       </div>
       {dependantCount > 0 && (
@@ -1581,8 +1580,8 @@ function IntentTypeStep() {
   return (
     <div>
       <StepHeading
-        title="What type of mortgage do you need?"
-        description="This helps us find the right lenders and products for your situation."
+        title="What type of mortgage are you looking for?"
+        description="This helps us match you with the right lenders and products."
       />
       <SelectInput
         label=""
@@ -1591,9 +1590,9 @@ function IntentTypeStep() {
         autoAdvance
         options={[
           { value: 'first_time', label: 'First-time buyer', description: 'Buying your first property' },
-          { value: 'moving', label: 'Moving home', description: 'Already own a home and moving' },
-          { value: 'remortgage', label: 'Remortgage', description: 'Refinancing your existing mortgage' },
-          { value: 'buy_to_let', label: 'Buy-to-let', description: 'Investment property to rent out' },
+          { value: 'moving', label: 'Moving home', description: 'You already own a home and are moving' },
+          { value: 'remortgage', label: 'Remortgage', description: 'Switching or refinancing your existing mortgage' },
+          { value: 'buy_to_let', label: 'Buy-to-let', description: 'An investment property to rent out' },
         ]}
       />
     </div>
@@ -1618,10 +1617,10 @@ function IntentRemortgageStep() {
   return (
     <div>
       <StepHeading
-        title="Current mortgage details"
-        description="Tell us about your existing mortgage so we can find better options."
+        title="Tell us about your current mortgage"
+        description="We use this to find you a better deal."
       />
-      <TextInput label="Current lender" value={d.currentLender} onChange={(v) => setField('currentLender', v)} placeholder="e.g., NatWest, Halifax" autoFocus />
+      <TextInput label="Current lender" value={d.currentLender} onChange={(v) => setField('currentLender', v)} placeholder="e.g. NatWest, Halifax" autoFocus />
       <div className="mb-6">
         <CurrencyInput label="Outstanding balance" value={d.outstandingBalance} onChange={(v) => setField('outstandingBalance', v)} placeholder="180,000" />
       </div>
@@ -1629,7 +1628,7 @@ function IntentRemortgageStep() {
         <CurrencyInput label="Current monthly payment" value={d.currentMortgagePayment} onChange={(v) => setField('currentMortgagePayment', v)} placeholder="950" />
       </div>
       <SelectInput
-        label="Reason for remortgaging"
+        label="Why are you remortgaging?"
         value={d.remortgageReason}
         onChange={(v) => setField('remortgageReason', v)}
         options={[
@@ -1642,11 +1641,11 @@ function IntentRemortgageStep() {
       />
       {/* Contextual document prompt for remortgage */}
       <div className="mt-8 pt-6" style={{ borderTop: '1px solid #E5E7EB' }}>
-        <p className="text-xs font-semibold text-muted-foreground mb-3">You&apos;ll need...</p>
-        <InlineDocumentPrompt 
-          requirementId="req-mortgage-statement" 
+        <p className="text-xs font-semibold text-muted-foreground mb-3">You&apos;ll need…</p>
+        <InlineDocumentPrompt
+          requirementId="req-mortgage-statement"
           title="Current mortgage statement"
-          description="Most recent statement from your current lender"
+          description="Your most recent statement from your current lender"
         />
       </div>
     </div>
@@ -1672,7 +1671,7 @@ function IntentUploadMortgageStep() {
     <div>
       <StepHeading
         title="Current mortgage statement"
-        description="Please upload your most recent mortgage statement from your current lender."
+        description="Upload your most recent statement from your current lender."
       />
       <InlineDocumentPrompt 
         requirementId="req-mortgage-statement" 
@@ -1700,45 +1699,45 @@ function IntentBtlStep() {
   return (
     <div>
       <StepHeading
-        title="Buy-to-let details"
-        description="Lenders will assess rental income to ensure the mortgage is affordable."
+        title="Tell us about the buy-to-let"
+        description="Lenders will look at the expected rental income to make sure the mortgage stacks up."
       />
       <div className="mb-6">
-        <CurrencyInput 
-          label="Expected monthly rental income" 
-          value={d.expectedRentalIncome} 
-          onChange={(v) => setField('expectedRentalIncome', v)} 
+        <CurrencyInput
+          label="Expected monthly rental income"
+          value={d.expectedRentalIncome}
+          onChange={(v) => setField('expectedRentalIncome', v)}
           placeholder="1,200"
-          hint="Based on local market rates or letting agent valuation"
+          hint="Based on local market rates or a letting agent valuation"
         />
       </div>
       <SelectInput
-        label="Property management plan"
+        label="How will you manage the property?"
         value={d.propertyManagementPlan}
         onChange={(v) => setField('propertyManagementPlan', v)}
         options={[
-          { value: 'self_managed', label: 'I will manage the property myself' },
+          { value: 'self_managed', label: 'I\'ll manage it myself' },
           { value: 'letting_agent', label: 'Through a letting agent' },
           { value: 'management_company', label: 'Professional management company' },
         ]}
       />
       <SelectInput
-        label="Existing BTL portfolio"
+        label="How many buy-to-let properties do you own?"
         value={d.existingBTLPortfolio}
         onChange={(v) => setField('existingBTLPortfolio', v)}
         options={[
-          { value: '0', label: 'This will be my first BTL property' },
-          { value: '1-3', label: '1-3 properties' },
-          { value: '4+', label: '4 or more properties (portfolio landlord)' },
+          { value: '0', label: 'None — this will be my first' },
+          { value: '1-3', label: '1–3 properties' },
+          { value: '4+', label: '4 or more (portfolio landlord)' },
         ]}
       />
       {/* Contextual document prompt for BTL */}
       <div className="mt-8 pt-6" style={{ borderTop: '1px solid #E5E7EB' }}>
-        <p className="text-xs font-semibold text-muted-foreground mb-3">You&apos;ll need...</p>
-        <InlineDocumentPrompt 
-          requirementId="req-rental-projection" 
+        <p className="text-xs font-semibold text-muted-foreground mb-3">You&apos;ll need…</p>
+        <InlineDocumentPrompt
+          requirementId="req-rental-projection"
           title="Rental income evidence"
-          description="Letting agent valuation or existing tenancy agreement"
+          description="A letting agent valuation or existing tenancy agreement"
         />
       </div>
     </div>
@@ -1764,7 +1763,7 @@ function IntentUploadRentalStep() {
     <div>
       <StepHeading
         title="Rental income evidence"
-        description="Upload a rental projection from a letting agent, or existing tenancy agreement if applicable."
+        description="Upload a letting agent's rental projection or an existing tenancy agreement."
       />
       <InlineDocumentPrompt 
         requirementId="req-rental-projection" 
@@ -1782,8 +1781,8 @@ function IntentTimelineStep() {
   return (
     <div>
       <StepHeading
-        title="When do you need the mortgage?"
-        description="This helps us prioritise your application appropriately."
+        title="When are you looking to move?"
+        description="This helps us understand how urgently to prioritise your application."
       />
       <SelectInput
         label=""
@@ -1812,8 +1811,8 @@ function PropStageStep() {
   return (
     <div>
       <StepHeading
-        title="Have you found a property?"
-        description="Let us know where you are in your property search."
+        title="Where are you in your property search?"
+        description="Just let us know how far along you are — no need to have found a property yet."
       />
       <SelectInput
         label=""
@@ -1842,8 +1841,8 @@ function PropDetailsStep() {
   return (
     <div>
       <StepHeading
-        title={hasProperty ? "Property details" : "What type of property are you looking for?"}
-        description={hasProperty ? "Tell us about the property you have found." : "This helps us estimate your borrowing needs."}
+        title={hasProperty ? "Tell us about the property" : "What type of property are you looking for?"}
+        description={hasProperty ? "A few details about the property you've found." : "This helps us estimate what you'll need to borrow."}
       />
       {hasProperty && (
         <AddressAutocomplete
@@ -1888,20 +1887,20 @@ function PropValueStep() {
   return (
     <div>
       <StepHeading
-        title="Property value and loan amount"
-        description="This helps us calculate your loan-to-value ratio and find suitable products."
+        title="What's the property value and loan amount?"
+        description="We use these to calculate your loan-to-value ratio and find suitable products."
       />
       <div className="space-y-4">
-        <CurrencyInput 
-          label="Property value / Purchase price" 
-          value={d.propertyValue} 
-          onChange={(v) => setField('propertyValue', v)} 
+        <CurrencyInput
+          label="Property value / purchase price"
+          value={d.propertyValue}
+          onChange={(v) => setField('propertyValue', v)}
           placeholder="350,000"
         />
-        <CurrencyInput 
-          label="Loan amount needed" 
-          value={d.loanAmount} 
-          onChange={(v) => setField('loanAmount', v)} 
+        <CurrencyInput
+          label="Loan amount needed"
+          value={d.loanAmount}
+          onChange={(v) => setField('loanAmount', v)}
           placeholder="280,000"
           hint="Property value minus your deposit"
         />
@@ -1920,8 +1919,8 @@ function EmpStatusStep() {
   return (
     <div>
       <StepHeading
-        title="What is your employment status?"
-        description="Your employment type determines which documents we will need."
+        title="What's your employment status?"
+        description="This tells us which documents we'll need from you."
       />
       <SelectInput
         label=""
@@ -1961,14 +1960,14 @@ function EmpDetailsStep() {
   return (
     <div>
       <StepHeading
-        title="Employment details"
-        description="Tell us about your current employer."
+        title="Who do you work for?"
+        description="A few details about your current employer."
       />
-      <TextInput label="Employer name" value={d.employerName} onChange={(v) => setField('employerName', v)} placeholder="Acme Corporation" autoFocus autofillSource={af.employerName} />
+      <TextInput label="Employer name" value={d.employerName} onChange={(v) => setField('employerName', v)} placeholder="Acme Ltd" autoFocus autofillSource={af.employerName} />
       <TextInput label="Job title" value={d.jobTitle} onChange={(v) => setField('jobTitle', v)} placeholder="Senior Developer" autofillSource={af.jobTitle} />
       <TextInput label="Start date" value={d.employmentStartDate} onChange={(v) => setField('employmentStartDate', v)} type="date" autofillSource={af.employmentStartDate} />
       <SelectInput
-        label="Are you on probation?"
+        label="Are you currently on probation?"
         value={d.onProbation}
         onChange={(v) => setField('onProbation', v)}
         options={[
@@ -1978,11 +1977,11 @@ function EmpDetailsStep() {
       />
       {/* Contextual document prompt after employment details */}
       <div className="mt-8 pt-6" style={{ borderTop: '1px solid #E5E7EB' }}>
-        <p className="text-xs font-semibold text-muted-foreground mb-3">While you&apos;re here...</p>
-        <InlineDocumentPrompt 
-          requirementId="req-payslips" 
-          title="Upload your payslips now"
-          description="Last 3 months of consecutive payslips"
+        <p className="text-xs font-semibold text-muted-foreground mb-3">While you&apos;re here…</p>
+        <InlineDocumentPrompt
+          requirementId="req-payslips"
+          title="Upload your payslips"
+          description="Your last three consecutive monthly payslips"
         />
       </div>
     </div>
@@ -2008,8 +2007,8 @@ function EmpSelfEmployedStep() {
   return (
     <div>
       <StepHeading
-        title="Self-employment details"
-        description="Lenders typically require 2-3 years of accounts or tax returns for self-employed applicants."
+        title="Tell us about your business"
+        description="Most lenders need two to three years of accounts or tax returns for self-employed applicants."
       />
       <TextInput label="Business name" value={d.employerName} onChange={(v) => setField('employerName', v)} placeholder="Murphy Consulting Ltd" autoFocus />
       <TextInput label="Your role" value={d.jobTitle} onChange={(v) => setField('jobTitle', v)} placeholder="Director / Owner" />
@@ -2046,7 +2045,7 @@ function EmpSelfEmployedStep() {
 
       {/* Contextual document prompt for self-employed */}
       <div className="mt-8 pt-6" style={{ borderTop: '1px solid #E5E7EB' }}>
-        <p className="text-xs font-semibold text-muted-foreground mb-3">Documents you&apos;ll need...</p>
+        <p className="text-xs font-semibold text-muted-foreground mb-3">Documents you&apos;ll need…</p>
         <div className="space-y-3">
           <InlineDocumentPrompt 
             requirementId="req-sa302" 
@@ -2084,7 +2083,7 @@ function EmpUploadPayslipsStep() {
     <div>
       <StepHeading
         title="Upload your payslips"
-        description="Please upload your last 3 consecutive monthly payslips."
+        description="We need your last three consecutive monthly payslips."
       />
       <InlineDocumentPrompt 
         requirementId="req-payslips" 
@@ -2114,20 +2113,20 @@ function EmpUploadTaxStep() {
     <div>
       <StepHeading
         title="Upload your SA302 or tax returns"
-        description="Please upload your last 2 years of HMRC tax calculations (SA302) or certified accounts."
+        description="We need your last two years of HMRC tax calculations (SA302) or certified accounts."
       />
-      <InlineDocumentPrompt 
-        requirementId="req-sa302" 
+      <InlineDocumentPrompt
+        requirementId="req-sa302"
         condition={isSelfEmployed}
-        title="SA302 / Tax Returns"
-        description="Last 2 years of HMRC tax calculations"
+        title="SA302 / Tax returns"
+        description="Your last two years of HMRC tax calculations"
       />
       <div className="mt-4">
-        <InlineDocumentPrompt 
-          requirementId="req-accountant-reference" 
+        <InlineDocumentPrompt
+          requirementId="req-accountant-reference"
           condition={isSelfEmployed}
-          title="Accountant&apos;s Certificate (optional)"
-          description="Letter from your accountant confirming income"
+          title="Accountant's certificate (optional)"
+          description="A letter from your accountant confirming your income"
         />
       </div>
     </div>
@@ -2152,8 +2151,8 @@ function EmpSecondApplicantStep() {
   return (
     <div>
       <StepHeading
-        title="Second applicant employment"
-        description="Tell us about your co-applicant&apos;s employment."
+        title="What does your co-applicant do for work?"
+        description="We need their employment details too."
       />
       <SelectInput
         label="Employment status"
@@ -2198,8 +2197,8 @@ function EmpUploadJointStep() {
   return (
     <div>
       <StepHeading
-        title="Second applicant income evidence"
-        description="Please upload income evidence for your co-applicant."
+        title="Co-applicant income documents"
+        description="Upload income evidence for your co-applicant."
       />
       {isJointEmployed && (
         <InlineDocumentPrompt 
@@ -2232,16 +2231,16 @@ function IncSalaryStep() {
   return (
     <div>
       <StepHeading
-        title="Your income"
-        description="Please provide your annual income before tax."
+        title="What's your annual income?"
+        description="Enter your gross income before tax."
       />
       <div className="relative">
         <CurrencyInput
-          label="Annual salary / Self-employed income"
+          label="Annual salary / self-employed income"
           value={d.annualSalary}
           onChange={(v) => setField('annualSalary', v)}
           placeholder="65,000"
-          hint="Your gross annual income before deductions"
+          hint="Your gross annual income before tax and deductions"
         />
         {af.annualSalary && (
           <div className="flex items-center gap-1 mt-1">
@@ -2267,8 +2266,8 @@ function IncAdditionalStep() {
   return (
     <div>
       <StepHeading
-        title="Additional income"
-        description="Do you receive any regular additional income? This can increase your borrowing power."
+        title="Do you have any additional income?"
+        description="Regular additional income can increase how much you're able to borrow."
       />
       <div className="space-y-4">
         <CurrencyInput label="Annual bonus" value={d.bonus} onChange={(v) => setField('bonus', v)} placeholder="5,000" />
@@ -2282,10 +2281,10 @@ function IncAdditionalStep() {
       {/* Contextual document prompt after income questions */}
       <div className="mt-8 pt-6" style={{ borderTop: '1px solid #E5E7EB' }}>
         <p className="text-xs font-semibold text-muted-foreground mb-3">While you&apos;re here...</p>
-        <InlineDocumentPrompt 
-          requirementId="req-bank-statements" 
-          title="Upload your bank statements now"
-          description="Last 3 months from your main current account"
+        <InlineDocumentPrompt
+          requirementId="req-bank-statements"
+          title="Upload your bank statements"
+          description="Last three months from your main current account"
         />
       </div>
     </div>
@@ -2310,14 +2309,14 @@ function IncSecondApplicantStep() {
   return (
     <div>
       <StepHeading
-        title="Second applicant income"
-        description="Please provide your co-applicant&apos;s annual income."
+        title="What does your co-applicant earn?"
+        description="Enter their gross annual income before tax."
       />
-      <TextInput 
-        label="Annual salary" 
-        value={d.secondApplicantAnnualSalary} 
-        onChange={(v) => setField('secondApplicantAnnualSalary', v)} 
-        placeholder="£45,000"
+      <TextInput
+        label="Annual salary"
+        value={d.secondApplicantAnnualSalary}
+        onChange={(v) => setField('secondApplicantAnnualSalary', v)}
+        placeholder="45,000"
         autoFocus 
       />
     </div>
@@ -2332,7 +2331,7 @@ function IncUploadBankStep() {
     <div>
       <StepHeading
         title="Upload your bank statements"
-        description="Please upload your last 3 months of bank statements from your main current account."
+        description="We need the last three months from your main current account."
       />
       <InlineDocumentPrompt requirementId="req-bank-statements" />
     </div>
@@ -2357,8 +2356,8 @@ function IncUploadJointBankStep() {
   return (
     <div>
       <StepHeading
-        title="Second applicant bank statements"
-        description="Please upload your co-applicant&apos;s last 3 months of bank statements."
+        title="Co-applicant bank statements"
+        description="We need the last three months from your co-applicant's main current account."
       />
       <InlineDocumentPrompt 
         requirementId="req-joint-bank-statements" 
@@ -2378,14 +2377,14 @@ function CommitOutgoingsStep() {
   return (
     <div>
       <StepHeading
-        title="Monthly financial commitments"
-        description="Please tell us about any regular monthly payments you make. Enter 0 if none."
+        title="What are your monthly outgoings?"
+        description="Tell us about your regular monthly payments. Enter 0 if something doesn't apply."
       />
-      <TextInput label="Loan repayments" value={d.monthlyLoans} onChange={(v) => setField('monthlyLoans', v)} placeholder="£0" autoFocus />
-      <TextInput label="Credit card payments" value={d.monthlyCreditCards} onChange={(v) => setField('monthlyCreditCards', v)} placeholder="£0" />
-      <TextInput label="Car finance" value={d.monthlyCarFinance} onChange={(v) => setField('monthlyCarFinance', v)} placeholder="£0" />
-      <TextInput label="Maintenance payments" value={d.monthlyMaintenance} onChange={(v) => setField('monthlyMaintenance', v)} placeholder="£0" hint="Child or spousal maintenance" />
-      <TextInput label="Other regular commitments" value={d.monthlyOther} onChange={(v) => setField('monthlyOther', v)} placeholder="£0" />
+      <TextInput label="Loan repayments" value={d.monthlyLoans} onChange={(v) => setField('monthlyLoans', v)} placeholder="0" autoFocus />
+      <TextInput label="Credit card payments" value={d.monthlyCreditCards} onChange={(v) => setField('monthlyCreditCards', v)} placeholder="0" />
+      <TextInput label="Car finance" value={d.monthlyCarFinance} onChange={(v) => setField('monthlyCarFinance', v)} placeholder="0" />
+      <TextInput label="Maintenance payments" value={d.monthlyMaintenance} onChange={(v) => setField('monthlyMaintenance', v)} placeholder="0" hint="Child maintenance or spousal maintenance" />
+      <TextInput label="Other regular commitments" value={d.monthlyOther} onChange={(v) => setField('monthlyOther', v)} placeholder="0" />
     </div>
   );
 }
@@ -2408,14 +2407,14 @@ function CommitChildcareStep() {
   return (
     <div>
       <StepHeading
-        title="Childcare costs"
-        description="If you have regular childcare costs, please tell us the monthly amount."
+        title="What are your monthly childcare costs?"
+        description="We need this to accurately calculate your affordability."
       />
-      <TextInput 
-        label="Monthly childcare costs" 
-        value={d.monthlyChildcare} 
-        onChange={(v) => setField('monthlyChildcare', v)} 
-        placeholder="£800"
+      <TextInput
+        label="Monthly childcare costs"
+        value={d.monthlyChildcare}
+        onChange={(v) => setField('monthlyChildcare', v)}
+        placeholder="800"
         hint="Nursery, childminder, after-school clubs, etc."
         autoFocus 
       />
@@ -2433,8 +2432,8 @@ function DepAmountStep() {
   return (
     <div>
       <StepHeading
-        title="Your deposit"
-        description="How much deposit do you have available?"
+        title="How much deposit do you have?"
+        description="Tell us how much you have available and where it's sitting right now."
       />
       <div className="mb-6">
         <CurrencyInput 
@@ -2467,8 +2466,8 @@ function DepSourceStep() {
   return (
     <div>
       <StepHeading
-        title="Source of deposit"
-        description="Lenders need to verify where your deposit funds come from."
+        title="Where is your deposit coming from?"
+        description="Lenders are required to verify the source of your deposit funds."
       />
       <SelectInput
         label=""
@@ -2505,10 +2504,10 @@ function DepGiftDetailsStep() {
   return (
     <div>
       <StepHeading
-        title="Gift details"
-        description="Please provide details about the person gifting you funds."
+        title="Who is gifting you the deposit?"
+        description="We need a few details about the person giving you the funds."
       />
-      <TextInput label="Giftor&apos;s full name" value={d.giftorName} onChange={(v) => setField('giftorName', v)} placeholder="Margaret Murphy" autoFocus />
+      <TextInput label="Their full name" value={d.giftorName} onChange={(v) => setField('giftorName', v)} placeholder="Margaret Murphy" autoFocus />
       <SelectInput
         label="Relationship to you"
         value={d.giftorRelationship}
@@ -2545,7 +2544,7 @@ function DepUploadGiftStep() {
     <div>
       <StepHeading
         title="Gift letter"
-        description="Please upload a signed gift letter from the person gifting you funds."
+        description="Upload a signed gift letter from the person giving you the funds."
       />
       <InlineDocumentPrompt 
         requirementId="req-gift-letter" 
@@ -2573,8 +2572,8 @@ function DepUploadGiftorStep() {
   return (
     <div>
       <StepHeading
-        title="Giftor&apos;s bank statements"
-        description="Please upload 3 months of bank statements from the person gifting you funds, showing the source of their funds."
+        title="Bank statements from the gift giver"
+        description="Upload three months of bank statements showing where their funds came from."
       />
       <InlineDocumentPrompt 
         requirementId="req-giftor-statements" 
@@ -2598,8 +2597,8 @@ function FPNameStep() {
     <div>
       <SectionLabel text="Personal Details" />
       <StepHeading
-        title="What is your name?"
-        description="We will use your legal name throughout your mortgage application."
+        title="What's your name?"
+        description="We use your legal name throughout the application."
       />
       <div className="grid grid-cols-2 gap-x-4">
         <TextInput label="First name" value={d.firstName} onChange={(v) => setField('firstName', v)} placeholder="Sarah" autoFocus />
@@ -2621,8 +2620,8 @@ function FPDobStep() {
     <div>
       <SectionLabel text="Personal Details" />
       <StepHeading
-        title="When were you born?"
-        description="Your date of birth helps us verify your identity and check mortgage eligibility."
+        title="What's your date of birth?"
+        description="We use this to verify your identity and confirm you're eligible for a mortgage."
       />
       <TextInput label="Date of birth" value={d.dateOfBirth} onChange={(v) => setField('dateOfBirth', v)} type="date" autoFocus />
     </div>
@@ -2641,10 +2640,10 @@ function FPContactStep() {
     <div>
       <SectionLabel text="Contact Details" />
       <StepHeading
-        title="Contact details"
-        description="We will only contact you about your mortgage application."
+        title="How can we reach you?"
+        description="We'll only contact you about your mortgage application."
       />
-      <TextInput label="Phone number" value={d.phone} onChange={(v) => setField('phone', v)} placeholder="+44 7700 900000" type="tel" autoFocus />
+      <TextInput label="Mobile number" value={d.phone} onChange={(v) => setField('phone', v)} placeholder="+44 7700 900000" type="tel" autoFocus />
       <TextInput label="Email address" value={d.email} onChange={(v) => setField('email', v)} placeholder="sarah@example.com" type="email" />
     </div>
   );
@@ -2662,18 +2661,18 @@ function FPCircumstancesStep() {
     <div>
       <SectionLabel text="Personal Circumstances" />
       <StepHeading
-        title="Personal circumstances"
-        description="This information helps lenders understand your financial responsibilities."
+        title="What's your relationship status?"
+        description="Lenders use this to understand your financial responsibilities."
       />
 <SelectInput
-  label="Marital / relationship status"
+  label="Relationship status"
   value={d.maritalStatus}
   onChange={(v) => setField('maritalStatus', v)}
   columns={2}
   options={[
     { value: 'single', label: 'Single' },
     { value: 'married', label: 'Married' },
-    { value: 'civil_partnership', label: 'Civil Partnership' },
+    { value: 'civil_partnership', label: 'Civil partnership' },
     { value: 'divorced', label: 'Divorced' },
     { value: 'widowed', label: 'Widowed' },
     { value: 'cohabiting', label: 'Cohabiting' },
@@ -2719,7 +2718,7 @@ function FPAddressStep() {
       <SectionLabel text="Your Address" />
       <StepHeading
         title="Where do you live?"
-        description="We need your current address for identity verification."
+        description="We need your current address for identity and residency verification."
       />
       <TextInput
         label="Current address"
@@ -2757,8 +2756,8 @@ function FPAddressHistoryStep() {
     <div>
       <SectionLabel text="Address History" />
       <StepHeading
-        title="Address history"
-        description="Lenders typically look at your address history for the past 3 years."
+        title="Your address history"
+        description="Lenders typically look at the past three years of address history."
       />
       <TextInput
         label="Date you moved in"
@@ -2793,7 +2792,7 @@ function FPAddressHistoryStep() {
           value={d.previousAddress}
           onChange={(v) => setField('previousAddress', v)}
           placeholder="Your address before moving to your current home"
-          hint="Since you moved in less than 3 years ago, please provide your previous address."
+          hint="Since you moved in less than three years ago, we need your previous address too."
         />
       )}
     </div>
@@ -2811,21 +2810,21 @@ function FPEmploymentStatusStep() {
     <div>
       <SectionLabel text="Employment" />
       <StepHeading
-        title="Employment status"
-        description="This helps us understand your income type and the documents you will need."
+        title="What's your employment status?"
+        description="This helps us understand your income type and which documents we'll need."
       />
 <SelectInput
-  label="What is your employment status?"
+  label=""
   value={d.employmentStatus}
   onChange={(v) => setField('employmentStatus', v)}
   columns={2}
   options={[
     { value: 'employed', label: 'Employed' },
     { value: 'self_employed', label: 'Self-employed' },
-    { value: 'director', label: 'Company Director' },
+    { value: 'director', label: 'Company director' },
     { value: 'contractor', label: 'Contractor' },
     { value: 'retired', label: 'Retired' },
-    { value: 'unemployed', label: 'Not employed' },
+    { value: 'unemployed', label: 'Not currently working' },
   ]}
       />
     </div>
@@ -2856,9 +2855,9 @@ function FPEmploymentDetailsStep() {
         <SectionLabel text="Employment" />
         <StepHeading
           title="Employment details"
-          description="This step is not applicable based on your employment status."
+          description="This step doesn't apply based on your employment status."
         />
-        <p className="text-sm text-muted-foreground">Click continue to proceed to the next step.</p>
+        <p className="text-sm text-muted-foreground">Click continue to move on.</p>
       </div>
     );
   }
@@ -2867,8 +2866,8 @@ function FPEmploymentDetailsStep() {
     <div>
       <SectionLabel text="Employment" />
       <StepHeading
-        title="Employment details"
-        description="Tell us about your current role."
+        title="Tell us about your current role"
+        description="A few details about where you work."
       />
       <TextInput
         label={d.employmentStatus === 'self_employed' ? 'Business name' : 'Employer name'}
@@ -2929,36 +2928,36 @@ function FPIncomeStep() {
     <div>
       <SectionLabel text="Income" />
       <StepHeading
-        title="Your income"
-        description="Enter your annual income before tax. Include all regular income sources."
+        title="What's your annual income?"
+        description="Enter your gross income before tax. Include all regular sources."
       />
       <CurrencyInput
         label="Annual base salary"
         value={d.annualSalary}
         onChange={(v) => setField('annualSalary', v)}
         placeholder="55,000"
-        hint="Your gross annual salary before deductions."
+        hint="Your gross annual salary before tax and deductions"
       />
       <CurrencyInput
         label="Annual bonus"
         value={d.bonus}
         onChange={(v) => setField('bonus', v)}
         placeholder="0"
-        hint="Average annual bonus if applicable."
+        hint="Your average annual bonus, if you receive one"
       />
       <CurrencyInput
         label="Annual commission"
         value={d.commission}
         onChange={(v) => setField('commission', v)}
         placeholder="0"
-        hint="Average annual commission if applicable."
+        hint="Your average annual commission, if applicable"
       />
       <CurrencyInput
         label="Annual overtime"
         value={d.overtime}
         onChange={(v) => setField('overtime', v)}
         placeholder="0"
-        hint="Average annual overtime if applicable."
+        hint="Your average annual overtime, if applicable"
       />
       <CurrencyInput
         label="Other annual income"
@@ -2989,8 +2988,8 @@ function FPOutgoingsStep() {
     <div>
       <SectionLabel text="Monthly Commitments" />
       <StepHeading
-        title="Monthly commitments"
-        description="Enter your regular monthly financial commitments. Enter 0 if not applicable."
+        title="What are your monthly outgoings?"
+        description="Enter your regular monthly commitments. Enter 0 if something doesn't apply."
       />
       <CurrencyInput
         label="Loan repayments"
@@ -3000,11 +2999,11 @@ function FPOutgoingsStep() {
         hint="Personal loans, student loans, etc."
       />
       <CurrencyInput
-        label="Credit card repayments"
+        label="Credit card payments"
         value={d.monthlyCreditCards}
         onChange={(v) => setField('monthlyCreditCards', v)}
         placeholder="0"
-        hint="Minimum monthly payments on credit cards."
+        hint="Minimum monthly payments across all cards"
       />
       <CurrencyInput
         label="Childcare costs"
@@ -3017,21 +3016,21 @@ function FPOutgoingsStep() {
         value={d.monthlyMaintenance}
         onChange={(v) => setField('monthlyMaintenance', v)}
         placeholder="0"
-        hint="Child maintenance or spousal maintenance."
+        hint="Child maintenance or spousal maintenance"
       />
       <CurrencyInput
         label="Car finance"
         value={d.monthlyCarFinance}
         onChange={(v) => setField('monthlyCarFinance', v)}
         placeholder="0"
-        hint="Monthly car loan or lease payments."
+        hint="Monthly car loan or lease payments"
       />
       <CurrencyInput
         label="Other commitments"
         value={d.monthlyOther}
         onChange={(v) => setField('monthlyOther', v)}
         placeholder="0"
-        hint="Any other regular monthly payments."
+        hint="Any other regular monthly payments"
       />
     </div>
   );
@@ -3048,15 +3047,15 @@ function FPDepositStep() {
     <div>
       <SectionLabel text="Deposit" />
       <StepHeading
-        title="Deposit and savings"
-        description="Tell us about your deposit and where it is coming from."
+        title="Your deposit and savings"
+        description="Tell us about your deposit and where it's coming from."
       />
       <CurrencyInput
         label="Deposit amount"
         value={d.depositAmount}
         onChange={(v) => setField('depositAmount', v)}
         placeholder="40,000"
-        hint="The amount you plan to put down as a deposit."
+        hint="The amount you plan to put down as your deposit"
       />
       <SelectInput
         label="Source of deposit"
@@ -3080,7 +3079,7 @@ function FPDepositStep() {
     { value: 'yes', label: 'Yes' },
     { value: 'no', label: 'No' },
   ]}
-          hint="A gifted deposit letter from the donor will be required."
+          hint="You'll need a signed gift letter from the donor"
         />
       )}
 <SelectInput
@@ -3098,7 +3097,7 @@ function FPDepositStep() {
         value={d.savingsAmount}
         onChange={(v) => setField('savingsAmount', v)}
         placeholder="15,000"
-        hint="All savings currently accessible to you, including the deposit."
+        hint="All savings currently accessible to you, including the deposit amount above"
       />
     </div>
   );
@@ -3119,11 +3118,11 @@ function FPGoalsStep() {
     <div>
       <SectionLabel text="Mortgage Goals" />
       <StepHeading
-        title="Mortgage goals"
-        description="Tell us what you are looking to achieve with this application."
+        title="What are you trying to achieve?"
+        description="Tell us a bit about what you're looking for with this mortgage."
       />
 <SelectInput
-  label="I am a..."
+  label=""
   value={d.buyerType}
   onChange={(v) => setField('buyerType', v)}
   columns={2}
@@ -3141,14 +3140,14 @@ function FPGoalsStep() {
         placeholder="350,000"
       />
       <CurrencyInput
-        label="Mortgage amount required"
+        label="Mortgage amount needed"
         value={d.loanAmount}
         onChange={(v) => setField('loanAmount', v)}
         placeholder="280,000"
-        hint="Typically property value minus your deposit."
+        hint="Usually property value minus your deposit"
       />
       <SelectInput
-        label="Target timeline to purchase"
+        label="When are you looking to buy?"
         value={d.targetTimeline}
         onChange={(v) => setField('targetTimeline', v)}
         options={[
@@ -3262,7 +3261,7 @@ function DocsOverviewStep() {
       <SectionLabel text="Documents" />
       <StepHeading
         title="Upload your documents"
-        description="Upload the documents lenders will need to review your application. LendWell will check each one and let you know if anything else is needed."
+        description="Upload the documents lenders need to review your application. LendWell will check each one and flag anything that's missing."
       />
       <RequirementsDocuments />
     </div>
@@ -3281,7 +3280,7 @@ function HHStageStep() {
       <SectionLabel text="House Hunting — 1 of 2" />
       <StepHeading
         title="Where are you in your property search?"
-        description="This helps us understand how urgently you need a mortgage offer and what details we need from you."
+        description="This helps us understand how urgently you need a mortgage offer."
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
         {[
@@ -3314,11 +3313,11 @@ function HHPropertyStep() {
     <div>
       <SectionLabel text="House Hunting — 2 of 2" />
       <StepHeading
-        title={hasProperty ? 'Property details' : 'Your property preferences'}
+        title={hasProperty ? 'Tell us about the property' : 'Your property preferences'}
         description={
           hasProperty
-            ? 'Tell us about the property you have made an offer on.'
-            : 'Give us a sense of what you are looking for — you can update this later.'
+            ? 'A few details about the property you\'ve made an offer on.'
+            : 'Give us a sense of what you\'re looking for — you can update this later.'
         }
       />
       {hasProperty && (
@@ -3364,14 +3363,14 @@ function AGDeclarationsStep() {
   const { state, signAgreement, setField, completeStep } = useApplication();
   const agreements = state.agreements;
   const d = state.data;
-  useStepFooter(() => completeStep('ag_declarations'), 'Proceed to signature');
+  useStepFooter(() => completeStep('ag_declarations'), 'Continue to signature');
 
   return (
     <div>
       <SectionLabel text="Agreements — 1 of 2" />
       <StepHeading
         title="Declarations and consent"
-        description="Please read each statement carefully and confirm your agreement before signing."
+        description="Read each statement carefully and confirm your agreement before moving on."
       />
 
       <div className="space-y-3 mb-8">
@@ -3412,14 +3411,14 @@ function AGDeclarationsStep() {
 
       <div className="grid grid-cols-1 gap-2.5">
         <CheckboxRow
-          label="I confirm all information I have provided is accurate"
-          description="I understand that providing false or misleading information may invalidate my application."
+          label="All the information I've provided is accurate and complete"
+          description="I understand that providing false or misleading information could invalidate my application."
           checked={d.declarationConfirmed}
           onChange={(v) => setField('declarationConfirmed', v)}
         />
         <CheckboxRow
-          label="I consent to my data being processed"
-          description="For the purposes of assessing this mortgage application, including credit checks and sharing with lenders."
+          label="I consent to my data being used to assess this application"
+          description="This includes credit checks and sharing relevant details with lenders."
           checked={d.consentConfirmed}
           onChange={(v) => setField('consentConfirmed', v)}
         />
@@ -3446,7 +3445,7 @@ function AGSignatureStep() {
   // Use proper footer integration
   useStepFooter(() => {
     saveSignature();
-  }, 'Save Signature');
+  }, 'Save signature');
 
   // Initialize canvas
   useEffect(() => {
@@ -3543,8 +3542,8 @@ function AGSignatureStep() {
     <div>
       <SectionLabel text="Agreements — 2 of 2" />
       <StepHeading
-        title="Create Your Signature"
-        description="This signature will be used to sign all legal documents in your application."
+        title="Create your signature"
+        description="This will be used to sign all legal documents in your application."
       />
 
       {/* Tab Switcher */}
@@ -4009,7 +4008,7 @@ function AffordabilityEstimateStep() {
           {hasData ? fmt(displayLoan) : '—'}
         </p>
         <p style={{ fontSize: '14px', fontWeight: '600', color: 'rgba(255,255,255,0.80)' }}>
-          {monthlyPmt > 0 ? `Est. monthly repayment: ${fmt(monthlyPmt)}/month` : 'Complete your income and deposit details below'}
+          {monthlyPmt > 0 ? `Est. monthly repayment: ${fmt(monthlyPmt)}/month` : 'Fill in your income and deposit details to see an estimate'}
         </p>
 
         {/* Buyer type badge */}
@@ -4164,8 +4163,8 @@ function AffordabilityEstimateStep() {
 
       {/* Disclaimer */}
       <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', textAlign: 'center', lineHeight: '1.5' }}>
-        This is an indicative estimate based on the information provided so far.<br />
-        Complete your full application for a personalised recommendation.
+        This is an indicative estimate based on the information you've provided so far.<br />
+        Complete your application for a personalised recommendation.
       </p>
     </div>
   );

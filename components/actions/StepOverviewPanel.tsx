@@ -38,71 +38,71 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
 
   const overviewContent: Partial<Record<SectionId, { title: string; description: string; details: string[] }>> = {
     welcome: {
-      title: "Let's kick start your mortgage journey",
-      description: 'Meet your adviser and understand what happens next as we prepare your application for lenders.',
+      title: "Let's get your mortgage journey started",
+      description: 'Meet your adviser and find out what to expect as we prepare your application.',
       details: [
         'Get to know your dedicated adviser',
-        'Understand the application process',
-        'Review what lenders will assess',
+        'Understand how the process works',
+        'See what lenders will look at',
       ],
     },
     about_you: {
       title: 'Tell us about yourself',
-      description: 'We need to collect some personal details that lenders require to assess your mortgage application.',
+      description: 'We need a few personal details that lenders require to assess your application.',
       details: [
-        'Confirm your identity and contact details',
-        'Tell us about your household',
-        'Provide residency and address information',
+        'Your identity and contact details',
+        'Your household situation',
+        'Your address and residency information',
       ],
     },
     property_mortgage: {
-      title: 'Property & Mortgage details',
-      description: 'This section helps lenders understand your property goals and mortgage requirements.',
+      title: 'Property & mortgage',
+      description: 'Tell us about the property you have in mind and how you plan to fund it.',
       details: [
-        'Tell us what you want to buy or refinance',
-        'Share the estimated property value',
-        'Provide details about your deposit',
+        'What you want to buy or remortgage',
+        'The estimated property value',
+        'Your deposit and where it comes from',
       ],
     },
     employment_income: {
-      title: 'Employment & Income',
-      description: 'Lenders need to understand your income stability and financial commitments to assess affordability.',
+      title: 'Employment & income',
+      description: 'We\'ll cover your job or business, how much you earn, and your regular monthly outgoings.',
       details: [
-        'Tell us about your job or business',
-        'Share your income sources',
-        'Provide details about monthly commitments',
+        'Your employment type and employer details',
+        'Your income from all sources',
+        'Your regular monthly commitments',
       ],
     },
     documents: {
-      title: 'Upload supporting documents',
-      description: 'Lenders need specific documents to verify your income, identity, and financial stability.',
+      title: 'Upload your supporting documents',
+      description: 'Lenders need specific documents to verify your income, identity, and finances.',
       details: [
-        'Last 3 months of payslips (all applicants)',
-        'Last 3 months of bank statements (all accounts)',
-        'Photo ID (passport or driving licence)',
-        'Proof of address (utility bill or council tax, dated within 3 months)',
+        'Last three months of payslips (all applicants)',
+        'Last three months of bank statements (all accounts)',
+        'Photo ID — passport or driving licence',
+        'Proof of address — utility bill or council tax, dated within three months',
         'P60 or tax return (most recent tax year)',
-        'Proof of deposit (savings statements or gift letter)',
-        'Credit commitments (loan/credit card statements)',
-        'Proof of bonus/commission (if applicable)',
+        'Proof of deposit — savings statements or gift letter',
+        'Credit commitments — loan and credit card statements',
+        'Proof of bonus or commission (if applicable)',
       ],
     },
     agreements: {
       title: 'Review and sign',
-      description: 'Confirm your details, sign declarations, and confirm your application is ready for lender review.',
+      description: 'Read through your declarations, confirm everything is accurate, and add your signature.',
       details: [
-        'Review the information you provided',
-        'Sign required declarations',
-        'Confirm everything is accurate',
+        'Review the information you\'ve provided',
+        'Confirm your consent and declarations',
+        'Sign your application',
       ],
     },
     collect_keys: {
       title: 'Application ready',
-      description: 'Your application is prepared and ready for lender review. Submit when you are ready.',
+      description: 'Your application is ready for lender review. Submit whenever you\'re ready.',
       details: [
         'All sections complete',
         'Ready for lender assessment',
-        'Next: Submit your application',
+        'Next: submit your application',
       ],
     },
   };
@@ -120,7 +120,7 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
             className="font-display font-medium mb-2"
             style={{ fontSize: '24px', color: '#182026', lineHeight: '1.2', letterSpacing: '-0.01em' }}
           >
-            Let&apos;s kick start your mortgage journey
+            Let&apos;s get your mortgage journey started
           </h2>
           <p className="text-sm font-medium leading-relaxed" style={{ color: '#5A7387' }}>
             {content.description}
