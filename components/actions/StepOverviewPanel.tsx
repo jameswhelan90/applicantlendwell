@@ -2,7 +2,7 @@
 
 import { useApplication, SECTION_LABELS, SECTION_FIRST_STEP } from '@/context/ApplicationContext';
 import { SectionId } from '@/types/tasks';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Clock } from 'lucide-react';
 import { CompletionSection } from './CompletionSection';
 import { DocumentsUploadSection } from '@/components/documents/DocumentsUploadSection';
 
@@ -110,6 +110,141 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
   const content = overviewContent[sectionId] as { title: string; description: string; details: string[] } | undefined;
   if (!content) return null;
 
+  // ── Welcome section: full-bleed photo card ──────────────────────────────
+  if (sectionId === 'welcome') {
+    return (
+      <div className="space-y-6">
+        {/* Page title */}
+        <div>
+          <h2
+            className="font-display font-medium mb-2"
+            style={{ fontSize: '30px', color: '#182026', lineHeight: '1.2', letterSpacing: '-0.01em' }}
+          >
+            Let&apos;s kick start your mortgage journey
+          </h2>
+          <p className="text-base font-medium leading-relaxed" style={{ color: '#5A7387' }}>
+            {content.description}
+          </p>
+        </div>
+
+        {/* Full-bleed Bristol photo card */}
+        <div
+          className="relative overflow-hidden"
+          style={{
+            borderRadius: '20px',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
+            minHeight: '400px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+          }}
+        >
+          {/* Background photo */}
+          <img
+            src="/images/Bristol1.jpg"
+            alt=""
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center 30%',
+            }}
+          />
+
+          {/* Light gradient — white rises from bottom */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(to top, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.75) 45%, transparent 100%)',
+            }}
+          />
+
+          {/* Content */}
+          <div style={{ position: 'relative', zIndex: 1, padding: '28px' }}>
+            {/* Pill badges */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '999px',
+                  backgroundColor: 'rgba(255,255,255,0.90)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(0,0,0,0.08)',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  color: '#182026',
+                }}
+              >
+                <Clock className="w-3.5 h-3.5" />
+                15 min to complete
+              </span>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: '6px 14px',
+                  borderRadius: '999px',
+                  backgroundColor: 'rgba(255,255,255,0.90)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(0,0,0,0.08)',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  color: '#182026',
+                }}
+              >
+                Expert advisers
+              </span>
+            </div>
+
+            {/* What's in this section */}
+            <p className="text-sm font-semibold mb-3" style={{ color: '#182026' }}>
+              What&apos;s in this section
+            </p>
+            <ul style={{ listStyle: 'none', margin: 0, padding: 0, marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {content.details.map((detail, idx) => (
+                <li key={idx} className="flex items-center gap-3">
+                  <div
+                    style={{
+                      flexShrink: 0,
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      backgroundColor: '#CBD5E1',
+                    }}
+                  />
+                  <span className="text-sm font-medium" style={{ color: '#374151' }}>{detail}</span>
+                </li>
+              ))}
+            </ul>
+
+            {/* CTA */}
+            <button
+              onClick={handleStartClick}
+              className="w-full py-3 font-semibold text-sm flex items-center justify-center gap-2 btn-interactive"
+              style={{
+                backgroundColor: isComplete ? '#F7F8FC' : '#3126E3',
+                color: isComplete ? '#374151' : '#ffffff',
+                borderRadius: '8px',
+                border: isComplete ? '1px solid #E1E8EE' : 'none',
+              }}
+            >
+              {isComplete ? 'Review section' : isInProgress ? 'Continue section' : 'Start section'}
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Standard sections ────────────────────────────────────────────────────
   return (
     <div className="space-y-6">
       {/* Page title + description */}
@@ -118,7 +253,7 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
           className="font-display font-medium mb-2"
           style={{ fontSize: '30px', color: '#182026', lineHeight: '1.2', letterSpacing: '-0.01em' }}
         >
-          {sectionId === 'welcome' ? "Let's kick start your mortgage journey" : (overrideTitle || content.title)}
+          {overrideTitle || content.title}
         </h2>
         <p className="text-base font-medium leading-relaxed" style={{ color: '#5A7387' }}>
           {content.description}
