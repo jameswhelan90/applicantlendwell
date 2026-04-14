@@ -805,15 +805,13 @@ function ChatBubble({
     <div
       className="max-w-[85%] px-4 py-2.5 animate-in fade-in slide-in-from-bottom-1 duration-150"
       style={{
-        backgroundColor: 'rgba(235,235,240,0.9)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        borderRadius: '18px 18px 18px 4px',
-        border: '1px solid rgba(255,255,255,0.7)',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+        backgroundColor: '#ffffff',
+        borderRadius: '16px',
+        border: '1px solid rgba(0,0,0,0.06)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
       }}
     >
-      <p className="text-sm font-medium leading-relaxed" style={{ color: '#1C1C1E' }}>
+      <p className="text-sm font-medium leading-relaxed" style={{ color: '#182026' }}>
         {animate ? (
           <AnimatedText text={message} onComplete={onAnimationComplete} />
         ) : (
@@ -912,7 +910,7 @@ function WelcomeStep() {
         <div
           ref={chatContainerRef}
           className="px-5 py-5 space-y-2 overflow-y-auto"
-          style={{ minHeight: '260px', maxHeight: '380px', backgroundColor: 'rgba(247,248,252,0.5)' }}
+          style={{ minHeight: '260px', maxHeight: '380px', backgroundColor: '#F7F8FC' }}
         >
           {messages.map((msg, idx) => {
             const isCompleted = completedMessages.includes(idx);
@@ -952,12 +950,10 @@ function WelcomeStep() {
                 <div className="w-6 flex-shrink-0" />
               )}
               <div style={{
-                backgroundColor: 'rgba(235,235,240,0.9)',
-                backdropFilter: 'blur(8px)',
-                WebkitBackdropFilter: 'blur(8px)',
-                borderRadius: '18px 18px 18px 4px',
-                border: '1px solid rgba(255,255,255,0.7)',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+                backgroundColor: '#ffffff',
+                borderRadius: '16px',
+                border: '1px solid rgba(0,0,0,0.06)',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
               }}>
                 <TypingIndicator />
               </div>
