@@ -23,10 +23,10 @@ export default function MortgageApplication() {
 
   return (
     <ActivityProvider>
-    <div className="min-h-screen bg-background" style={{ backgroundColor: '#F7F8FC' }}>
+    <div className="h-screen overflow-hidden flex flex-col bg-background" style={{ backgroundColor: '#F7F8FC' }}>
       {/* Header — full-width sticky band with inset glass card */}
       <header
-        className="sticky top-0 z-20 w-full"
+        className="flex-shrink-0 z-20 w-full"
         style={{ backgroundColor: 'transparent', paddingTop: '24px', paddingLeft: '24px', paddingRight: '24px' }}
       >
         <div
@@ -66,18 +66,18 @@ export default function MortgageApplication() {
       </header>
 
       {/* Page — two-column master-detail layout */}
-      <main className="w-full" style={{ backgroundColor: '#F7F8FC' }}>
-        <div className="flex items-start min-h-[calc(100vh-57px)]">
+      <main className="flex-1 overflow-hidden w-full" style={{ backgroundColor: '#F7F8FC' }}>
+        <div className="flex h-full">
 
-          {/* Left sidebar — journey navigation */}
-          <aside className="hidden lg:block w-80 flex-shrink-0 sticky top-[69px] self-start px-6 py-6" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
+          {/* Left sidebar — journey navigation, never scrolls */}
+          <aside className="hidden lg:flex lg:flex-col w-80 flex-shrink-0 px-6 py-6 overflow-hidden" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
             <nav style={{ paddingTop: '0px', paddingBottom: '12px', paddingRight: '12px' }}>
               <JourneyTracker />
             </nav>
           </aside>
 
-          {/* Main content — step overview + action cards */}
-          <div className="flex-1 min-w-0 px-6" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
+          {/* Main content — scrollable column */}
+          <div className="flex-1 min-w-0 overflow-y-auto px-6" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
             <div className={`mx-auto space-y-8 ${selectedJourneyStep === 'documents' ? 'max-w-6xl' : 'max-w-3xl'}`} style={{ paddingTop: '24px' }}>
 
               {/* Step overview panel — updates based on selected journey step */}
