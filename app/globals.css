@@ -130,6 +130,15 @@
     transition-duration: 700ms;
   }
 
+  /* ─── Motion tokens ─────────────────────────────────────────── */
+  /* Honour prefers-reduced-motion system preference */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   * {
     @apply border-border;
   }

@@ -365,6 +365,7 @@ interface ApplicationContextType {
   // Navigation
   currentStep: StepId;
   isModalOpen: boolean;
+  navDirection: 'forward' | 'backward' | 'initial';
   selectedJourneyStep: SectionId; // Selected section in sidebar (controls main content panel)
   openModal: (step?: StepId) => void;
   closeModal: () => void;
@@ -400,6 +401,7 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ApplicationState>(mockApplicationState);
   const [currentStep, setCurrentStep] = useState<StepId>('welcome');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [navDirection, setNavDirection] = useState<'forward' | 'backward' | 'initial'>('initial');
   const [selectedJourneyStep, setSelectedJourneyStep] = useState<SectionId>('welcome');
 
   const currentSectionId = STEP_SECTION[currentStep];
@@ -425,19 +427,34 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
   // ── Navigation ─────────────────────────────────────────────────────────
 
   const openModal = useCallback((step?: StepId) => {
-    if (step) setCurrentStep(step);
+    if (step) {
+      setNavDirection((prev) => {
+        const targetIdx = ALL_STEPS.indexOf(step);
+        const currentIdx = ALL_STEPS.indexOf(currentStep);
+        return targetIdx >= currentIdx ? 'forward' : 'backward';
+      });
+      setCurrentStep(step);
+    } else {
+      setNavDirection('initial');
+    }
     setIsModalOpen(true);
-  }, []);
+  }, [currentStep]);
 
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
   }, []);
 
   const goToStep = useCallback((step: StepId) => {
+    setNavDirection((prev) => {
+      const targetIdx = ALL_STEPS.indexOf(step);
+      const currentIdx = ALL_STEPS.indexOf(currentStep);
+      return targetIdx >= currentIdx ? 'forward' : 'backward';
+    });
     setCurrentStep(step);
-  }, []);
+  }, [currentStep]);
 
   const goToSection = useCallback((sectionId: SectionId) => {
+    setNavDirection('forward');
     const firstStep = SECTION_FIRST_STEP[sectionId];
     setCurrentStep(firstStep);
     setIsModalOpen(true);
@@ -493,6 +510,7 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
       idx += 1;
       const nextStep = ALL_STEPS[idx];
       if (shouldShowStep(nextStep, data)) {
+        setNavDirection('forward');
         setCurrentStep(nextStep);
         return;
       }
@@ -507,6 +525,7 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
       idx -= 1;
       const prevStep = ALL_STEPS[idx];
       if (shouldShowStep(prevStep, data)) {
+        setNavDirection('backward');
         setCurrentStep(prevStep);
         return;
       }
@@ -565,6 +584,7 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
 
     // Move to next step
     if (nextStep) {
+      setNavDirection('forward');
       setCurrentStep(nextStep);
     } else {
       setIsModalOpen(false);
@@ -637,6 +657,7 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
     state,
     currentStep,
     isModalOpen,
+    navDirection,
     selectedJourneyStep,
     openModal,
     closeModal,

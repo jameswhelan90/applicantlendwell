@@ -100,6 +100,7 @@ function ModalContent() {
     closeModal,
     currentStep,
     goToPrevStep,
+    navDirection,
   } = useApplication();
 
   const { label: continueLabel, onContinue } = useFormFooter();
@@ -132,7 +133,7 @@ function ModalContent() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-stretch justify-stretch"
+      className="fixed inset-0 z-50 flex items-stretch justify-stretch animate-in fade-in duration-[180ms] ease-out"
       style={{ padding: '12px' }}
       role="dialog"
       aria-modal="true"
@@ -140,7 +141,7 @@ function ModalContent() {
     >
       {/* Floating modal card */}
       <div
-        className="flex flex-col flex-1 overflow-hidden"
+        className="flex flex-col flex-1 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-[220ms] ease-out"
         style={{
           backgroundColor: '#F7F8FC',
           borderRadius: '16px',
@@ -197,7 +198,13 @@ function ModalContent() {
         <div className="min-h-full flex items-center justify-center py-8">
           <div
             key={currentStep}
-            className="max-w-xl w-full mx-auto px-6 animate-in fade-in slide-in-from-bottom-6 duration-300"
+            className={`max-w-xl w-full mx-auto px-6 animate-in fade-in ease-out duration-[240ms] ${
+              navDirection === 'backward'
+                ? 'slide-in-from-left-4'
+                : navDirection === 'initial'
+                  ? 'slide-in-from-bottom-3'
+                  : 'slide-in-from-right-4'
+            }`}
           >
             <FormStepRenderer />
           </div>
