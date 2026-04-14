@@ -176,6 +176,13 @@
 .modal-overlay-enter { animation: modal-fade-in 180ms ease-out both; }
 .modal-card-enter    { animation: modal-enter  220ms ease-out both; }
 
+/* Active step dot pulse */
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+.dot-pulse { animation: dot-pulse 2s ease-in-out infinite; }
+
 @layer base {
 
   * {

@@ -95,10 +95,10 @@ export function JourneyTracker({ compact = false }: JourneyTrackerProps) {
                   {SECTION_LABELS[section.id as SectionId]}
                 </span>
 
-                {/* Active indicator dot */}
-                {(isSelected || isComplete) && (
+                {/* Active indicator dot — only on current step */}
+                {isSelected && (
                   <span
-                    className="ml-auto w-1.5 h-1.5 rounded-full flex-shrink-0"
+                    className="ml-auto w-1.5 h-1.5 rounded-full flex-shrink-0 dot-pulse"
                     style={{ backgroundColor: '#3126E3' }}
                   />
                 )}
