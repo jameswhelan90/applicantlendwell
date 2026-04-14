@@ -188,27 +188,29 @@ export function FloatingChat({ hideButton = false }: FloatingChatProps) {
             }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between flex-shrink-0" style={{ padding: '20px 20px 0 20px' }}>
-              <div>
-                <p className="font-bold" style={{ fontSize: '18px', color: '#182026', lineHeight: 1.2 }}>
-                  {activeTab === 'adviser' ? 'Ciara Murphy' : 'LendWell'}
-                </p>
-                <p className="text-xs mt-0.5" style={{ color: '#677183' }}>
-                  {activeTab === 'adviser' ? 'Your mortgage adviser' : 'Your mortgage guide'}
-                </p>
+            <div className="flex-shrink-0" style={{ padding: '16px 20px 0 20px' }}>
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="font-semibold" style={{ fontSize: '15px', color: '#182026', lineHeight: 1.2 }}>
+                    {activeTab === 'adviser' ? 'Ciara Murphy' : 'LendWell'}
+                  </p>
+                  <p className="text-xs mt-0.5" style={{ color: '#5A7387', fontWeight: '500' }}>
+                    {activeTab === 'adviser' ? 'Your mortgage adviser' : 'Your mortgage guide'}
+                  </p>
+                </div>
+                <button
+                  onClick={closeChat}
+                  aria-label="Close chat"
+                  className="flex items-center justify-center btn-interactive"
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', flexShrink: 0, color: '#5A7387' }}
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-              <button
-                onClick={closeChat}
-                aria-label="Close chat"
-                className="flex items-center justify-center btn-interactive"
-                style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#3126E3', border: 'none', cursor: 'pointer', flexShrink: 0 }}
-              >
-                <X className="w-4 h-4 text-white" />
-              </button>
             </div>
 
             {/* Tabs */}
-            <div className="flex flex-shrink-0" style={{ padding: '16px 20px 0 20px', borderBottom: '1px solid #E5E7EB', gap: '24px' }}>
+            <div className="flex flex-shrink-0" style={{ padding: '0 20px 0 20px', borderBottom: '1px solid #E5E7EB', gap: '24px' }}>
               {(['ai', 'adviser'] as ChatTab[]).map((tab) => (
                 <button
                   key={tab}
@@ -306,7 +308,7 @@ export function FloatingChat({ hideButton = false }: FloatingChatProps) {
 
             {/* Input */}
             <div className="flex-shrink-0" style={{ padding: '0 20px 20px 20px' }}>
-              <div className="flex items-center gap-2" style={{ border: '1.5px solid #D9D7FF', borderRadius: '12px', padding: '10px 12px', backgroundColor: '#ffffff' }}>
+              <div className="flex items-center gap-2" style={{ border: '1.5px solid #E1E8EE', borderRadius: '12px', padding: '10px 12px', backgroundColor: '#ffffff' }}>
                 <input
                   ref={inputRef}
                   type="text"

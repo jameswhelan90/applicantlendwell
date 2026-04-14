@@ -117,8 +117,8 @@ export function TaskList() {
         {/* ── Checklist rows ── */}
         {!isComplete && immediateTasks.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-            <p style={{ fontSize: '11px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>
-              Up next
+            <p style={{ fontSize: '12px', fontWeight: '600', color: '#5A7387', marginBottom: '8px' }}>
+              Up Next
             </p>
             {immediateTasks.map((task, idx) => (
               <button

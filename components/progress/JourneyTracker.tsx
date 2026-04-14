@@ -32,10 +32,10 @@ export function JourneyTracker({ compact = false }: JourneyTrackerProps) {
       }}
     >
       <p
-        style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '12px', marginLeft: '10px', marginRight: '10px', color: '#5A7387' }}
+        style={{ fontSize: '12px', fontWeight: '600', marginBottom: '12px', marginLeft: '10px', marginRight: '10px', color: '#5A7387' }}
       >
         Your Journey
-      </p>
+</p>
 
       <ol className="space-y-1">
         {sections.map((section, index) => {
@@ -88,8 +88,8 @@ export function JourneyTracker({ compact = false }: JourneyTrackerProps) {
                 <span
                   className="text-sm leading-snug"
                   style={{
-                    color: isComplete ? '#3C6006' : isUpcoming ? '#9CA3AF' : '#182026',
-                    fontWeight: isSelected ? '700' : '600',
+                    color: isComplete ? '#3C6006' : isSelected ? '#182026' : '#6B7280',
+                    fontWeight: '600',
                   }}
                 >
                   {SECTION_LABELS[section.id as SectionId]}

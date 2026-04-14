@@ -201,9 +201,9 @@ export function NextActionCard() {
         {/* Status label */}
         <p
           className="font-semibold mb-3"
-          style={{ fontSize: '11px', color: '#5A7387', letterSpacing: '0.06em', textTransform: 'uppercase' }}
+          style={{ fontSize: '12px', fontWeight: '600', color: '#5A7387' }}
         >
-          {nextSection.status === 'in_progress' ? 'Continue where you left off' : 'Your next step'}
+          {nextSection.status === 'in_progress' ? 'Continue Where You Left Off' : 'Your Next Step'}
         </p>
 
         {/* Section heading */}

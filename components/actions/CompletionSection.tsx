@@ -154,7 +154,7 @@ export function CompletionSection({ isFullyComplete }: CompletionSectionProps) {
           <div className="text-center">
             <h2
               className="font-display font-medium mb-4"
-              style={{ fontSize: '30px', color: '#3C6006', letterSpacing: '-0.01em' }}
+              style={{ fontSize: '24px', color: '#3C6006', letterSpacing: '-0.01em' }}
             >
               Your Application is Ready
             </h2>
@@ -299,7 +299,7 @@ export function CompletionSection({ isFullyComplete }: CompletionSectionProps) {
         <div className="relative z-10 text-center">
           <h2
             className="font-display font-medium mb-4"
-            style={{ fontSize: '30px', color: '#182026', letterSpacing: '-0.01em' }}
+            style={{ fontSize: '24px', color: '#182026', letterSpacing: '-0.01em' }}
           >
             Collect Your Keys
           </h2>

@@ -118,11 +118,11 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
         <div>
           <h2
             className="font-display font-medium mb-2"
-            style={{ fontSize: '30px', color: '#182026', lineHeight: '1.2', letterSpacing: '-0.01em' }}
+            style={{ fontSize: '24px', color: '#182026', lineHeight: '1.2', letterSpacing: '-0.01em' }}
           >
             Let&apos;s kick start your mortgage journey
           </h2>
-          <p className="text-base font-medium leading-relaxed" style={{ color: '#5A7387' }}>
+          <p className="text-sm font-medium leading-relaxed" style={{ color: '#5A7387' }}>
             {content.description}
           </p>
         </div>
@@ -251,11 +251,11 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
       <div>
         <h2
           className="font-display font-medium mb-2"
-          style={{ fontSize: '30px', color: '#182026', lineHeight: '1.2', letterSpacing: '-0.01em' }}
+          style={{ fontSize: '24px', color: '#182026', lineHeight: '1.2', letterSpacing: '-0.01em' }}
         >
           {overrideTitle || content.title}
         </h2>
-        <p className="text-base font-medium leading-relaxed" style={{ color: '#5A7387' }}>
+        <p className="text-sm font-medium leading-relaxed" style={{ color: '#5A7387' }}>
           {content.description}
         </p>
       </div>

@@ -847,7 +847,7 @@ function CategorySection({
           <span
             style={{
               fontSize: '11px',
-              fontWeight: '700',
+              fontWeight: '600',
               padding: '3px 10px',
               borderRadius: '999px',
               backgroundColor: completedCount === requiredCount ? '#EEFDD9' : '#F7F8FC',

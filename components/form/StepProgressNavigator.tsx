@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useApplication, ALL_STEPS, STEP_SECTION, SECTION_LABELS, SECTION_FIRST_STEP } from '@/context/ApplicationContext';
-import { Check } from 'lucide-react';
+import { useApplication, SECTION_LABELS, SECTION_FIRST_STEP } from '@/context/ApplicationContext';
+import { Check, ChevronDown } from 'lucide-react';
 import { SectionId } from '@/types/tasks';
 
 // Inject hover/focus styles once
@@ -11,7 +11,7 @@ const STEP_NAV_STYLES = `
     transition: background-color 120ms ease, opacity 120ms ease;
   }
   .step-nav-item:hover {
-    background-color: #F1F3F7 !important;
+    background-color: #F7F8FC !important;
   }
   .step-nav-item:hover .step-nav-title {
     color: #3126E3 !important;
@@ -19,7 +19,7 @@ const STEP_NAV_STYLES = `
   .step-nav-item:focus-visible {
     outline: 2px solid #3126E3;
     outline-offset: 2px;
-    background-color: #F1F3F7 !important;
+    background-color: #F7F8FC !important;
   }
   .step-nav-item:hover .step-nav-arrow,
   .step-nav-item:focus-visible .step-nav-arrow {
@@ -93,75 +93,39 @@ export function StepProgressNavigator() {
     setIsExpanded(false);
   };
 
+  const currentIndex = currentProgressItem ? progressItems.indexOf(currentProgressItem) + 1 : 1;
+  const totalSteps = progressItems.length;
+
   return (
-    <div className="relative inline-flex items-center" style={{ border: '1.5px solid #E1E8EE', borderRadius: '8px', paddingLeft: '4px', paddingRight: '4px', paddingTop: '2px', paddingBottom: '2px' }}>
+    <div className="relative inline-flex items-center">
       <style>{STEP_NAV_STYLES}</style>
-      {/* Collapsed view - horizontal step indicators */}
+      {/* Collapsed — minimal text pill */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         onBlur={() => setTimeout(() => setIsExpanded(false), 100)}
-        className="flex items-center gap-3 px-4 py-2.5 rounded-full row-interactive"
+        className="flex items-center gap-2 px-3 py-1.5 btn-interactive"
         style={{
           backgroundColor: 'transparent',
-          border: '0px',
+          border: '1.5px solid #E1E8EE',
+          borderRadius: '999px',
           cursor: 'pointer',
         }}
         aria-expanded={isExpanded}
         aria-label="Step progress indicator"
       >
-        {/* Step indicators */}
-        <div className="flex items-center gap-2">
-          {progressItems.map((item, index) => (
-            <React.Fragment key={item.sectionId}>
-              {/* Step circle */}
-              <div
-                className="w-6 h-6 flex items-center justify-center transition-interaction flex-shrink-0"
-                style={{
-                  borderRadius: '8px',
-                  backgroundColor:
-                    item.status === 'completed' ? '#6CAD0A' :
-                    item.status === 'current' ? '#3126E3' :
-                    '#ffffff',
-                  border: item.status === 'current' ? '2px solid #3126E3' : 'none',
-                  boxShadow: item.status === 'current' ? '0 0 0 4px rgba(49, 38, 227, 0.1)' : 'none',
-                }}
-                title={item.label}
-              >
-                {item.status === 'completed' ? (
-                  <Check className="w-3 h-3 text-white" />
-                ) : (
-                  <span
-                    className="text-xs font-semibold"
-                    style={{ color: item.status === 'upcoming' ? '#6B7A8D' : '#ffffff' }}
-                  >
-                    {index + 1}
-                  </span>
-                )}
-              </div>
-
-              {/* Connector line - not after last */}
-              {index < progressItems.length - 1 && (
-                <div
-                  className="h-0.5 w-2 transition-all duration-120"
-                  style={{
-                    backgroundColor:
-                      item.status === 'completed' ? '#6CAD0A' :
-                      '#E1E8EE',
-                  }}
-                />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-
-        {/* Current section label */}
         {currentProgressItem && (
-          <div className="flex flex-col gap-0.5 ml-1">
-            <p className="text-xs font-semibold text-foreground">{currentProgressItem.label}</p>
-            <p className="text-[10px]" style={{ fontWeight: '500', color: '#182026' }}>
-              {progressItems.indexOf(currentProgressItem) + 1} of {progressItems.length}
-            </p>
-          </div>
+          <>
+            <span className="text-sm font-semibold" style={{ color: '#182026' }}>
+              {currentProgressItem.label}
+            </span>
+            <span className="text-sm" style={{ color: '#9CA3AF', fontWeight: '500' }}>
+              {currentIndex} / {totalSteps}
+            </span>
+            <ChevronDown
+              className="w-3.5 h-3.5 transition-transform duration-150"
+              style={{ color: '#9CA3AF', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
+            />
+          </>
         )}
       </button>
 
@@ -191,30 +155,27 @@ export function StepProgressNavigator() {
                 className="step-nav-item w-full px-3 py-2.5 text-left flex items-start gap-3"
                 style={{
                   borderRadius: '8px',
-                  backgroundColor: item.status === 'current' ? '#F1F3F7' : 'transparent',
+                  backgroundColor: item.status === 'current' ? '#F7F8FC' : 'transparent',
                   cursor: item.status === 'current' ? 'default' : 'pointer',
                   border: 'none',
                 }}
               >
-                {/* Status indicator circle */}
+                {/* Status indicator */}
                 <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-120"
+                  className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-120"
                   style={{
-                    borderRadius: '8px',
                     backgroundColor:
                       item.status === 'completed' ? '#6CAD0A' :
                       item.status === 'current' ? '#3126E3' :
-                      '#C8D0D8',
-                    border: item.status === 'current' ? '2px solid #3126E3' : 'none',
-                    boxShadow: item.status === 'current' ? '0 0 0 4px rgba(49, 38, 227, 0.1)' : 'none',
+                      '#E5E7EB',
                   }}
                 >
                   {item.status === 'completed' ? (
-                    <Check className="w-4 h-4 text-white" />
+                    <Check className="w-3 h-3 text-white stroke-[2.5]" />
                   ) : (
                     <span
-                      className="text-sm font-semibold"
-                      style={{ color: item.status === 'upcoming' ? '#6B7A8D' : '#ffffff' }}
+                      className="text-[10px] font-semibold leading-none"
+                      style={{ color: item.status === 'current' ? '#ffffff' : '#9CA3AF' }}
                     >
                       {progressItems.indexOf(item) + 1}
                     </span>

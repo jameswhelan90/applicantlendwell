@@ -239,42 +239,27 @@ export function AIActivityIndicator() {
             boxShadow: '0 8px 32px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06)',
           }}
         >
-          {/* Panel header — branded indigo strip */}
+          {/* Panel header */}
           <div
             style={{
-              background: 'linear-gradient(135deg, #3126E3 0%, #473FE6 100%)',
-              padding: '16px 18px 14px',
+              padding: '14px 16px',
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: '10px',
+              borderBottom: '1px solid #F1F3F7',
             }}
           >
-            <div
-              style={{
-                width: '34px',
-                height: '34px',
-                borderRadius: '50%',
-                backgroundColor: 'rgba(255,255,255,0.15)',
-                backdropFilter: 'blur(8px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <AILogo size={18} />
-            </div>
+            <AILogo size={20} />
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p className="font-display" style={{ fontSize: '15px', fontWeight: '500', color: '#ffffff', margin: 0, letterSpacing: '-0.01em' }}>
-                LendWell Intelligence
+              <p style={{ fontSize: '14px', fontWeight: '600', color: '#182026', margin: 0 }}>
+                LendWell AI
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '2px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '1px' }}>
                 <span style={{
                   width: '6px', height: '6px', borderRadius: '50%', flexShrink: 0,
-                  backgroundColor: isProcessing ? '#FCD34D' : isConnected ? '#6CAD0A' : '#CC013D',
-                  animation: isProcessing ? 'ping 1.5s ease infinite' : 'none',
+                  backgroundColor: isProcessing ? '#E07900' : isConnected ? '#6CAD0A' : '#CC013D',
                 }} />
-                <p style={{ fontSize: '11px', fontWeight: '600', color: 'rgba(255,255,255,0.80)', margin: 0 }}>
+                <p style={{ fontSize: '12px', fontWeight: '500', color: '#5A7387', margin: 0 }}>
                   {isProcessing ? 'Working on your application…' : isConnected ? 'Everything looks good' : 'Disconnected'}
                 </p>
               </div>
@@ -282,12 +267,13 @@ export function AIActivityIndicator() {
             <button
               onClick={() => setPanelOpen(false)}
               aria-label="Close activity panel"
+              className="btn-interactive"
               style={{
-                width: '26px',
-                height: '26px',
+                width: '28px',
+                height: '28px',
                 borderRadius: '50%',
                 border: 'none',
-                backgroundColor: 'rgba(255,255,255,0.15)',
+                backgroundColor: 'transparent',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -295,7 +281,7 @@ export function AIActivityIndicator() {
                 flexShrink: 0,
               }}
             >
-              <X style={{ width: '13px', height: '13px', color: '#ffffff' }} />
+              <X style={{ width: '14px', height: '14px', color: '#5A7387' }} />
             </button>
           </div>
 
@@ -410,5 +396,5 @@ function TimeLabel({ timestamp }: { timestamp: Date | string }) {
     setLabel(formatTime(timestamp));
   }, [timestamp]);
   if (!label) return null;
-  return <p style={{ fontSize: '11px', color: '#9CA3AF', margin: '2px 0 0', fontWeight: '500' }}>{label}</p>;
+  return <p style={{ fontSize: '12px', color: '#9CA3AF', margin: '2px 0 0', fontWeight: '500' }}>{label}</p>;
 }

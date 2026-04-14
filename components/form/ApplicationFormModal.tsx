@@ -7,7 +7,6 @@ import { useChat } from '@/context/ChatContext';
 import { FormStepRenderer } from './FormStepRenderer';
 import { FormFooterProvider, useFormFooter } from './FormFooterContext';
 import { StepProgressNavigator } from './StepProgressNavigator';
-import { FormIntelligenceDialog } from '@/components/intelligence/FormIntelligenceDialog';
 
 function ModalContent() {
   const {
@@ -70,16 +69,35 @@ function ModalContent() {
           {/* Step Progress Navigator - replaces static step counter */}
           <StepProgressNavigator />
 
-          {/* Close */}
-          <button
-            type="button"
-            onClick={closeModal}
-            className="w-8 h-8 rounded-full flex items-center justify-center icon-btn flex-shrink-0"
-            style={{ backgroundColor: 'transparent', color: '#171C26', border: '1.5px solid #171C26' }}
-            aria-label="Close application form"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          {/* Header actions */}
+          <div className="flex items-center gap-1">
+            {/* Ask LendWell */}
+            <button
+              type="button"
+              onClick={() => toggleChat()}
+              aria-label={isChatOpen ? 'Close chat' : 'Ask LendWell'}
+              className="inline-flex items-center gap-1.5 font-semibold text-xs px-3 py-1.5 rounded-full btn-interactive"
+              style={{
+                backgroundColor: isChatOpen ? '#3126E3' : 'transparent',
+                color: isChatOpen ? '#ffffff' : '#5A7387',
+                border: 'none',
+              }}
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              Ask LendWell
+            </button>
+
+            {/* Close */}
+            <button
+              type="button"
+              onClick={closeModal}
+              className="w-8 h-8 rounded-full flex items-center justify-center btn-interactive flex-shrink-0"
+              style={{ backgroundColor: 'transparent', color: '#5A7387', border: 'none' }}
+              aria-label="Close application form"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -95,7 +113,7 @@ function ModalContent() {
 
       {/* Fixed footer — always visible */}
       <footer
-        className="flex-shrink-0 flex items-center justify-between px-5 py-5"
+        className="flex-shrink-0 flex items-center px-5 py-5"
         style={{
           backgroundColor: 'rgba(255, 255, 255, 0)',
           borderTop: '1px solid #e8eaee',
@@ -115,10 +133,10 @@ function ModalContent() {
               }
             }}
             aria-label={isFirstStep ? 'Return to overview' : 'Go to previous step'}
-            className="inline-flex items-center gap-2 font-semibold text-sm px-6 py-3 rounded-full btn-interactive"
+            className="inline-flex items-center gap-2 font-semibold text-sm px-5 py-3 rounded-full btn-interactive"
             style={{
-              backgroundColor: '#ffffff',
-              color: '#374151',
+              backgroundColor: 'transparent',
+              color: '#5A7387',
             }}
           >
             <ArrowLeft className="w-4 h-4" />
@@ -153,33 +171,10 @@ function ModalContent() {
           )}
         </div>
 
-        {/* Right side — Ask LendWell button */}
-        <div className="flex items-center gap-2">
-
-        {/* Ask LendWell button */}
-        <button
-          type="button"
-          onClick={() => toggleChat()}
-          aria-label={isChatOpen ? 'Close chat' : 'Ask LendWell'}
-          className="inline-flex items-center gap-2 font-semibold text-sm px-6 py-3 rounded-full btn-interactive"
-          style={{
-            backgroundColor: isChatOpen ? '#3126E3' : '#ffffff',
-            color: isChatOpen ? '#ffffff' : '#374151',
-            border: 'none',
-            boxShadow: isChatOpen ? '0 2px 8px rgba(49,38,227,0.25)' : 'none',
-          }}
-        >
-          <MessageSquare className="w-4 h-4" />
-          Ask LendWell
-        </button>
-
-        </div>
       </footer>
 
       </div>
 
-      {/* Form Intelligence Dialog - contextual AI insights (replaces SystemIntelligencePanel) */}
-      <FormIntelligenceDialog />
     </div>
   );
 }

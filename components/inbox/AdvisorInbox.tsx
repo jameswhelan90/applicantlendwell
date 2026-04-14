@@ -236,20 +236,10 @@ function TaskDetailModal({
             type="button"
             onClick={onClose}
             aria-label="Close"
-            style={{
-              width: '28px',
-              height: '28px',
-              borderRadius: '50%',
-              border: 'none',
-              backgroundColor: '#F7F8FC',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
+            className="btn-interactive"
+            style={{ width: '32px', height: '32px', borderRadius: '50%', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#5A7387' }}
           >
-            <X style={{ width: '14px', height: '14px', color: '#5A7387' }} />
+            <X style={{ width: '16px', height: '16px' }} />
           </button>
         </div>
 
@@ -281,7 +271,7 @@ function TaskDetailModal({
               </div>
 
               <div>
-                <p style={{ fontSize: '11px', fontWeight: '700', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 10px' }}>
+                <p style={{ fontSize: '12px', fontWeight: '600', color: '#182026', margin: '0 0 10px' }}>
                   Key terms
                 </p>
                 <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -321,7 +311,7 @@ function TaskDetailModal({
 
               {action.content.offPlatform && action.content.steps && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <p style={{ fontSize: '11px', fontWeight: '700', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#182026', margin: 0 }}>
                     Steps to complete
                   </p>
                   {action.content.steps.map((step, i) => (
@@ -473,7 +463,6 @@ function TaskCard({
   onAction: (task: AdvisorTask) => void;
   onComplete: (id: string) => void;
 }) {
-  const Icon = TYPE_ICONS[task.type];
   const statusStyle = STATUS_COLORS[task.status];
   const isCompleted = task.status === 'completed';
 
@@ -492,28 +481,14 @@ function TaskCard({
     >
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-        <div
-          style={{
-            width: '30px',
-            height: '30px',
-            borderRadius: '8px',
-            backgroundColor: '#EDECFD',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
-          <Icon style={{ width: '15px', height: '15px', color: '#3126E3' }} />
-        </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: '13px', fontWeight: '700', color: '#182026', margin: 0, lineHeight: '1.3' }}>
+          <p style={{ fontSize: '13px', fontWeight: '600', color: '#182026', margin: 0, lineHeight: '1.3' }}>
             {task.title}
           </p>
         </div>
         <span
           style={{
-            fontSize: '10px',
+            fontSize: '11px',
             fontWeight: '600',
             padding: '3px 8px',
             borderRadius: '999px',
@@ -544,16 +519,15 @@ function TaskCard({
             padding: '8px 12px',
             backgroundColor: '#ffffff',
             color: '#182026',
-            border: 'none',
+            border: '1.5px solid #E1E8EE',
             borderRadius: '999px',
             fontSize: '12px',
-            fontWeight: '700',
+            fontWeight: '600',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: '6px',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.10)',
           }}
         >
           {ACTION_LABELS[task.type]}
@@ -640,7 +614,7 @@ export function AdvisorInbox() {
               backgroundColor: '#ffffff',
               borderRadius: '16px',
               boxShadow: '0px 8px 32px 0px rgba(24, 32, 38, 0.16)',
-              border: `1px solid ${hasActionNeeded ? '#FFDAAF' : 'rgba(0,0,0,0.08)'}`,
+              border: '1px solid rgba(0,0,0,0.08)',
               overflow: 'hidden',
               maxHeight: '480px',
               display: 'flex',
@@ -660,7 +634,7 @@ export function AdvisorInbox() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Inbox style={{ width: '15px', height: '15px', color: '#3126E3' }} />
-                <p style={{ fontSize: '13px', fontWeight: '700', color: '#182026', margin: 0 }}>
+                <p style={{ fontSize: '13px', fontWeight: '600', color: '#182026', margin: 0 }}>
                   Adviser Inbox
                 </p>
                 {badgeCount > 0 && (
@@ -671,8 +645,8 @@ export function AdvisorInbox() {
                       borderRadius: '50%',
                       backgroundColor: '#E07900',
                       color: '#ffffff',
-                      fontSize: '10px',
-                      fontWeight: '700',
+                      fontSize: '11px',
+                      fontWeight: '600',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -686,9 +660,10 @@ export function AdvisorInbox() {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close inbox"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#9CA3AF', display: 'flex' }}
+                className="btn-interactive"
+                style={{ width: '32px', height: '32px', borderRadius: '50%', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#5A7387' }}
               >
-                <X style={{ width: '15px', height: '15px' }} />
+                <X style={{ width: '16px', height: '16px' }} />
               </button>
             </div>
 
@@ -809,7 +784,7 @@ export function AdvisorInbox() {
               </span>
             )}
           </div>
-          <span style={{ fontSize: '13px', fontWeight: '700', color: hasActionNeeded ? '#653701' : '#182026' }}>
+          <span style={{ fontSize: '13px', fontWeight: '600', color: hasActionNeeded ? '#653701' : '#182026' }}>
             {badgeCount > 0 ? `${badgeCount} task${badgeCount > 1 ? 's' : ''} waiting` : 'Adviser inbox'}
           </span>
           {isOpen ? (

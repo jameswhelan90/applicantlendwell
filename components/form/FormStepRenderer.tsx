@@ -48,14 +48,14 @@ function SectionLabel({ text: _text, isSecondary: _isSecondary }: { text: string
 
 function StepHeading({ title, description }: { title: string; description: string }) {
   return (
-    <div className="mb-10">
+    <div className="mb-8">
       <h1
-        className="font-display font-medium text-balance leading-tight mb-3"
-        style={{ fontSize: '2rem', color: '#182026' }}
+        className="font-display font-medium text-balance leading-tight mb-2"
+        style={{ fontSize: '1.5rem', color: '#182026' }}
       >
         {title}
       </h1>
-      <p className="text-base text-muted-foreground leading-relaxed" style={{ fontWeight: '500' }}>
+      <p className="text-sm leading-relaxed" style={{ fontWeight: '500', color: '#5A7387' }}>
         {description}
       </p>
     </div>
@@ -3893,8 +3893,8 @@ function AffordabilityDonut({ ltv }: { ltv: number }) {
       <text x={cx} y={cy - 4} textAnchor="middle" style={{ fontSize: '13px', fontWeight: '700', fill: '#182026', fontFamily: 'NeuSans, system-ui' }}>
         {Math.round(ltvClamped)}%
       </text>
-      <text x={cx} y={cy + 10} textAnchor="middle" style={{ fontSize: '9px', fontWeight: '600', fill: '#5A7387' }}>
-        LTV
+      <text x={cx} y={cy + 10} textAnchor="middle" style={{ fontSize: '9px', fontWeight: '500', fill: '#9CA3AF' }}>
+        of value
       </text>
     </svg>
   );
@@ -4020,7 +4020,7 @@ function AffordabilityEstimateStep() {
           background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)',
           pointerEvents: 'none',
         }} />
-        <p style={{ fontSize: '13px', fontWeight: '600', color: 'rgba(255,255,255,0.70)', marginBottom: '8px', letterSpacing: '0.01em' }}>
+        <p style={{ fontSize: '13px', fontWeight: '500', color: 'rgba(255,255,255,0.70)', marginBottom: '8px' }}>
           You could borrow up to
         </p>
         <p
@@ -4045,14 +4045,14 @@ function AffordabilityEstimateStep() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
         {/* Max borrowing */}
         <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-          <p style={{ fontSize: '10px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+          <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', marginBottom: '6px' }}>
             Max loan
           </p>
           <p className="font-display" style={{ fontSize: '18px', fontWeight: '500', color: '#182026', letterSpacing: '-0.02em' }}>
             {hasData ? fmt(displayLoan) : '—'}
           </p>
           {totalMonthlyCommitments > 0 && (
-            <p style={{ fontSize: '10px', fontWeight: '500', color: '#9CA3AF', marginTop: '3px' }}>
+            <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', marginTop: '3px' }}>
               {fmt(totalMonthlyCommitments)}/mo outgoings
             </p>
           )}
@@ -4060,21 +4060,21 @@ function AffordabilityEstimateStep() {
 
         {/* Deposit */}
         <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-          <p style={{ fontSize: '10px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+          <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', marginBottom: '6px' }}>
             Deposit
           </p>
           <p className="font-display" style={{ fontSize: '18px', fontWeight: '500', color: '#182026', letterSpacing: '-0.02em' }}>
             {fmtPct(depositPctDisplay)}
           </p>
-          <p style={{ fontSize: '10px', fontWeight: '500', color: '#9CA3AF', marginTop: '3px' }}>
+          <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', marginTop: '3px' }}>
             {deposit > 0 ? fmt(deposit) : 'Not entered'}
           </p>
         </div>
 
-        {/* LTV donut */}
+        {/* Loan to value donut */}
         <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-          <p style={{ fontSize: '10px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.05em', alignSelf: 'flex-start' }}>
-            LTV
+          <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', alignSelf: 'flex-start' }}>
+            Loan to value
           </p>
           <AffordabilityDonut ltv={actualLTV} />
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -4119,7 +4119,7 @@ function AffordabilityEstimateStep() {
             <EditField label="Property value" value={editPropertyValue} onChange={setEditPropertyValue} />
             <EditField label="Deposit amount" value={editDeposit} onChange={setEditDeposit} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label style={{ fontSize: '11px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <label style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF' }}>
                 Monthly outgoings
               </label>
               <p style={{ fontSize: '14px', fontWeight: '600', color: '#9CA3AF', padding: '8px 0' }}>

@@ -10,7 +10,6 @@ import { TaskList } from '@/components/actions/TaskList';
 import { AIActivityIndicator } from '@/components/status/AIActivityIndicator';
 import { ApplicationFormModal } from '@/components/form/ApplicationFormModal';
 import { FloatingChat } from '@/components/chat/FloatingChat';
-import { ContextualAssistant } from '@/components/intelligence/ContextualAssistant';
 import { AdvisorInbox } from '@/components/inbox/AdvisorInbox';
 import { ActivityProvider } from '@/context/ActivityContext';
 
@@ -116,8 +115,6 @@ export default function MortgageApplication() {
       {/* Floating chat button + window — button hidden on documents page (bottom bar replaces it) */}
       <FloatingChat hideButton={selectedJourneyStep === 'documents'} />
 
-      {/* LendWell assistant — positioned bottom-right, visible during form completion */}
-      <ContextualAssistant />
     </div>
     </ActivityProvider>
   );
