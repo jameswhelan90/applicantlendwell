@@ -10,7 +10,6 @@ import {
   Loader2,
   Upload,
   FileText,
-  Sparkles,
   X,
 } from 'lucide-react';
 
@@ -200,7 +199,7 @@ export function InlineDocumentPrompt({
 
       {/* Header with LendWell badge */}
       <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid #EBEBEB' }}>
-        <Sparkles className="w-4 h-4" style={{ color: '#3126E3' }} />
+        <img src="/images/lendwell-ai-logo.svg" alt="" className="w-4 h-4" />
         <span className="text-xs font-semibold" style={{ color: '#3126E3' }}>
           LendWell will verify automatically
         </span>

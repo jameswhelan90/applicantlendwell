@@ -1,7 +1,7 @@
 'use client';
 
 import { AIActivity } from '@/types/tasks';
-import { CheckCircle2, Loader2, Sparkles } from 'lucide-react';
+import { CheckCircle2, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface AIActivityFeedProps {
@@ -59,7 +59,7 @@ export function AIActivityFeed({ activities: activitiesProp }: AIActivityFeedPro
   return (
     <div className="bg-card rounded-lg shadow-card border border-border p-5">
       <div className="flex items-center gap-2 mb-4">
-        <Sparkles className="w-3.5 h-3.5 text-accent" />
+        <img src="/images/lendwell-ai-logo.svg" alt="" className="w-3.5 h-3.5" />
         <p className="text-xs font-semibold text-muted-foreground">
           Working in the background
         </p>

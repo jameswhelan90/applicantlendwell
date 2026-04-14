@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useApplication } from '@/context/ApplicationContext';
-import { MessageSquare, X, Send, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Send } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -168,7 +168,7 @@ export function ContextualAssistant() {
               flexShrink: 0,
             }}
           >
-            <Sparkles className="w-4 h-4 text-white" />
+            <img src="/images/lendwell-ai-logo.svg" alt="" className="w-4 h-4" />
           </div>
           <span className="text-sm font-semibold text-[#182026]">Ask LendWell</span>
         </button>
@@ -208,7 +208,7 @@ export function ContextualAssistant() {
                   background: 'linear-gradient(135deg, #3126E3, #473FE6)',
                 }}
               >
-                <Sparkles className="w-3.5 h-3.5 text-white" />
+                <img src="/images/lendwell-ai-logo.svg" alt="" className="w-3.5 h-3.5" />
               </div>
               <span className="text-sm font-semibold text-[#182026]">Application Guide</span>
             </div>
@@ -235,7 +235,7 @@ export function ContextualAssistant() {
                 className="flex flex-col items-center justify-center h-full text-center"
                 style={{ color: '#6B7280' }}
               >
-                <Sparkles className="w-8 h-8 mb-2 opacity-40" />
+                <img src="/images/lendwell-ai-logo.svg" alt="" className="w-8 h-8 mb-2 opacity-40" />
                 <p className="text-sm font-medium">Hi there! I'm your guide</p>
                 <p className="text-xs mt-1">
                   I'll provide tips and answer questions about your application.

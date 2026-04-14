@@ -39,7 +39,6 @@ import {
   Loader2,
   Upload,
   FileText,
-  Sparkles,
   MessageSquare,
   X,
   User,
@@ -1081,7 +1080,7 @@ function BulkDropZone({
                   ) : file.phase === 'issue' ? (
                     <AlertCircle className="w-4 h-4" style={{ color: '#E07900' }} />
                   ) : file.phase === 'scanning' ? (
-                    <Sparkles className="w-4 h-4 animate-pulse" style={{ color: '#473FE6' }} />
+                    <img src="/images/lendwell-ai-logo.svg" alt="" className="w-4 h-4 animate-pulse" />
                   ) : (
                     <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#473FE6' }} />
                   )}

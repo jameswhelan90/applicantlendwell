@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { X, Send, Phone, Mail, MessageSquare, Sparkles } from 'lucide-react';
+import { X, Send, Phone, Mail, MessageSquare } from 'lucide-react';
 import { useChat as useChatPanel } from '@/context/ChatContext';
 import { useApplication } from '@/context/ApplicationContext';
 import { useChat } from '@ai-sdk/react';
@@ -150,13 +150,18 @@ export function FloatingChat({ hideButton = false }: FloatingChatProps) {
     zIndex: 50,
   };
 
-  // Extract text from an AI SDK message
+  // Extract text from an AI SDK message — check parts first, fall back to content string
   const getMessageText = (msg: (typeof aiMessages)[number]): string => {
-    if (!msg.parts) return '';
-    return msg.parts
-      .filter((p) => p.type === 'text')
-      .map((p) => (p as { type: 'text'; text: string }).text)
-      .join('');
+    if (Array.isArray(msg.parts)) {
+      const fromParts = msg.parts
+        .filter((p) => p.type === 'text')
+        .map((p) => (p as { type: 'text'; text: string }).text)
+        .join('');
+      if (fromParts) return fromParts;
+    }
+    const content = (msg as { content?: string }).content;
+    if (typeof content === 'string' && content) return content;
+    return '';
   };
 
   return (
@@ -269,7 +274,7 @@ export function FloatingChat({ hideButton = false }: FloatingChatProps) {
                     return (
                       <div key={msg.id} className="flex gap-3 items-start">
                         <div className="flex items-center justify-center flex-shrink-0" style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#EDECFD', border: '1px solid #D9D7FF' }}>
-                          <Sparkles className="w-4 h-4" style={{ color: '#3126E3' }} />
+                          <img src="/images/lendwell-ai-logo.svg" alt="" className="w-4 h-4" />
                         </div>
                         <div className="flex flex-col gap-1">
                           <span className="text-xs font-semibold" style={{ color: '#182026' }}>LendWell</span>
@@ -353,7 +358,7 @@ function TypingIndicator({ name, isAdviser }: { name: string; isAdviser: boolean
         <img src="/images/adviser-avatar.jpg" alt={name} className="flex-shrink-0 object-cover" style={{ width: '36px', height: '36px', borderRadius: '50%' }} />
       ) : (
         <div className="flex items-center justify-center flex-shrink-0" style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#EEF2FF', border: '1px solid #C7D2FE' }}>
-          <Sparkles className="w-4 h-4" style={{ color: '#3126E3' }} />
+          <img src="/images/lendwell-ai-logo.svg" alt="" className="w-4 h-4" />
         </div>
       )}
       <div className="flex flex-col gap-1">

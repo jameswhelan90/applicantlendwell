@@ -10,7 +10,6 @@ import {
   Loader2,
   Upload,
   FileText,
-  Sparkles,
   X,
   ChevronDown,
   Paperclip,
@@ -360,7 +359,7 @@ export function RequirementsDocuments() {
         {/* LendWell badge — top of card */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4" style={{ borderBottom: '1px solid #EBEBEB' }}>
           <div className="flex items-center gap-2">
-<Sparkles className="w-4 h-4" style={{ color: '#3126E3' }} />
+<img src="/images/lendwell-ai-logo.svg" alt="" className="w-4 h-4" />
                         <span className="text-xs font-semibold" style={{ color: '#3126E3' }}>
               LendWell will categorise your documents automatically
             </span>
