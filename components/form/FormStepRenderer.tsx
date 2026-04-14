@@ -1215,7 +1215,6 @@ function IdDobStep() {
         label="Date of birth" 
         value={d.dateOfBirth} 
         onChange={(v) => setField('dateOfBirth', v)} 
-        hint="You must be at least 18 years old to apply"
       />
     </div>
   );
