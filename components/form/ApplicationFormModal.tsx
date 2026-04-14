@@ -81,7 +81,7 @@ function StepDotsIndicator() {
                 width: isCurrent ? '26px' : '18px',
                 height: '4px',
                 borderRadius: '999px',
-                backgroundColor: isCompleted || isCurrent ? '#3126E3' : 'rgba(24,32,38,0.12)',
+                backgroundColor: isCompleted || isCurrent ? '#3126E3' : 'rgba(49,38,227,0.14)',
                 opacity: isCompleted ? 0.45 : 1,
                 transition: 'all 180ms ease',
                 cursor: 'default',

@@ -104,7 +104,7 @@ export function TaskList() {
               style={{
                 flex: 1,
                 borderRadius: '999px',
-                backgroundColor: section.status === 'complete' ? '#3126E3' : '#E1E8EE',
+                backgroundColor: section.status === 'complete' ? '#3126E3' : 'rgba(49,38,227,0.12)',
                 transition: 'background-color 500ms ease',
               }}
             />
