@@ -5,6 +5,7 @@ import { useApplication } from '@/context/ApplicationContext';
 import { StepId } from '@/context/ApplicationContext';
 import { ApplicationData, MortgageDocument } from '@/types/tasks';
 import { useFormFooter } from './FormFooterContext';
+import { AddressAutocomplete } from './AddressAutocomplete';
 import { useActivityStream } from '@/hooks/useActivityStream';
 import { RequirementsDocuments } from '@/components/documents/RequirementsDocuments';
 import { InlineDocumentPrompt } from '@/components/documents/InlineDocumentPrompt';
@@ -1311,7 +1312,15 @@ function IdAddressStep() {
         title="Current address"
         description="Where you live now. Most lenders require at least 3 years of address history."
       />
-      <TextInput label="Address" value={d.currentAddress} onChange={(v) => setField('currentAddress', v)} placeholder="14 Elm Street, London" autoFocus />
+      <AddressAutocomplete
+        label="Address"
+        value={d.currentAddress}
+        onChange={(address, postcode) => {
+          setField('currentAddress', address);
+          if (postcode) setField('postcode', postcode);
+        }}
+        autoFocus
+      />
       <TextInput label="Postcode / Eircode" value={d.postcode} onChange={(v) => setField('postcode', v)} placeholder="SW1A 1AA" />
       <TextInput label="Move-in date" value={d.moveInDate} onChange={(v) => setField('moveInDate', v)} type="date" />
       <SelectInput
@@ -1341,12 +1350,13 @@ function IdAddressHistoryStep() {
         title="Previous address"
         description="If you have been at your current address less than 3 years, please provide your previous address."
       />
-      <TextInput 
-        label="Previous address" 
-        value={d.previousAddress} 
-        onChange={(v) => setField('previousAddress', v)} 
-        placeholder="Previous address (if less than 3 years at current)"
-        autoFocus 
+      <AddressAutocomplete
+        label="Previous address"
+        value={d.previousAddress}
+        onChange={(address) => setField('previousAddress', address)}
+        placeholder="Start typing your previous address…"
+        hint="Only needed if you moved in less than 3 years ago"
+        autoFocus
       />
       {/* Contextual document prompt after identity questions */}
       <div className="mt-8 pt-6" style={{ borderTop: '1px solid #E5E7EB' }}>
@@ -1857,12 +1867,11 @@ function PropDetailsStep() {
         description={hasProperty ? "Tell us about the property you have found." : "This helps us estimate your borrowing needs."}
       />
       {hasProperty && (
-        <TextInput 
-          label="Property address" 
-          value={d.propertyAddress} 
-          onChange={(v) => setField('propertyAddress', v)} 
-          placeholder="123 Main Street, London"
-          autoFocus 
+        <AddressAutocomplete
+          label="Property address"
+          value={d.propertyAddress}
+          onChange={(address) => setField('propertyAddress', address)}
+          autoFocus
         />
       )}
       <SelectInput

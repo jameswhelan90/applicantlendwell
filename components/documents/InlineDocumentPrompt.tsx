@@ -10,8 +10,13 @@ import {
   Loader2,
   Upload,
   FileText,
-  X,
+  Sparkles,
 } from 'lucide-react';
+import {
+  AI_EXTRACTION_MESSAGES,
+  AI_VERIFIED_MESSAGES,
+  DEMO_EXTRACTED_FIELDS,
+} from '@/constants/documentMessages';
 
 // ─── Status helpers ──────────────────────────────────────────────────────────
 
@@ -88,15 +93,19 @@ export function InlineDocumentPrompt({
     triggerActivity('document_scan', { documentName: file.name });
 
     // Simulate upload completion
+    const extractMsg = AI_EXTRACTION_MESSAGES[requirementId] || 'Classifying document…';
+    const verifiedMsg = AI_VERIFIED_MESSAGES[requirementId] || 'Document verified';
+    const extractedFields = DEMO_EXTRACTED_FIELDS[requirementId];
+
     setTimeout(() => {
-      setLocalFile({ file, status: 'categorizing', aiMessage: 'LendWell is reviewing your document...' });
+      setLocalFile({ file, status: 'categorizing', aiMessage: extractMsg });
     }, 500);
 
     // Simulate AI processing
     setTimeout(() => {
       updateRequirementStatus(requirementId, 'reviewing', {
         fileName: file.name,
-        aiMessage: 'LendWell is checking your document',
+        aiMessage: extractMsg,
       });
       setLocalFile(null);
     }, 1500);
@@ -105,7 +114,8 @@ export function InlineDocumentPrompt({
     setTimeout(() => {
       updateRequirementStatus(requirementId, 'verified', {
         fileName: file.name,
-        aiMessage: 'Document verified',
+        aiMessage: verifiedMsg,
+        extractedFields,
       });
     }, 3500);
   };
@@ -136,22 +146,52 @@ export function InlineDocumentPrompt({
 
   // Already complete state
   if (isComplete) {
+    const fields = requirement.extractedFields;
     return (
       <div
-        className="flex items-center gap-4 p-4 rounded-xl"
-        style={{ backgroundColor: '#F0FBDF', border: '1px solid rgba(60, 96, 6, 0.2)' }}
+        className="rounded-xl overflow-hidden"
+        style={{ backgroundColor: '#F0FBDF', border: '1px solid rgba(60,96,6,0.15)' }}
       >
-        <CheckCircle2 className="w-5 h-5 flex-shrink-0" style={{ color: '#6CAD0A' }} />
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold" style={{ color: '#3C6006' }}>
-            {displayTitle}
-          </p>
-          {requirement.uploadedFileName && (
-            <p className="text-xs mt-0.5" style={{ color: '#5A7D23' }}>
-              {requirement.uploadedFileName} — Verified
+        {/* Success header */}
+        <div className="flex items-center gap-3 px-4 py-3">
+          <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#6CAD0A' }} />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold" style={{ color: '#3C6006' }}>
+              {displayTitle}
             </p>
-          )}
+            {requirement.uploadedFileName && (
+              <p className="text-xs mt-0.5 font-medium" style={{ color: '#5A7D23' }}>
+                {requirement.uploadedFileName} · {requirement.aiMessage || 'Verified'}
+              </p>
+            )}
+          </div>
         </div>
+        {/* Extracted fields */}
+        {fields && Object.keys(fields).length > 0 && (
+          <div
+            className="px-4 pb-3"
+            style={{ borderTop: '1px solid rgba(60,96,6,0.1)' }}
+          >
+            <div className="flex items-center gap-1.5 pt-2.5 mb-2">
+              <Sparkles className="w-3 h-3" style={{ color: '#3C6006' }} />
+              <span className="text-xs font-semibold" style={{ color: '#3C6006' }}>
+                Extracted by LendWell AI
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+              {Object.entries(fields).map(([key, val]) => (
+                <div key={key}>
+                  <p className="text-xs font-medium capitalize" style={{ color: '#5A7D23' }}>
+                    {key.replace(/_/g, ' ')}
+                  </p>
+                  <p className="text-xs font-semibold" style={{ color: '#1F3A0A' }}>
+                    {val}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   }

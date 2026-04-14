@@ -4,6 +4,7 @@ import { useRef, useState, useMemo, useCallback, useEffect } from 'react';
 import { useApplication } from '@/context/ApplicationContext';
 import { useChat } from '@/context/ChatContext';
 import { DocumentRequirement, RequirementStatus } from '@/types/tasks';
+import { AI_EXTRACTION_MESSAGES, AI_VERIFIED_MESSAGES } from '@/constants/documentMessages';
 
 // ─── Upload Flow Types ───────────────────────────────────────────────────────
 
@@ -1284,20 +1285,6 @@ export function DocumentsUploadSection() {
       setUploadingFiles(prev => prev.map(f => ({ ...f, phase: 'scanning' as const })));
       
       // Update requirement statuses to reviewing with specific AI extraction messages
-      const AI_EXTRACTION_MESSAGES: Record<string, string> = {
-        'req-passport':         'Detecting document type… reading identity fields',
-        'req-proof-of-address': 'Verifying address details and issue date',
-        'req-payslips':         'Extracting salary, employer, and pay period',
-        'req-p60':              'Reading annual income and PAYE reference',
-        'req-bank-statements':  'Scanning transactions and verifying account holder',
-        'req-employer-reference': 'Confirming employment terms and start date',
-        'req-sa302':            'Extracting self-assessment income figures',
-        'req-business-accounts': 'Analysing company profit and director drawings',
-        'req-contract':         'Reading contract type, salary, and start date',
-        'req-deposit-proof':    'Verifying balance, account holder, and date range',
-        'req-gift-letter':      'Confirming donor details and gift amount',
-        'req-aip':              'Reading lender, reference number, and expiry',
-      };
       newUploadingFiles.forEach(f => {
         const docNames = DOCUMENT_NAME_MAPPINGS[f.assignedDocId] || [f.originalName];
         const realisticName = docNames[Math.floor(Math.random() * docNames.length)];
@@ -1321,20 +1308,6 @@ export function DocumentsUploadSection() {
             : uf
         ));
 
-        const AI_VERIFIED_MESSAGES: Record<string, string> = {
-          'req-passport':         'Identity confirmed — name and date of birth extracted',
-          'req-proof-of-address': 'Address verified — dated within 3 months',
-          'req-payslips':         'Salary confirmed — income figures sent to your application',
-          'req-p60':              'Annual income verified and cross-referenced',
-          'req-bank-statements':  'Statements accepted — 3 months of transactions reviewed',
-          'req-employer-reference': 'Employment confirmed — start date and role extracted',
-          'req-sa302':            'Self-assessment income verified',
-          'req-business-accounts': 'Accounts verified — net profit figures extracted',
-          'req-contract':         'Contract confirmed — terms and salary extracted',
-          'req-deposit-proof':    'Deposit funds verified — balance and date confirmed',
-          'req-gift-letter':      'Gift letter accepted — donor confirmed as non-repayable',
-          'req-aip':              'AIP confirmed — lender reference recorded',
-        };
         if (hasIssue) {
           updateRequirementStatus(f.assignedDocId, 'issue', {
             fileName: realisticName,
