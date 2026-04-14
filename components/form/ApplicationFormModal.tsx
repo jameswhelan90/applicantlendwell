@@ -1,12 +1,98 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useApplication, ALL_STEPS } from '@/context/ApplicationContext';
+import { useEffect, useState } from 'react';
+import { useApplication, ALL_STEPS, STEP_SECTION, StepId } from '@/context/ApplicationContext';
 import { X, ArrowLeft, ArrowRight, MessageSquare } from 'lucide-react';
 import { useChat } from '@/context/ChatContext';
 import { FormStepRenderer } from './FormStepRenderer';
 import { FormFooterProvider, useFormFooter } from './FormFooterContext';
 import { StepProgressNavigator } from './StepProgressNavigator';
+
+const STEP_LABELS: Partial<Record<StepId, string>> = {
+  id_name: 'Your name', id_dob: 'Date of birth', id_contact: 'Contact details',
+  id_nationality: 'Nationality', id_ni_pps: 'National Insurance', id_address: 'Current address',
+  id_address_history: 'Address history', hh_circumstances: 'Relationship status',
+  hh_application_mode: 'Joint or sole', hh_second_applicant: 'Second applicant',
+  hh_second_applicant_contact: 'Second applicant contact', hh_dependants: 'Dependants',
+  intent_type: 'Mortgage type', intent_remortgage: 'Remortgage details',
+  intent_btl: 'Buy-to-let', intent_timeline: 'Timeline',
+  prop_stage: 'Property stage', prop_details: 'Property details', prop_value: 'Property value',
+  dep_amount: 'Deposit amount', dep_source: 'Deposit source', dep_gift_details: 'Gift details',
+  pm_affordability: 'Affordability',
+  emp_status: 'Employment status', emp_details: 'Employment details',
+  emp_self_employed: 'Self-employment', emp_second_applicant: 'Joint employment',
+  inc_salary: 'Salary', inc_additional: 'Additional income', inc_second_applicant: 'Joint income',
+  commit_outgoings: 'Monthly outgoings', commit_childcare: 'Childcare costs',
+  id_upload_photo: 'Photo ID', hh_upload_joint_id: 'Joint applicant ID',
+  intent_upload_mortgage: 'Mortgage statement', intent_upload_rental: 'Rental income proof',
+  emp_upload_payslips: 'Payslips', emp_upload_tax: 'Tax returns', emp_upload_joint: 'Joint payslips',
+  inc_upload_bank: 'Bank statements', inc_upload_joint_bank: 'Joint bank statements',
+  dep_upload_gift: 'Gift letter', dep_upload_giftor: 'Giftor ID',
+  ag_declarations: 'Declarations', ag_signature: 'Signature',
+};
+
+const NON_QUESTION_STEPS = new Set<StepId>([
+  'welcome', 'orientation', 'intro_about_you', 'intro_property_mortgage',
+  'intro_employment_income', 'intro_documents', 'intro_agreements',
+  'docs_overview', 'completion',
+]);
+
+function StepDotsIndicator() {
+  const { currentStep, currentSectionId } = useApplication();
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  const sectionSteps = ALL_STEPS.filter(
+    s => STEP_SECTION[s] === currentSectionId && !NON_QUESTION_STEPS.has(s)
+  );
+  const currentIdx = sectionSteps.indexOf(currentStep);
+  if (sectionSteps.length < 2 || currentIdx === -1) return null;
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+      {sectionSteps.map((step, idx) => {
+        const isCompleted = idx < currentIdx;
+        const isCurrent = idx === currentIdx;
+        return (
+          <div key={step} style={{ position: 'relative' }}>
+            {hoveredIdx === idx && (
+              <div style={{
+                position: 'absolute',
+                bottom: 'calc(100% + 7px)',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: '#182026',
+                color: '#ffffff',
+                fontSize: '11px',
+                fontWeight: '500',
+                padding: '3px 8px',
+                borderRadius: '4px',
+                whiteSpace: 'nowrap',
+                pointerEvents: 'none',
+                zIndex: 100,
+                lineHeight: '1.5',
+              }}>
+                {STEP_LABELS[step] ?? step}
+              </div>
+            )}
+            <div
+              onMouseEnter={() => setHoveredIdx(idx)}
+              onMouseLeave={() => setHoveredIdx(null)}
+              style={{
+                width: isCurrent ? '20px' : '14px',
+                height: '3px',
+                borderRadius: '999px',
+                backgroundColor: isCompleted || isCurrent ? '#3126E3' : 'rgba(24,32,38,0.12)',
+                opacity: isCompleted ? 0.45 : 1,
+                transition: 'all 180ms ease',
+                cursor: 'default',
+              }}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 function ModalContent() {
   const {
@@ -64,13 +150,18 @@ function ModalContent() {
 
       {/* Header */}
       <header className="sticky top-0 flex-shrink-0 z-10">
-        <div className="w-full flex items-center justify-between" style={{ backgroundColor: 'transparent', borderWidth: '0px 0px 0px 0px', borderRadius: '16px 16px 0 0', paddingLeft: '16px', paddingRight: '24px', paddingTop: '16px', paddingBottom: '0px' }}>
+        <div className="w-full flex items-center" style={{ position: 'relative', backgroundColor: 'transparent', borderRadius: '16px 16px 0 0', paddingLeft: '16px', paddingRight: '24px', paddingTop: '16px', paddingBottom: '0px' }}>
 
-          {/* Step Progress Navigator - replaces static step counter */}
+          {/* Step Progress Navigator */}
           <StepProgressNavigator />
 
+          {/* Centered question step dots */}
+          <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+            <StepDotsIndicator />
+          </div>
+
           {/* Header actions */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 ml-auto">
             {/* Ask LendWell */}
             <button
               type="button"
