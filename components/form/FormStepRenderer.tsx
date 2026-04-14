@@ -803,10 +803,17 @@ function ChatBubble({
   if (!isVisible) return null;
   return (
     <div
-      className="max-w-[85%] px-4 py-3 animate-in fade-in slide-in-from-bottom-1 duration-150"
-      style={{ backgroundColor: '#F1F3F7', borderRadius: '18px 18px 18px 4px' }}
+      className="max-w-[85%] px-4 py-2.5 animate-in fade-in slide-in-from-bottom-1 duration-150"
+      style={{
+        backgroundColor: 'rgba(235,235,240,0.9)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        borderRadius: '18px 18px 18px 4px',
+        border: '1px solid rgba(255,255,255,0.7)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+      }}
     >
-      <p className="text-sm font-medium leading-relaxed" style={{ color: '#182026' }}>
+      <p className="text-sm font-medium leading-relaxed" style={{ color: '#1C1C1E' }}>
         {animate ? (
           <AnimatedText text={message} onComplete={onAnimationComplete} />
         ) : (
@@ -866,37 +873,36 @@ function WelcomeStep() {
     <div className="w-full">
       {/* Chat container */}
       <div
-        className="rounded-xl overflow-hidden"
+        className="rounded-2xl overflow-hidden"
         style={{
-          backgroundColor: '#ffffff',
-          border: 'none',
-          boxShadow: '0 2px 8px rgba(24, 32, 38, 0.06)',
+          backgroundColor: 'rgba(255,255,255,0.75)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          border: '1px solid rgba(255,255,255,0.6)',
+          boxShadow: '0 4px 24px rgba(24,32,38,0.08), 0 1px 4px rgba(24,32,38,0.04)',
         }}
       >
         {/* Chat header — advisor info */}
         <div
           className="flex items-center gap-3 px-5 py-4"
-          style={{ borderBottom: '1px solid #F1F3F7' }}
+          style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}
         >
-          {/* Avatar */}
           <div className="relative flex-shrink-0">
             <img
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Bristol1-LccOjH08cdx6tLEzIFNynaSCoWK6y7.jpg"
               alt="Sarah Mitchell"
-              className="w-11 h-11 rounded-full object-cover"
+              className="w-10 h-10 rounded-full object-cover"
             />
-            {/* Online indicator */}
             <span
-              className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white"
-              style={{ backgroundColor: '#22C55E' }}
+              className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white"
+              style={{ backgroundColor: '#34C759' }}
             />
           </div>
-          {/* Name and status */}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold" style={{ color: '#182026' }}>
               Sarah Mitchell
             </p>
-            <p className="text-xs font-medium text-muted-foreground">
+            <p className="text-xs font-medium" style={{ color: '#9CA3AF' }}>
               Your Mortgage Advisor
             </p>
           </div>
@@ -905,28 +911,25 @@ function WelcomeStep() {
         {/* Chat messages area */}
         <div
           ref={chatContainerRef}
-          className="px-5 py-6 space-y-3 overflow-y-auto"
-          style={{ minHeight: '280px', maxHeight: '400px' }}
+          className="px-5 py-5 space-y-2 overflow-y-auto"
+          style={{ minHeight: '260px', maxHeight: '380px', backgroundColor: 'rgba(247,248,252,0.5)' }}
         >
-          {/* Message bubbles */}
           {messages.map((msg, idx) => {
             const isCompleted = completedMessages.includes(idx);
             const isCurrentlyTyping = currentMessageIndex === idx && !isCompleted;
             const shouldShow = idx <= currentMessageIndex;
-
             if (!shouldShow) return null;
-
             return (
               <div key={idx} className="flex items-end gap-2">
-                {/* Small avatar for first message only */}
-                {idx === 0 && (
+                {idx === 0 ? (
                   <img
                     src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Bristol1-LccOjH08cdx6tLEzIFNynaSCoWK6y7.jpg"
                     alt=""
-                    className="w-6 h-6 rounded-full object-cover flex-shrink-0"
+                    className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-0.5"
                   />
+                ) : (
+                  <div className="w-6 flex-shrink-0" />
                 )}
-                {idx !== 0 && <div className="w-6 flex-shrink-0" />}
                 <ChatBubble
                   message={msg}
                   isVisible={true}
@@ -937,18 +940,25 @@ function WelcomeStep() {
             );
           })}
 
-          {/* Typing indicator - shows between messages */}
           {isTyping && currentMessageIndex < messages.length - 1 && (
             <div className="flex items-end gap-2">
-              {currentMessageIndex === -1 && (
+              {currentMessageIndex === -1 ? (
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Bristol1-LccOjH08cdx6tLEzIFNynaSCoWK6y7.jpg"
                   alt=""
-                  className="w-6 h-6 rounded-full object-cover flex-shrink-0"
+                  className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-0.5"
                 />
+              ) : (
+                <div className="w-6 flex-shrink-0" />
               )}
-              {currentMessageIndex >= 0 && <div className="w-6 flex-shrink-0" />}
-              <div style={{ backgroundColor: '#F1F3F7', borderRadius: '18px 18px 18px 4px' }}>
+              <div style={{
+                backgroundColor: 'rgba(235,235,240,0.9)',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+                borderRadius: '18px 18px 18px 4px',
+                border: '1px solid rgba(255,255,255,0.7)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+              }}>
                 <TypingIndicator />
               </div>
             </div>
