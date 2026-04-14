@@ -25,14 +25,20 @@ export default function MortgageApplication() {
   return (
     <ActivityProvider>
     <div className="min-h-screen bg-background" style={{ backgroundColor: '#F7F8FC' }}>
-      {/* Header — full-width sticky band with inset rounded card */}
+      {/* Header — full-width sticky band with inset glass card */}
       <header
         className="sticky top-0 z-20 w-full"
-        style={{ backgroundColor: '#F7F8FC', paddingTop: '12px', paddingLeft: '12px', paddingRight: '12px' }}
+        style={{ backgroundColor: 'transparent', paddingTop: '24px', paddingLeft: '24px', paddingRight: '24px' }}
       >
         <div
           className="w-full px-6 py-4 flex items-center justify-between"
-          style={{ backgroundColor: '#ffffff', borderRadius: '12px' }}
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.72)',
+            backdropFilter: 'blur(24px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+            borderRadius: '16px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(255,255,255,0.6) inset',
+          }}
         >
           <div className="flex items-center gap-3">
             <img src="/images/logotype.svg" alt="Lendwell" className="h-5 w-auto" />

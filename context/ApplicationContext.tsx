@@ -517,10 +517,16 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
   // ── Data updates ───────────────────────────────────────────────────────
 
   const setField = useCallback((field: string, value: any) => {
-    setState((prev) => ({
-      ...prev,
-      data: { ...prev.data, [field]: value },
-    }));
+    setState((prev) => {
+      // Clear autofill source when user edits the field — trust user input
+      const newAutofillSources = { ...prev.autofillSources };
+      delete newAutofillSources[field];
+      return {
+        ...prev,
+        data: { ...prev.data, [field]: value },
+        autofillSources: newAutofillSources,
+      };
+    });
   }, []);
 
   // Mark a step's section as in_progress or complete, and update currentSection

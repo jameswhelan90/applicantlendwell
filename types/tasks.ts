@@ -258,4 +258,7 @@ export interface ApplicationState {
   aiActivity: AIActivity[];
   blockingIssues: BlockingIssue[];
   readinessScore: number; // 0-100
+  // Tracks which fields were auto-populated from document extraction
+  // Cleared when the user edits the field (trust user input)
+  autofillSources: Record<string, string>;
 }

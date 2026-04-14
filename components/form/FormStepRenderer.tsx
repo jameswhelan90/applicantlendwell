@@ -36,6 +36,7 @@ import {
   Briefcase,
   Shield,
   Type,
+  Wand2,
 } from 'lucide-react';
 
 // ─── Shared primitives ──────────────────────────────────────────────────────
@@ -88,6 +89,7 @@ function TextInput({
   type = 'text',
   hint,
   autoFocus,
+  autofillSource,
 }: {
   label: string;
   value: string;
@@ -96,7 +98,22 @@ function TextInput({
   type?: string;
   hint?: string;
   autoFocus?: boolean;
+  autofillSource?: string;
 }) {
+  const [isFocused, setIsFocused] = useState(false);
+  // Autofill badge disappears as soon as user starts typing
+  const [showAutofill, setShowAutofill] = useState(!!autofillSource);
+
+  const handleChange = (v: string) => {
+    if (showAutofill) setShowAutofill(false);
+    onChange(v);
+  };
+
+  // Re-sync if parent changes autofillSource (e.g., navigating to step)
+  useEffect(() => {
+    setShowAutofill(!!autofillSource);
+  }, [autofillSource]);
+
   return (
     <div className="mb-5">
       <label className="block text-sm font-semibold mb-1.5" style={{ color: '#182026' }}>
@@ -107,11 +124,29 @@ function TextInput({
         autoFocus={autoFocus}
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         placeholder={placeholder}
         className="w-full px-4 py-3 rounded-lg border text-sm font-medium transition-colors outline-none"
-        style={{ borderColor: 'hsl(220 15% 90%)', backgroundColor: '#ffffff', color: '#182026' }}
+        style={{
+          borderColor: isFocused ? '#473FE6' : showAutofill ? 'rgba(71,63,230,0.3)' : 'hsl(220 15% 90%)',
+          backgroundColor: showAutofill ? 'rgba(71,63,230,0.02)' : '#ffffff',
+          color: '#182026',
+          boxShadow: isFocused ? '0 0 0 2px rgba(71,63,230,0.12)' : 'none',
+        }}
       />
+      {showAutofill && autofillSource && (
+        <div className="flex items-center gap-1 mt-1.5">
+          <Wand2 style={{ width: '10px', height: '10px', color: '#473FE6', flexShrink: 0 }} />
+          <span style={{ fontSize: '11px', fontWeight: '600', color: '#473FE6' }}>
+            Autofilled · {autofillSource}
+          </span>
+          <span style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: '500' }}>
+            — just type to override
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -501,50 +536,95 @@ function RadioGroup({
   options,
   columns = 1,
   hint,
+  autoAdvance = false,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; description?: string }[];
   columns?: 1 | 2 | 3;
   hint?: string;
+  autoAdvance?: boolean;
 }) {
+  const { onContinue } = useFormFooter();
   const gridCols = columns === 3 ? 'grid-cols-3' : columns === 2 ? 'grid-cols-2' : 'grid-cols-1';
-  
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleSelect = (v: string) => {
+    onChange(v);
+    if (autoAdvance && onContinue) {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => onContinue(), 420);
+    }
+  };
+
+  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
+
+  const isGrid = columns > 1;
+
   return (
     <div className="mb-5">
-      <label className="block text-sm font-semibold mb-3" style={{ color: '#182026' }}>
-        {label}
-      </label>
-      {hint && <p className="text-xs text-muted-foreground font-medium mb-2">{hint}</p>}
-      <div className={`grid ${gridCols} gap-2`}>
-        {options.map((o) => {
+      {label && (
+        <label className="block text-sm font-semibold mb-3" style={{ color: '#182026' }}>
+          {label}
+        </label>
+      )}
+      {hint && <p className="text-xs text-muted-foreground font-medium mb-3">{hint}</p>}
+      <div className={isGrid ? `grid ${gridCols} gap-2` : 'flex flex-col gap-2'}>
+        {options.map((o, idx) => {
           const isSelected = value === o.value;
+          // Keyboard letter hint A–Z for small option lists
+          const keyHint = options.length <= 9 ? String.fromCharCode(65 + idx) : null;
           return (
             <button
               key={o.value}
               type="button"
-              onClick={() => onChange(o.value)}
-              className="flex items-center gap-3 px-4 py-3 border text-left transition-all"
+              onClick={() => handleSelect(o.value)}
+              className="flex items-center gap-3 text-left transition-all"
               style={{
-                borderColor: isSelected ? '#473FE6' : 'hsl(220 15% 90%)',
-                backgroundColor: isSelected ? 'rgba(71, 63, 230, 0.04)' : '#ffffff',
-                boxShadow: isSelected ? '0 0 0 1px #473FE6' : 'none',
-                borderRadius: '8px',
+                borderRadius: '10px',
+                padding: o.description ? '14px 16px' : '12px 16px',
+                border: `1.5px solid ${isSelected ? '#473FE6' : 'hsl(220 15% 90%)'}`,
+                backgroundColor: isSelected ? 'rgba(71,63,230,0.04)' : '#ffffff',
+                boxShadow: isSelected ? '0 0 0 0.5px #473FE6' : 'none',
               }}
             >
-              <div
-                className="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all"
-                style={{
-                  borderColor: isSelected ? '#473FE6' : 'hsl(220 15% 85%)',
-                  backgroundColor: isSelected ? '#473FE6' : 'transparent',
-                }}
-              >
-                {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+              {/* Letter hint pill */}
+              {keyHint && !isGrid && (
+                <span
+                  className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold flex-shrink-0"
+                  style={{
+                    backgroundColor: isSelected ? '#473FE6' : '#F3F4F6',
+                    color: isSelected ? '#ffffff' : '#9CA3AF',
+                    border: isSelected ? 'none' : '1px solid #E5E7EB',
+                    transition: 'all 150ms ease',
+                  }}
+                >
+                  {isSelected ? <Check className="w-3 h-3" /> : keyHint}
+                </span>
+              )}
+              {/* Check for grid layout */}
+              {isGrid && (
+                <div
+                  className="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all"
+                  style={{
+                    borderColor: isSelected ? '#473FE6' : 'hsl(220 15% 85%)',
+                    backgroundColor: isSelected ? '#473FE6' : 'transparent',
+                  }}
+                >
+                  {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <span className="text-sm font-semibold" style={{ color: isSelected ? '#3126E3' : '#182026' }}>
+                  {o.label}
+                </span>
+                {o.description && (
+                  <p className="text-xs font-medium mt-0.5 leading-relaxed" style={{ color: '#5A7387' }}>
+                    {o.description}
+                  </p>
+                )}
               </div>
-              <span className="text-sm font-medium" style={{ color: '#182026' }}>
-                {o.label}
-              </span>
             </button>
           );
         })}
@@ -1102,6 +1182,7 @@ function IntroAgreementsStep() {
 function IdNameStep() {
   const { state, setField, completeStep } = useApplication();
   const d = state.data;
+  const af = state.autofillSources;
   useStepFooter(() => completeStep('id_name'));
 
   return (
@@ -1111,8 +1192,8 @@ function IdNameStep() {
         description="We will use your legal name throughout your mortgage application."
       />
       <div className="grid grid-cols-2 gap-x-4">
-        <TextInput label="First name" value={d.firstName} onChange={(v) => setField('firstName', v)} placeholder="Sarah" autoFocus />
-        <TextInput label="Last name" value={d.lastName} onChange={(v) => setField('lastName', v)} placeholder="Murphy" />
+        <TextInput label="First name" value={d.firstName} onChange={(v) => setField('firstName', v)} placeholder="Sarah" autoFocus autofillSource={af.firstName} />
+        <TextInput label="Last name" value={d.lastName} onChange={(v) => setField('lastName', v)} placeholder="Murphy" autofillSource={af.lastName} />
       </div>
     </div>
   );
@@ -1142,6 +1223,7 @@ function IdDobStep() {
 function IdContactStep() {
   const { state, setField, completeStep } = useApplication();
   const d = state.data;
+  const af = state.autofillSources;
   useStepFooter(() => completeStep('id_contact'));
 
   return (
@@ -1150,8 +1232,8 @@ function IdContactStep() {
         title="Contact details"
         description="We will only contact you about your mortgage application."
       />
-      <TextInput label="Phone number" value={d.phone} onChange={(v) => setField('phone', v)} placeholder="+44 7700 900000" type="tel" autoFocus />
-      <TextInput label="Email address" value={d.email} onChange={(v) => setField('email', v)} placeholder="sarah@example.com" type="email" />
+      <TextInput label="Phone number" value={d.phone} onChange={(v) => setField('phone', v)} placeholder="+44 7700 900000" type="tel" autoFocus autofillSource={af.phone} />
+      <TextInput label="Email address" value={d.email} onChange={(v) => setField('email', v)} placeholder="sarah@example.com" type="email" autofillSource={af.email} />
     </div>
   );
 }
@@ -1196,6 +1278,7 @@ function IdNationalityStep() {
 function IdNiPpsStep() {
   const { state, setField, completeStep } = useApplication();
   const d = state.data;
+  const af = state.autofillSources;
   useStepFooter(() => completeStep('id_ni_pps'));
 
   return (
@@ -1204,13 +1287,14 @@ function IdNiPpsStep() {
         title="National Insurance or PPS number"
         description="Your NI number (UK) or PPS number (Ireland) is used for identity verification and credit checks."
       />
-      <TextInput 
-        label="NI / PPS number" 
-        value={d.nationalInsuranceNumber} 
-        onChange={(v) => setField('nationalInsuranceNumber', v)} 
+      <TextInput
+        label="NI / PPS number"
+        value={d.nationalInsuranceNumber}
+        onChange={(v) => setField('nationalInsuranceNumber', v)}
         placeholder="QQ 12 34 56 C"
         hint="Format: 2 letters, 6 numbers, 1 letter (e.g., QQ 12 34 56 C)"
-        autoFocus 
+        autoFocus
+        autofillSource={af.nationalInsuranceNumber}
       />
     </div>
   );
@@ -1310,6 +1394,7 @@ function HhCircumstancesStep() {
         value={d.maritalStatus}
         onChange={(v) => setField('maritalStatus', v)}
         columns={2}
+        autoAdvance
         options={[
           { value: 'single', label: 'Single' },
           { value: 'married', label: 'Married' },
@@ -1335,12 +1420,13 @@ function HhApplicationModeStep() {
         description="Joint applications can increase borrowing power. Your co-applicant will need to provide their details too."
       />
       <SelectInput
-        label="Application type"
+        label=""
         value={d.applicationMode}
         onChange={(v) => setField('applicationMode', v)}
+        autoAdvance
         options={[
-          { value: 'single', label: 'Just me (sole application)' },
-          { value: 'joint', label: 'With a partner or co-applicant (joint application)' },
+          { value: 'single', label: 'Just me', description: 'Sole application' },
+          { value: 'joint', label: 'With a partner or co-applicant', description: 'Joint application — increases borrowing power' },
         ]}
       />
     </div>
@@ -1509,10 +1595,17 @@ function IntentTypeStep() {
         title="What type of mortgage do you need?"
         description="This helps us find the right lenders and products for your situation."
       />
-      <RadioCardGroup
-        options={MORTGAGE_TYPE_OPTIONS}
+      <SelectInput
+        label=""
         value={d.buyerType}
         onChange={(v) => setField('buyerType', v)}
+        autoAdvance
+        options={[
+          { value: 'first_time', label: 'First-time buyer', description: 'Buying your first property' },
+          { value: 'moving', label: 'Moving home', description: 'Already own a home and moving' },
+          { value: 'remortgage', label: 'Remortgage', description: 'Refinancing your existing mortgage' },
+          { value: 'buy_to_let', label: 'Buy-to-let', description: 'Investment property to rent out' },
+        ]}
       />
     </div>
   );
@@ -1704,13 +1797,14 @@ function IntentTimelineStep() {
         description="This helps us prioritise your application appropriately."
       />
       <SelectInput
-        label="Target timeline"
+        label=""
         value={d.targetTimeline}
         onChange={(v) => setField('targetTimeline', v)}
+        autoAdvance
         options={[
           { value: 'asap', label: 'As soon as possible' },
-          { value: '1-3_months', label: 'Within 1-3 months' },
-          { value: '3-6_months', label: 'Within 3-6 months' },
+          { value: '1-3_months', label: 'Within 1–3 months' },
+          { value: '3-6_months', label: 'Within 3–6 months' },
           { value: '6+_months', label: 'More than 6 months away' },
           { value: 'just_exploring', label: 'Just exploring options' },
         ]}
@@ -1733,9 +1827,10 @@ function PropStageStep() {
         description="Let us know where you are in your property search."
       />
       <SelectInput
-        label="Property status"
+        label=""
         value={d.propertyStage}
         onChange={(v) => setField('propertyStage', v)}
+        autoAdvance
         options={[
           { value: 'not_looking', label: 'Not started looking yet' },
           { value: 'searching', label: 'Actively searching' },
@@ -1840,10 +1935,19 @@ function EmpStatusStep() {
         title="What is your employment status?"
         description="Your employment type determines which documents we will need."
       />
-      <RadioCardGroup
-        options={EMPLOYMENT_STATUS_OPTIONS}
+      <SelectInput
+        label=""
         value={d.employmentStatus}
         onChange={(v) => setField('employmentStatus', v)}
+        autoAdvance
+        options={[
+          { value: 'employed', label: 'Employed', description: 'Working for an employer (PAYE)' },
+          { value: 'self_employed', label: 'Self-employed', description: 'Running your own business or freelancing' },
+          { value: 'contractor', label: 'Contractor', description: 'Fixed-term or contract work' },
+          { value: 'director', label: 'Company director', description: 'Director of a limited company' },
+          { value: 'retired', label: 'Retired', description: 'No longer in employment' },
+          { value: 'not_working', label: 'Not currently working', description: 'Student, career break, or other' },
+        ]}
       />
     </div>
   );
@@ -1852,9 +1956,10 @@ function EmpStatusStep() {
 function EmpDetailsStep() {
   const { state, setField, completeStep } = useApplication();
   const d = state.data;
+  const af = state.autofillSources;
   const isEmployed = d.employmentStatus === 'employed' || d.employmentStatus === 'contractor';
   const shouldSkip = !isEmployed;
-  
+
   useStepFooter(() => completeStep('emp_details'));
 
   useEffect(() => {
@@ -1871,9 +1976,9 @@ function EmpDetailsStep() {
         title="Employment details"
         description="Tell us about your current employer."
       />
-      <TextInput label="Employer name" value={d.employerName} onChange={(v) => setField('employerName', v)} placeholder="Acme Corporation" autoFocus />
-      <TextInput label="Job title" value={d.jobTitle} onChange={(v) => setField('jobTitle', v)} placeholder="Senior Developer" />
-      <TextInput label="Start date" value={d.employmentStartDate} onChange={(v) => setField('employmentStartDate', v)} type="date" />
+      <TextInput label="Employer name" value={d.employerName} onChange={(v) => setField('employerName', v)} placeholder="Acme Corporation" autoFocus autofillSource={af.employerName} />
+      <TextInput label="Job title" value={d.jobTitle} onChange={(v) => setField('jobTitle', v)} placeholder="Senior Developer" autofillSource={af.jobTitle} />
+      <TextInput label="Start date" value={d.employmentStartDate} onChange={(v) => setField('employmentStartDate', v)} type="date" autofillSource={af.employmentStartDate} />
       <SelectInput
         label="Are you on probation?"
         value={d.onProbation}
@@ -2133,6 +2238,7 @@ function EmpUploadJointStep() {
 function IncSalaryStep() {
   const { state, setField, completeStep } = useApplication();
   const d = state.data;
+  const af = state.autofillSources;
   useStepFooter(() => completeStep('inc_salary'));
 
   return (
@@ -2141,13 +2247,26 @@ function IncSalaryStep() {
         title="Your income"
         description="Please provide your annual income before tax."
       />
-      <CurrencyInput 
-        label="Annual salary / Self-employed income" 
-        value={d.annualSalary} 
-        onChange={(v) => setField('annualSalary', v)} 
-        placeholder="65,000"
-        hint="Your gross annual income before deductions"
-      />
+      <div className="relative">
+        <CurrencyInput
+          label="Annual salary / Self-employed income"
+          value={d.annualSalary}
+          onChange={(v) => setField('annualSalary', v)}
+          placeholder="65,000"
+          hint="Your gross annual income before deductions"
+        />
+        {af.annualSalary && (
+          <div className="flex items-center gap-1 mt-1">
+            <Wand2 style={{ width: '10px', height: '10px', color: '#473FE6', flexShrink: 0 }} />
+            <span style={{ fontSize: '11px', fontWeight: '600', color: '#473FE6' }}>
+              Autofilled · {af.annualSalary}
+            </span>
+            <span style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: '500' }}>
+              — just type to override
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -2363,10 +2482,18 @@ function DepSourceStep() {
         title="Source of deposit"
         description="Lenders need to verify where your deposit funds come from."
       />
-      <RadioCardGroup
-        options={DEPOSIT_SOURCE_OPTIONS}
+      <SelectInput
+        label=""
         value={d.depositSource}
         onChange={(v) => setField('depositSource', v)}
+        autoAdvance
+        options={[
+          { value: 'savings', label: 'Personal savings', description: 'Money you have saved over time' },
+          { value: 'gift', label: 'Gift from family', description: 'Money given by a family member' },
+          { value: 'inheritance', label: 'Inheritance', description: 'Money received from an estate' },
+          { value: 'property_sale', label: 'Property sale', description: 'Proceeds from selling another property' },
+          { value: 'other', label: 'Other source', description: 'Investment returns, bonus, etc.' },
+        ]}
       />
     </div>
   );

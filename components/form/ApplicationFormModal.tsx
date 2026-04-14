@@ -87,7 +87,7 @@ function ModalContent() {
       <main className="flex-1 overflow-y-auto">
         <div
           key={currentStep}
-          className="max-w-xl mx-auto px-6 py-14 pb-32 animate-in fade-in slide-in-from-right-4 duration-300"
+          className="max-w-xl mx-auto px-6 py-14 pb-32 animate-in fade-in slide-in-from-bottom-6 duration-300"
         >
           <FormStepRenderer />
         </div>
@@ -127,15 +127,29 @@ function ModalContent() {
 
           {/* Continue — primary style */}
           {onContinue && continueLabel && (
-            <button
-              type="button"
-              onClick={onContinue}
-              className="inline-flex items-center gap-2 font-semibold text-sm px-6 py-3 rounded-full btn-interactive group"
-              style={{ backgroundColor: '#3126E3', color: '#ffffff' }}
-            >
-              {continueLabel}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={onContinue}
+                className="inline-flex items-center gap-2 font-semibold text-sm px-6 py-3 rounded-full btn-interactive group"
+                style={{ backgroundColor: '#3126E3', color: '#ffffff' }}
+              >
+                {continueLabel}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </button>
+              <span
+                className="hidden sm:inline-flex items-center gap-1 text-xs font-medium"
+                style={{ color: '#9CA3AF' }}
+              >
+                or press
+                <kbd
+                  className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-semibold"
+                  style={{ backgroundColor: '#F3F4F6', color: '#6B7280', border: '1px solid #E5E7EB', fontFamily: 'inherit' }}
+                >
+                  Enter ↵
+                </kbd>
+              </span>
+            </div>
           )}
         </div>
 

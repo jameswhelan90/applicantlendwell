@@ -571,14 +571,44 @@ export const initialBlockingIssues: BlockingIssue[] = [];
 
 // ─── Initial application state ─────────────────────────────────────────────
 
+// Demo autofill sources — simulates AI extraction from uploaded documents
+// These fields appear pre-filled in the form with an "Autofilled" badge
+export const demoAutofillSources: Record<string, string> = {
+  firstName:               'Passport',
+  lastName:                'Passport',
+  dateOfBirth:             'Passport',
+  nationalInsuranceNumber: 'Payslip',
+  email:                   'Application account',
+  phone:                   'Application account',
+  annualSalary:            'Payslip',
+  employerName:            'Payslip',
+  jobTitle:                'Payslip',
+  employmentStartDate:     'Payslip',
+};
+
+// Demo pre-filled data — values extracted by LendWell AI from uploaded documents
+const demoPrefilledData: Partial<typeof emptyApplicationData> = {
+  firstName:               'Sarah',
+  lastName:                'Murphy',
+  dateOfBirth:             '1989-03-15',
+  nationalInsuranceNumber: 'QQ 12 34 56 C',
+  email:                   'sarah.murphy@example.com',
+  phone:                   '+353 87 123 4567',
+  annualSalary:            '72000',
+  employerName:            'TechCorp Ireland Ltd',
+  jobTitle:                'Senior Product Manager',
+  employmentStartDate:     '2021-04-01',
+};
+
 export const mockApplicationState: ApplicationState = {
   currentSection: 'welcome',
   sections: initialSections,
-  data: emptyApplicationData,
+  data: { ...emptyApplicationData, ...demoPrefilledData },
   documents: initialDocuments,
   requirements: initialRequirements,
   agreements: initialAgreements,
   aiActivity: initialAIActivity,
   blockingIssues: initialBlockingIssues,
   readinessScore: 0,
+  autofillSources: demoAutofillSources,
 };
