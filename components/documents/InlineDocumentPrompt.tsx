@@ -221,8 +221,8 @@ export function InlineDocumentPrompt({
     <div
       className="rounded-xl overflow-hidden"
       style={{
-        border: isDragging ? '2px dashed #3126E3' : '2px dashed #E1E8EE',
-        backgroundColor: isDragging ? 'rgba(71, 63, 230, 0.03)' : '#FAFBFC',
+        border: isDragging ? '1.5px dashed #3126E3' : '1.5px dashed #D1D9E0',
+        backgroundColor: isDragging ? 'rgba(49,38,227,0.02)' : '#ffffff',
         transition: 'border-color 0.15s, background-color 0.15s',
       }}
       onDrop={handleDrop}
@@ -237,82 +237,42 @@ export function InlineDocumentPrompt({
         onChange={handleFileChange}
       />
 
-      {/* Header with LendWell badge */}
-      <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid #EBEBEB' }}>
-        <img src="/images/lendwell-ai-logo.svg" alt="" className="w-4 h-4" />
-        <span className="text-xs font-semibold" style={{ color: '#3126E3' }}>
-          LendWell will verify automatically
-        </span>
-      </div>
-
-      {/* Document info */}
-      <div className="px-4 pt-4 pb-2">
-        <p className="text-sm font-semibold" style={{ color: '#182026' }}>
-          {displayTitle}
-        </p>
-        <p className="text-xs mt-1 text-muted-foreground">
-          {displayDescription}
-        </p>
-      </div>
-
-      {/* Local file preview if uploading */}
-      {localFile && (
-        <div className="px-4 py-2">
-          <div
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg"
-            style={{ backgroundColor: '#F7F8FC', border: '1px solid #E5E7EB' }}
-          >
-            <FileText className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate" style={{ color: '#182026' }}>
-                {localFile.file.name}
+      {/* Local file uploading */}
+      {localFile ? (
+        <div className="flex items-center gap-3 px-4 py-3.5">
+          <FileText className="w-4 h-4 flex-shrink-0" style={{ color: '#5A7387' }} />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold truncate" style={{ color: '#182026' }}>
+              {localFile.file.name}
+            </p>
+            {localFile.aiMessage && (
+              <p className="text-xs mt-0.5" style={{ color: '#3126E3' }}>
+                {localFile.aiMessage}
               </p>
-              {localFile.aiMessage && (
-                <p className="text-xs mt-0.5" style={{ color: '#3126E3' }}>
-                  {localFile.aiMessage}
-                </p>
-              )}
-            </div>
-            <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#3126E3' }} />
+            )}
           </div>
+          <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" style={{ color: '#3126E3' }} />
         </div>
-      )}
-
-      {/* Upload button */}
-      {!localFile && (
+      ) : (
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="w-full flex items-center gap-3 px-4 py-4 transition-colors row-interactive"
-          style={{ cursor: 'pointer' }}
+          className="w-full flex items-center gap-3 px-4 py-3.5 row-interactive"
+          style={{ cursor: 'pointer', textAlign: 'left' }}
         >
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-            style={{ backgroundColor: isDragging ? '#3126E3' : '#EDECFD' }}
-          >
-            <Upload
-              className="w-4 h-4"
-              style={{ color: isDragging ? '#ffffff' : '#3126E3' }}
-            />
-          </div>
-          <div className="text-left">
-            <p className="text-sm font-medium" style={{ color: '#182026' }}>
-              {isDragging ? 'Drop to upload' : 'Drop file here or click to browse'}
+          <Upload className="w-4 h-4 flex-shrink-0" style={{ color: isDragging ? '#3126E3' : '#9CA3AF' }} />
+          <div>
+            <p className="text-sm font-semibold" style={{ color: '#182026' }}>
+              {isDragging ? 'Drop to upload' : displayTitle}
             </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              PDF, JPG, or PNG
+            <p className="text-xs mt-0.5 font-medium" style={{ color: '#9CA3AF' }}>
+              {displayDescription}
+              {requirement.acceptableDocuments && requirement.acceptableDocuments.length > 0
+                ? ` · ${requirement.acceptableDocuments.join(', ')}`
+                : ' · PDF, JPG or PNG'}
             </p>
           </div>
         </button>
-      )}
-
-      {/* Acceptable documents hint */}
-      {requirement.acceptableDocuments && requirement.acceptableDocuments.length > 0 && (
-        <div className="px-4 pb-4">
-          <p className="text-xs text-muted-foreground">
-            Accepted: {requirement.acceptableDocuments.join(', ')}
-          </p>
-        </div>
       )}
     </div>
   );
