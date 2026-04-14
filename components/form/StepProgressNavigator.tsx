@@ -132,7 +132,7 @@ export function StepProgressNavigator() {
       {/* Expanded view - detailed section list */}
       {isExpanded && (
         <div
-          className="absolute top-full left-0 mt-2 w-80 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-160 z-50"
+          className="absolute top-full left-0 mt-2 w-80 overflow-hidden step-enter-initial z-50"
           style={{
             borderRadius: '8px',
             backgroundColor: '#ffffff',
