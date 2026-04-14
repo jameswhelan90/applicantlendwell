@@ -162,12 +162,13 @@ export function AddressAutocomplete({
           }}
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
-          className="w-full pl-9 pr-10 py-3 rounded-lg text-sm font-medium transition-all outline-none"
+          className="w-full pl-9 pr-10 py-3 text-sm font-medium transition-all outline-none"
           style={{
-            backgroundColor: isFocused ? '#ffffff' : 'rgba(255,255,255,0.7)',
+            backgroundColor: '#ffffff',
             color: '#182026',
-            boxShadow: isFocused ? '0 0 0 2px rgba(24,32,38,0.25)' : 'none',
+            boxShadow: isFocused ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
             border: 'none',
+            borderRadius: '6px',
           }}
         />
         {isLoading && (

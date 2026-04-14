@@ -119,6 +119,10 @@
     background-color: #ffffff !important;
   }
 
+  input:hover:not(:focus), textarea:hover:not(:focus), select:hover:not(:focus) {
+    box-shadow: none !important;
+  }
+
   /* Smooth progress bar transitions */
   .transition-width {
     transition-property: width;

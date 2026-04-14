@@ -82,12 +82,13 @@ export function CurrencyInput({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
-          className="w-full pl-8 pr-4 py-3 rounded-lg text-sm transition-all outline-none"
+          className="w-full pl-8 pr-4 py-3 text-sm transition-all outline-none"
           style={{
-            backgroundColor: isFocused ? '#ffffff' : 'rgba(255,255,255,0.7)',
+            backgroundColor: '#ffffff',
             color: '#182026',
-            boxShadow: isFocused ? '0 0 0 2px rgba(24,32,38,0.25)' : 'none',
+            boxShadow: isFocused ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
             border: 'none',
+            borderRadius: '6px',
           }}
         />
       </div>
@@ -181,15 +182,16 @@ export function DOBInput({
     updateValue(day, month, val);
   };
 
-  const inputClass = "w-full px-3 py-3 rounded-lg text-sm text-center transition-all outline-none";
+  const inputClass = "w-full px-3 py-3 text-sm text-center transition-all outline-none";
   const [dayFocused, setDayFocused] = useState(false);
   const [monthFocused, setMonthFocused] = useState(false);
   const [yearFocused, setYearFocused] = useState(false);
   const getInputStyle = (focused: boolean) => ({
-    backgroundColor: focused ? '#ffffff' : 'rgba(255,255,255,0.7)',
+    backgroundColor: '#ffffff',
     color: '#182026',
-    boxShadow: focused ? '0 0 0 2px rgba(24,32,38,0.25)' : 'none',
+    boxShadow: focused ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
     border: 'none',
+    borderRadius: '6px',
   });
 
   return (
@@ -301,22 +303,26 @@ export function NumberStepper({
           onClick={decrement}
           disabled={value <= min}
           aria-label="Decrease"
-          className="w-12 h-12 rounded-lg flex items-center justify-center transition-all"
+          className="w-12 h-12 flex items-center justify-center transition-all"
           style={{
-            backgroundColor: value <= min ? '#F3F4F6' : 'rgba(255,255,255,0.7)',
+            backgroundColor: value <= min ? '#F3F4F6' : '#ffffff',
             color: value <= min ? '#D1D5DB' : '#374151',
             cursor: value <= min ? 'not-allowed' : 'pointer',
             border: 'none',
+            borderRadius: '6px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
           }}
         >
           <Minus className="w-4 h-4" />
         </button>
         <div
-          className="flex-1 text-center py-3 rounded-lg text-lg font-semibold"
+          className="flex-1 text-center py-3 text-lg font-semibold"
           style={{
-            backgroundColor: 'rgba(255,255,255,0.7)',
+            backgroundColor: '#ffffff',
             color: '#182026',
             border: 'none',
+            borderRadius: '6px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
           }}
         >
           {value}
@@ -326,12 +332,14 @@ export function NumberStepper({
           onClick={increment}
           disabled={value >= max}
           aria-label="Increase"
-          className="w-12 h-12 rounded-lg flex items-center justify-center transition-all"
+          className="w-12 h-12 flex items-center justify-center transition-all"
           style={{
-            backgroundColor: value >= max ? '#F3F4F6' : 'rgba(255,255,255,0.7)',
+            backgroundColor: value >= max ? '#F3F4F6' : '#ffffff',
             color: value >= max ? '#D1D5DB' : '#374151',
             cursor: value >= max ? 'not-allowed' : 'pointer',
             border: 'none',
+            borderRadius: '6px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
           }}
         >
           <Plus className="w-4 h-4" />
@@ -565,12 +573,13 @@ export function SearchableSelect({
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm transition-all outline-none"
+        className="w-full flex items-center justify-between px-4 py-3 text-sm transition-all outline-none"
         style={{
-          backgroundColor: isOpen ? '#ffffff' : 'rgba(255,255,255,0.7)',
-          color: selectedOption ? '#182026' : '#9CA3AF',
-          boxShadow: isOpen ? '0 0 0 2px rgba(24,32,38,0.25)' : 'none',
+          backgroundColor: '#ffffff',
+          color: '#182026',
+          boxShadow: isOpen ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
           border: 'none',
+          borderRadius: '6px',
         }}
       >
         <span className="font-medium">{selectedOption?.label || placeholder}</span>
@@ -601,11 +610,12 @@ export function SearchableSelect({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={searchPlaceholder}
-                className="w-full pl-9 pr-3 py-2 rounded-lg text-sm outline-none"
+                className="w-full pl-9 pr-3 py-2 text-sm outline-none"
                 style={{
                   backgroundColor: '#F3F4F6',
                   color: '#182026',
                   border: 'none',
+                  borderRadius: '4px',
                 }}
                 autoFocus
               />
