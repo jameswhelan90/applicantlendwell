@@ -290,6 +290,7 @@ export function NumberStepper({
           type="button"
           onClick={decrement}
           disabled={value <= min}
+          aria-label="Decrease"
           className="w-12 h-12 rounded-lg border flex items-center justify-center transition-all"
           style={{
             borderColor: 'hsl(220 15% 90%)',
@@ -314,6 +315,7 @@ export function NumberStepper({
           type="button"
           onClick={increment}
           disabled={value >= max}
+          aria-label="Increase"
           className="w-12 h-12 rounded-lg border flex items-center justify-center transition-all"
           style={{
             borderColor: 'hsl(220 15% 90%)',
@@ -508,15 +510,25 @@ export function SearchableSelect({
   const [searchQuery, setSearchQuery] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
+  // Close on outside click or Escape
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+        setSearchQuery('');
+      }
+    };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const filteredOptions = options.filter((opt) =>
@@ -541,6 +553,8 @@ export function SearchableSelect({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
         className="w-full flex items-center justify-between px-4 py-3 rounded-lg border text-sm transition-colors"
         style={{
           borderColor: isOpen ? '#473FE6' : 'hsl(220 15% 90%)',

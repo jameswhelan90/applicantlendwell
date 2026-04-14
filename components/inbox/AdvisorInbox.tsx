@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Inbox, X, Upload, FileSignature, Eye, CheckCircle2, Clock, ChevronUp, ChevronDown, AlertCircle } from 'lucide-react';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -120,6 +120,7 @@ function TaskCard({ task, onComplete }: { task: AdvisorTask; onComplete: (id: st
       {/* Action button */}
       {!isCompleted && (
         <button
+          type="button"
           onClick={() => onComplete(task.id)}
           className="w-full text-xs font-semibold py-2 px-3 rounded-lg transition-all hover:opacity-90 active:scale-[0.98]"
           style={{ backgroundColor: '#3126E3', color: '#ffffff', border: 'none', cursor: 'pointer' }}
@@ -136,6 +137,15 @@ function TaskCard({ task, onComplete }: { task: AdvisorTask; onComplete: (id: st
 export function AdvisorInbox() {
   const [isOpen, setIsOpen] = useState(false);
   const [tasks, setTasks] = useState<AdvisorTask[]>(INITIAL_TASKS);
+
+  // Close on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) setIsOpen(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
 
   const openTasks = tasks.filter((t) => t.status !== 'completed');
   const completedTasks = tasks.filter((t) => t.status === 'completed');
@@ -191,6 +201,7 @@ export function AdvisorInbox() {
               )}
             </div>
             <button
+              type="button"
               onClick={() => setIsOpen(false)}
               aria-label="Close inbox"
               className="btn-interactive"
@@ -256,6 +267,7 @@ export function AdvisorInbox() {
 
       {/* Persistent trigger pill */}
       <button
+        type="button"
         onClick={() => setIsOpen((v) => !v)}
         aria-label={isOpen ? 'Close adviser inbox' : 'Open adviser inbox'}
         className="flex items-center gap-2.5 btn-interactive"

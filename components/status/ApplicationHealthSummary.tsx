@@ -149,6 +149,7 @@ export function ApplicationHealthSummary() {
             return (
               <div key={section.sectionId} className="relative">
                 <button
+                  type="button"
                   onClick={() => handleSectionClick(section.sectionId)}
                   onMouseEnter={() => setHoveredSection(section.sectionId)}
                   onMouseLeave={() => setHoveredSection(null)}
@@ -223,6 +224,7 @@ export function ApplicationHealthSummary() {
           <div className="space-y-1.5">
             {nextTasks.map((task) => (
               <button
+                type="button"
                 key={task.id}
                 onClick={() => handleTaskClick(task)}
                 className="w-full flex items-center gap-3 p-2.5 rounded-lg transition-all hover:bg-muted/50 group text-left"
@@ -253,6 +255,7 @@ export function ApplicationHealthSummary() {
       {/* Quick action button */}
       {readinessScore < 100 && (
         <button
+          type="button"
           onClick={() => openModal()}
           className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm transition-all hover:opacity-90 active:scale-[0.98]"
           style={{ backgroundColor: '#3126E3', color: '#ffffff' }}

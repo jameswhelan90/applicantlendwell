@@ -47,22 +47,19 @@ export function JourneyTracker({ compact = false }: JourneyTrackerProps) {
 
           return (
             <li key={section.id}>
-              <div
+              <button
+                type="button"
                 onClick={() => handleSectionClick(section)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') handleSectionClick(section);
-                }}
-                className={`flex items-center gap-3 py-2.5 cursor-pointer nav-interactive ${
+                aria-current={isSelected ? 'page' : undefined}
+                className={`w-full flex items-center gap-3 py-2.5 nav-interactive ${
                   isSelected
                     ? 'bg-white'
                     : ''
                 }`}
                 style={
                   isSelected
-                    ? { boxShadow: '0px 2px 8px 0px rgba(24, 32, 38, 0.12)', paddingRight: '20px', paddingLeft: '10px', borderRadius: '999px' }
-                    : { paddingLeft: '10px', paddingRight: '12px', borderRadius: '999px' }
+                    ? { boxShadow: '0px 2px 8px 0px rgba(24, 32, 38, 0.12)', paddingRight: '20px', paddingLeft: '10px', borderRadius: '999px', border: 'none', background: '#ffffff', cursor: 'pointer' }
+                    : { paddingLeft: '10px', paddingRight: '12px', borderRadius: '999px', border: 'none', background: 'transparent', cursor: 'pointer' }
                 }
               >
                 {/* Step indicator */}
@@ -107,7 +104,7 @@ export function JourneyTracker({ compact = false }: JourneyTrackerProps) {
                     style={{ backgroundColor: isComplete ? '#6CAD0A' : '#3126E3' }}
                   />
                 )}
-              </div>
+              </button>
             </li>
           );
         })}
