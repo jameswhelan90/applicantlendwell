@@ -101,13 +101,15 @@ function ModalContent() {
         </div>
       </header>
 
-      {/* Scrollable content — bottom padding clears the fixed footer */}
+      {/* Scrollable content — centers when content fits, scrolls when it overflows */}
       <main className="flex-1 overflow-y-auto">
-        <div
-          key={currentStep}
-          className="max-w-xl mx-auto px-6 py-14 pb-32 animate-in fade-in slide-in-from-bottom-6 duration-300"
-        >
-          <FormStepRenderer />
+        <div className="min-h-full flex items-center justify-center py-8">
+          <div
+            key={currentStep}
+            className="max-w-xl w-full mx-auto px-6 animate-in fade-in slide-in-from-bottom-6 duration-300"
+          >
+            <FormStepRenderer />
+          </div>
         </div>
       </main>
 
