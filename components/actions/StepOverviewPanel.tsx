@@ -14,23 +14,20 @@ interface StepOverviewPanelProps {
 export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPanelProps) {
   const { state, openModal, isSectionComplete } = useApplication();
   const section = state.sections.find((s) => s.id === sectionId);
-  
+
   if (!section) return null;
 
   const isComplete = section.status === 'complete';
   const isInProgress = section.status === 'in_progress';
   const firstStep = SECTION_FIRST_STEP[sectionId];
 
-  // Check if all main sections (excluding collect_keys) are complete
   const mainSections = state.sections.filter(s => s.id !== 'collect_keys');
   const allSectionsComplete = mainSections.every(s => s.status === 'complete');
 
-  // Render special completion section for the collect_keys tab
   if (sectionId === 'collect_keys') {
     return <CompletionSection isFullyComplete={allSectionsComplete} />;
   }
 
-  // Render expanded documents upload section
   if (sectionId === 'documents') {
     return <DocumentsUploadSection />;
   }
@@ -39,7 +36,6 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
     openModal(firstStep);
   };
 
-  // Overview content for each section
   const overviewContent: Partial<Record<SectionId, { title: string; description: string; details: string[] }>> = {
     welcome: {
       title: "Let's kick start your mortgage journey",
@@ -112,49 +108,61 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
   };
 
   const content = overviewContent[sectionId] as { title: string; description: string; details: string[] } | undefined;
-  
-  // Guard against undefined content (documents/completion return early above)
   if (!content) return null;
 
   return (
-    <div className="space-y-8">
-      {/* Step overview section */}
+    <div className="space-y-6">
+      {/* Page title + description */}
       <div>
-        <h2 className="text-2xl font-bold mb-2" style={{ color: '#182026' }}>{sectionId === 'welcome' ? "Let's kick start your mortgage journey" : (overrideTitle || content.title)}</h2>
-        <p className="text-base text-foreground font-medium leading-relaxed" style={{ fontSize: '18px' }}>
+        <h2
+          className="font-display font-medium mb-2"
+          style={{ fontSize: '30px', color: '#182026', lineHeight: '1.2', letterSpacing: '-0.01em' }}
+        >
+          {sectionId === 'welcome' ? "Let's kick start your mortgage journey" : (overrideTitle || content.title)}
+        </h2>
+        <p className="text-base font-medium leading-relaxed" style={{ color: '#5A7387' }}>
           {content.description}
         </p>
       </div>
 
-      {/* Details list with white card styling */}
+      {/* Details card */}
       <div
         style={{
           padding: '24px',
           backgroundColor: '#ffffff',
-          borderRadius: '12px',
-          boxShadow: '0px 2px 10px 0px rgba(24, 32, 38, 0.10)',
+          borderRadius: '16px',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.04)',
+          border: '1px solid rgba(0, 0, 0, 0.06)',
         }}
       >
-        <p className="text-base font-bold mb-4" style={{ color: '#1C15A3', fontSize: '16px' }}>
-          {"What's in This Section"}
+        <p className="text-sm font-semibold mb-4" style={{ color: '#182026' }}>
+          What&apos;s in this section
         </p>
-        <ul className="space-y-4 mb-6">
+        <ul className="space-y-3 mb-6">
           {content.details.map((detail, idx) => (
             <li key={idx} className="flex items-start gap-3">
-              <div className="w-2 h-2 rounded-full flex-shrink-0 mt-2" style={{ backgroundColor: '#3126E3' }} />
-              <span className="text-base font-medium" style={{ color: '#1C15A3', fontSize: '16px' }}>{detail}</span>
+              <div
+                className="flex-shrink-0 mt-[5px]"
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  backgroundColor: '#CBD5E1',
+                }}
+              />
+              <span className="text-sm font-medium leading-snug" style={{ color: '#374151' }}>{detail}</span>
             </li>
           ))}
         </ul>
 
-        {/* CTA button inside container */}
         <button
           onClick={handleStartClick}
-          className="w-full px-4 py-3.5 rounded-full font-semibold text-sm flex items-center justify-center gap-2 btn-interactive"
+          className="w-full py-3 font-semibold text-sm flex items-center justify-center gap-2 btn-interactive"
           style={{
             backgroundColor: isComplete ? '#F7F8FC' : '#3126E3',
-            color: isComplete ? '#182026' : '#ffffff',
-            fontWeight: '700',
+            color: isComplete ? '#374151' : '#ffffff',
+            borderRadius: '8px',
+            border: isComplete ? '1px solid #E1E8EE' : 'none',
           }}
         >
           {isComplete ? 'Review section' : isInProgress ? 'Continue section' : 'Start section'}

@@ -54,9 +54,6 @@ export function TaskList() {
 
   const progressPercent = Math.round((completedCount / totalCount) * 100);
 
-  const currentSection = sections.find((s) => s.id === currentSectionId);
-  const currentSectionLabel = currentSection?.label ?? null;
-
   const incompleteSections = sections
     .filter((s) => s.status !== 'complete')
     .slice(0, 4);
@@ -66,84 +63,76 @@ export function TaskList() {
   return (
     <div
       style={{
-        border: '1px solid #E1E8EE',
-        borderRadius: '12px',
+        backgroundColor: '#ffffff',
+        border: '1px solid rgba(0,0,0,0.06)',
+        borderRadius: '16px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
         overflow: 'hidden',
       }}
     >
-      <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
         {/* ── Header ── */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '16px', fontWeight: '600', color: '#182026' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          <span style={{ fontSize: '15px', fontWeight: '600', color: '#182026' }}>
             Application Readiness
           </span>
-          <span style={{ fontSize: '16px', fontWeight: '500', color: '#182026' }}>
+          <span style={{ fontSize: '13px', fontWeight: '500', color: '#5A7387' }}>
             {milestoneLabel}
           </span>
         </div>
 
         {/* ── Progress bar ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {/* Track */}
+        <div
+          style={{
+            width: '100%',
+            height: '4px',
+            borderRadius: '999px',
+            backgroundColor: '#F1F5F9',
+            overflow: 'hidden',
+          }}
+          role="progressbar"
+          aria-valuenow={progressPercent}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Application completion progress"
+        >
           <div
             style={{
-              width: '100%',
-              height: '6px',
+              height: '100%',
+              width: `${progressPercent}%`,
               borderRadius: '999px',
-              backgroundColor: '#ffffff',
-              overflow: 'hidden',
+              backgroundColor: '#3126E3',
+              transition: 'width 600ms ease',
             }}
-            role="progressbar"
-            aria-valuenow={progressPercent}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label="Application completion progress"
-          >
-            <div
-              style={{
-                height: '100%',
-                width: `${progressPercent}%`,
-                borderRadius: '999px',
-                backgroundColor: '#3126E3',
-                transition: 'width 600ms ease',
-              }}
-            />
-          </div>
-
-          {/* Current section label */}
-          {currentSectionLabel && !isComplete && (
-            <span style={{ fontSize: '14px', fontWeight: '500', color: '#182026' }}>
-              Current section: <span style={{ color: '#182026', fontWeight: '600' }}>{currentSectionLabel}</span>
-            </span>
-          )}
+          />
         </div>
 
         {/* ── Separator ── */}
-        <div style={{ height: '1px', backgroundColor: '#F7F8FC' }} />
+        <div style={{ height: '1px', backgroundColor: '#E1E8EE', margin: '-4px 0' }} />
 
         {/* ── Remaining sections ── */}
         {!isComplete && incompleteSections.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#182026', textTransform: 'capitalize', letterSpacing: '0em' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <span style={{ fontSize: '11px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Remaining
             </span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {incompleteSections.map((section) => (
                 <button
                   key={section.id}
+                  type="button"
                   onClick={() => goToSection(section.id)}
-                  className="focus-ring row-interactive"
+                  className="focus-ring transition-interaction"
                   style={{
                     fontSize: '12px',
                     fontWeight: '500',
                     color: '#42535F',
-                    backgroundColor: 'transparent',
-                    border: 'none',
+                    backgroundColor: '#F7F8FC',
+                    border: '1px solid #E1E8EE',
                     borderRadius: '999px',
-                    padding: '4px 10px',
+                    padding: '4px 12px',
                     cursor: 'pointer',
-                    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
                   }}
                 >
                   {section.label}
@@ -153,33 +142,29 @@ export function TaskList() {
           </div>
         )}
 
-        {/* ── Separator ── */}
-        {!isComplete && immediateTasks.length > 0 && (
-          <div style={{ height: '1px', backgroundColor: '#F7F8FC' }} />
-        )}
-
         {/* ── Next tasks ── */}
         {!isComplete && immediateTasks.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#182026', textTransform: 'capitalize', letterSpacing: '0em' }}>
-              Next things to complete
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <span style={{ fontSize: '11px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              Next to complete
             </span>
-            <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
               {immediateTasks.map((task, idx) => (
                 <li key={idx}>
                   <button
+                    type="button"
                     onClick={() => goToSection(task.sectionId)}
                     className="focus-ring row-interactive"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
+                      gap: '10px',
                       width: '100%',
                       textAlign: 'left',
                       background: 'none',
                       border: 'none',
                       cursor: 'pointer',
-                      padding: '4px 8px',
+                      padding: '6px 8px',
                       borderRadius: '6px',
                     }}
                   >
@@ -192,7 +177,7 @@ export function TaskList() {
                         backgroundColor: '#3126E3',
                       }}
                     />
-                    <span style={{ fontSize: '14px', color: '#182026', fontWeight: '500' }}>
+                    <span style={{ fontSize: '13px', color: '#182026', fontWeight: '500' }}>
                       {task.label}
                     </span>
                   </button>
@@ -206,14 +191,14 @@ export function TaskList() {
         {isComplete && (
           <div
             style={{
-              backgroundColor: '#EDECFD',
-              border: '1px solid #D9D7FF',
+              backgroundColor: '#EEFDD9',
+              border: '1px solid #CEF88C',
               borderRadius: '8px',
-              padding: '12px 14px',
+              padding: '12px 16px',
             }}
           >
-            <p style={{ fontSize: '13px', fontWeight: '500', color: '#3126E3', margin: 0 }}>
-              Your application is ready for lender review.
+            <p style={{ fontSize: '13px', fontWeight: '600', color: '#3C6006', margin: 0 }}>
+              All sections complete — your application is ready for lender review.
             </p>
           </div>
         )}

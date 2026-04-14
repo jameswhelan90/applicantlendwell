@@ -21,20 +21,19 @@ export function JourneyTracker({ compact = false }: JourneyTrackerProps) {
     <nav
       aria-label="Application journey"
       style={{
-        paddingTop: '14px',
-        paddingBottom: '10px',
+        paddingTop: '16px',
+        paddingBottom: '12px',
         paddingLeft: '12px',
         paddingRight: '12px',
-        backgroundColor: 'transparent',
-        borderRadius: '12px', /* med component */
+        backgroundColor: '#ffffff',
+        borderRadius: '16px',
         width: '100%',
-        borderWidth: '1px',
-        borderColor: 'rgba(0, 0, 0, 0.08)',
-        borderStyle: 'solid',
+        border: '1px solid rgba(0, 0, 0, 0.06)',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
       }}
     >
       <p
-        style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '0', textTransform: 'none', marginBottom: '12px', marginLeft: '4px', marginRight: '4px', color: '#182026' }}
+        style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '12px', marginLeft: '10px', marginRight: '10px', color: '#5A7387' }}
       >
         Your Journey
       </p>

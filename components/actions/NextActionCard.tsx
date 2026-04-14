@@ -27,26 +27,39 @@ const SECTION_WHY: Partial<Record<SectionId, string>> = {
 export function NextActionCard() {
   const { state, openModal, canSubmit } = useApplication();
 
-  // Find the first incomplete section
   const nextSection = state.sections.find((s) => s.status !== 'complete');
 
   // All complete
   if (!nextSection) {
     return (
       <div
-        className="bg-card rounded-xl shadow-card border border-border p-6 text-center"
-        style={{ borderWidth: '0px' }}
+        style={{
+          backgroundColor: '#ffffff',
+          borderRadius: '16px',
+          border: '1px solid rgba(0,0,0,0.06)',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
+          padding: '24px',
+          textAlign: 'center',
+        }}
       >
         <div
-          className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
-          style={{ backgroundColor: '#EEFDD9' }}
+          style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            backgroundColor: '#EEFDD9',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 16px',
+          }}
         >
-          <CheckCircle2 className="w-6 h-6" style={{ color: '#6CAD0A' }} />
+          <CheckCircle2 className="w-5 h-5" style={{ color: '#6CAD0A' }} />
         </div>
-        <h2 className="text-lg font-display font-medium text-foreground mb-1">
+        <h2 className="font-display font-medium text-foreground mb-1" style={{ fontSize: '18px' }}>
           Application complete
         </h2>
-        <p className="text-sm text-muted-foreground font-medium text-pretty">
+        <p className="text-sm font-medium text-pretty" style={{ color: '#5A7387' }}>
           You have completed all sections. Your application is ready to submit.
         </p>
       </div>
@@ -57,43 +70,54 @@ export function NextActionCard() {
   const firstStep = SECTION_FIRST_STEP[sectionId];
   const isWelcome = sectionId === 'welcome';
 
-  // Special welcome card layout - horizontal hero with team photo
+  // Special welcome card — horizontal hero with team photo
   if (isWelcome) {
     return (
       <div
-        className="rounded-xl overflow-hidden flex items-stretch"
+        className="overflow-hidden flex items-stretch"
         style={{
-          minHeight: '280px',
-          boxShadow: '0 4px 12px rgba(24, 32, 38, 0.08)',
+          minHeight: '260px',
+          borderRadius: '16px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
+          border: '1px solid rgba(0,0,0,0.06)',
         }}
       >
         {/* Left content */}
-        <div className="flex-1 flex flex-col justify-between" style={{ maxWidth: '55%', backgroundColor: '#ffffff', padding: '20px' }}>
-          <div className="space-y-5">
-            <div>
-              <h2
-                className="font-display font-semibold text-balance leading-tight"
-                style={{ fontSize: '24px', color: '#182026', marginBottom: '6px' }}
-              >
-                Welcome
-              </h2>
-              <p className="font-medium text-muted-foreground leading-relaxed" style={{ fontSize: '16px' }}>
-                It&apos;s time to meet your advisor and learn about the mortgage journey
-              </p>
-            </div>
+        <div
+          className="flex flex-col justify-between"
+          style={{ maxWidth: '55%', backgroundColor: '#ffffff', padding: '28px 24px' }}
+        >
+          <div className="space-y-2">
+            <p className="text-xs font-semibold" style={{ color: '#5A7387', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+              Welcome
+            </p>
+            <h2
+              className="font-display font-medium text-balance leading-tight"
+              style={{ fontSize: '22px', color: '#182026' }}
+            >
+              Let&apos;s get your mortgage journey started
+            </h2>
+            <p className="text-sm font-medium leading-relaxed" style={{ color: '#5A7387' }}>
+              Meet your adviser and learn about the process
+            </p>
           </div>
-          
+
           <button
             onClick={() => openModal(firstStep)}
-            className="w-fit px-7 py-3 rounded-full font-semibold text-base flex items-center gap-2 btn-interactive"
-            style={{ backgroundColor: '#3126E3', color: '#ffffff' }}
+            className="w-fit flex items-center gap-2 font-semibold text-sm btn-interactive"
+            style={{
+              backgroundColor: '#3126E3',
+              color: '#ffffff',
+              borderRadius: '8px',
+              padding: '10px 20px',
+            }}
           >
-            Start Here
-            <ArrowRight className="w-5 h-5" />
+            Start here
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Right side - team photo */}
+        {/* Right side — team photo */}
         <div className="flex-1 relative overflow-hidden" style={{ maxWidth: '45%' }}>
           <img
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Bristol1-LccOjH08cdx6tLEzIFNynaSCoWK6y7.jpg"
@@ -102,11 +126,18 @@ export function NextActionCard() {
           />
           {/* Time badge */}
           <div
-            className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full"
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)' }}
+            className="absolute flex items-center gap-1.5 rounded-full"
+            style={{
+              top: '16px',
+              right: '16px',
+              padding: '6px 12px',
+              backgroundColor: 'rgba(255,255,255,0.95)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.6)',
+            }}
           >
-            <Clock className="w-4 h-4" style={{ color: '#3126E3' }} />
-            <span className="text-sm font-semibold" style={{ color: '#3126E3' }}>2 min</span>
+            <Clock className="w-3.5 h-3.5" style={{ color: '#3126E3' }} />
+            <span className="text-xs font-semibold" style={{ color: '#3126E3' }}>2 min</span>
           </div>
         </div>
       </div>
@@ -115,37 +146,47 @@ export function NextActionCard() {
 
   return (
     <div
-      className="bg-card shadow-card overflow-hidden"
-      style={{ borderRadius: '12px', borderWidth: '0px' }}
+      style={{
+        backgroundColor: '#ffffff',
+        borderRadius: '16px',
+        border: '1px solid rgba(0,0,0,0.06)',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
+        overflow: 'hidden',
+      }}
     >
-      <div
-        className="p-5"
-        style={{ paddingTop: '20px', paddingBottom: '20px', paddingLeft: '20px', paddingRight: '20px' }}
-      >
+      <div style={{ padding: '24px' }}>
+        {/* Status label */}
         <p
-          className="text-muted-foreground mb-3"
-          style={{ fontSize: '0.825rem', fontWeight: '600', letterSpacing: '0', textTransform: 'none' }}
+          className="font-semibold mb-3"
+          style={{ fontSize: '11px', color: '#5A7387', letterSpacing: '0.06em', textTransform: 'uppercase' }}
         >
           {nextSection.status === 'in_progress' ? 'Continue where you left off' : 'Your next step'}
         </p>
 
+        {/* Section heading */}
         <h2
-          className="font-display font-medium text-balance mb-2 leading-snug"
-          style={{ fontSize: '1.25rem', color: '#182026' }}
+          className="font-display font-medium text-balance leading-snug mb-2"
+          style={{ fontSize: '20px', color: '#182026' }}
         >
           {SECTION_LABELS[sectionId]}
         </h2>
 
-        <p className="text-sm text-muted-foreground font-medium leading-relaxed mb-5">
+        {/* Description */}
+        <p className="text-sm font-medium leading-relaxed mb-5" style={{ color: '#5A7387' }}>
           {SECTION_DESCRIPTIONS[sectionId]}
         </p>
 
         {/* Why this matters */}
         <div
-          className="px-4 py-3 mb-6"
-          style={{ backgroundColor: '#F7F8FC', borderRadius: '8px' /* small info box */ }}
+          className="mb-6"
+          style={{
+            backgroundColor: '#F7F8FC',
+            borderRadius: '8px',
+            border: '1px solid #E1E8EE',
+            padding: '12px 16px',
+          }}
         >
-          <p className="text-xs text-muted-foreground font-medium leading-relaxed">
+          <p className="text-xs font-medium leading-relaxed" style={{ color: '#5A7387' }}>
             <span className="font-semibold" style={{ color: '#182026' }}>
               Why this matters —&nbsp;
             </span>
@@ -153,12 +194,18 @@ export function NextActionCard() {
           </p>
         </div>
 
+        {/* CTA */}
         <button
           onClick={() => openModal(firstStep)}
-          className="inline-flex items-center gap-2 font-semibold text-sm px-6 py-3 rounded-full btn-interactive group"
-          style={{ backgroundColor: '#3126E3', color: '#ffffff' }}
+          className="inline-flex items-center gap-2 font-semibold text-sm btn-interactive group"
+          style={{
+            backgroundColor: '#3126E3',
+            color: '#ffffff',
+            borderRadius: '8px',
+            padding: '10px 20px',
+          }}
         >
-          {isWelcome ? 'Start application' : nextSection.status === 'in_progress' ? 'Continue' : 'Begin'}
+          {nextSection.status === 'in_progress' ? 'Continue' : 'Begin'}
           <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
         </button>
       </div>

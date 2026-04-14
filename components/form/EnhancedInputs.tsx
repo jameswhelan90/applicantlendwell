@@ -181,12 +181,16 @@ export function DOBInput({
     updateValue(day, month, val);
   };
 
-  const inputClass = "w-full px-3 py-3 rounded-lg border text-sm text-center transition-colors outline-none focus:border-[#473FE6] focus:ring-2 focus:ring-[#473FE6]/15";
-  const inputStyle = {
-    borderColor: 'hsl(220 15% 90%)',
+  const inputClass = "w-full px-3 py-3 rounded-lg border text-sm text-center transition-colors outline-none";
+  const [dayFocused, setDayFocused] = useState(false);
+  const [monthFocused, setMonthFocused] = useState(false);
+  const [yearFocused, setYearFocused] = useState(false);
+  const getInputStyle = (focused: boolean) => ({
+    borderColor: focused ? '#473FE6' : 'hsl(220 15% 90%)',
     backgroundColor: '#ffffff',
     color: '#182026',
-  };
+    boxShadow: focused ? '0 0 0 3px rgba(71, 63, 230, 0.12)' : 'none',
+  });
 
   return (
     <div>
@@ -203,10 +207,12 @@ export function DOBInput({
             inputMode="numeric"
             value={day}
             onChange={handleDayChange}
+            onFocus={() => setDayFocused(true)}
+            onBlur={() => setDayFocused(false)}
             placeholder="DD"
             maxLength={2}
             className={inputClass}
-            style={inputStyle}
+            style={getInputStyle(dayFocused)}
           />
           <p className="text-xs text-muted-foreground font-medium mt-1 text-center">Day</p>
         </div>
@@ -217,10 +223,12 @@ export function DOBInput({
             inputMode="numeric"
             value={month}
             onChange={handleMonthChange}
+            onFocus={() => setMonthFocused(true)}
+            onBlur={() => setMonthFocused(false)}
             placeholder="MM"
             maxLength={2}
             className={inputClass}
-            style={inputStyle}
+            style={getInputStyle(monthFocused)}
           />
           <p className="text-xs text-muted-foreground font-medium mt-1 text-center">Month</p>
         </div>
@@ -231,10 +239,12 @@ export function DOBInput({
             inputMode="numeric"
             value={year}
             onChange={handleYearChange}
+            onFocus={() => setYearFocused(true)}
+            onBlur={() => setYearFocused(false)}
             placeholder="YYYY"
             maxLength={4}
             className={inputClass}
-            style={inputStyle}
+            style={getInputStyle(yearFocused)}
           />
           <p className="text-xs text-muted-foreground font-medium mt-1 text-center">Year</p>
         </div>
@@ -383,7 +393,7 @@ export function DependantAgesInput({
               value={currentAges[index] || ''}
               onChange={(e) => handleAgeChange(index, e.target.value)}
               placeholder="0"
-              className="w-full px-3 py-3 rounded-lg border text-sm text-center transition-colors outline-none focus:border-[#473FE6] focus:ring-2 focus:ring-[#473FE6]/15"
+              className="w-full px-3 py-3 rounded-lg border text-sm text-center transition-colors outline-none"
               style={{
                 borderColor: 'hsl(220 15% 90%)',
                 backgroundColor: '#ffffff',
