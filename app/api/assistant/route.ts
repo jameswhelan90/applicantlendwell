@@ -1,5 +1,5 @@
 import { streamText, convertToModelMessages, UIMessage } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
+import { google } from '@ai-sdk/google';
 
 export const maxDuration = 30;
 
@@ -183,7 +183,7 @@ How to respond:
 - Tone: calm, professional, and trustworthy — like a knowledgeable friend guiding them through paperwork`;
 
     const result = streamText({
-      model: anthropic('claude-haiku-4.5'),
+      model: google('gemini-2.0-flash'),
       system: systemPrompt,
       messages: await convertToModelMessages(messages),
       abortSignal: req.signal,
