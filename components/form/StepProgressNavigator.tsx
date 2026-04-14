@@ -54,7 +54,8 @@ interface StepProgressItem {
 }
 
 export function StepProgressNavigator() {
-  const { currentSectionId, state, openModal, goToSection, SECTION_FIRST_STEP: sectionFirstStep } = useApplication();
+  const { currentSectionId, state, openModal, goToSection } = useApplication();
+  const sectionFirstStep = SECTION_FIRST_STEP;
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Build the progress items
@@ -67,7 +68,7 @@ export function StepProgressNavigator() {
     return {
       sectionId: section.id,
       label: SECTION_LABELS[section.id],
-      description: STEP_DESCRIPTIONS[section.id],
+      description: STEP_DESCRIPTIONS[section.id] ?? '',
       status,
       isClickable: true, // all sections are always navigable
       isUnlocked,

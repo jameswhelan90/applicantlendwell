@@ -279,7 +279,7 @@ export function AIActivityIndicator() {
 }
 
 // Avoids hydration mismatch for time display
-function TimeLabel({ timestamp }: { timestamp: Date }) {
+function TimeLabel({ timestamp }: { timestamp: Date | string }) {
   const [label, setLabel] = useState('');
   useEffect(() => {
     setLabel(formatTime(timestamp));

@@ -136,7 +136,7 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
         }}
       >
         <p className="text-base font-bold mb-4" style={{ color: '#1C15A3', fontSize: '16px' }}>
-          {sectionId === 'documents' ? "What We'll Need" : "What's in This Section"}
+          {"What's in This Section"}
         </p>
         <ul className="space-y-4 mb-6">
           {content.details.map((detail, idx) => (

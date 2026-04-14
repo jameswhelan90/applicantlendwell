@@ -1,7 +1,13 @@
 'use client';
 
-import { TimelineEvent } from '@/types/tasks';
 import { Calendar } from 'lucide-react';
+
+interface TimelineEvent {
+  id: string;
+  event: string;
+  timestamp: string;
+  status?: string;
+}
 
 interface ApplicationTimelineProps {
   events: TimelineEvent[];

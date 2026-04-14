@@ -22,7 +22,7 @@ export function getCurrentSection(sections: JourneySection[]): JourneySection | 
  */
 export function getProgressSummary(sections: JourneySection[]): string {
   const completed = getCompletedSectionCount(sections);
-  const total = sections.filter((s) => s.id !== 'completion').length;
+  const total = sections.filter((s) => s.id !== 'collect_keys').length;
   if (completed === 0) return "Let's get your application started";
   if (completed < 2) return 'Good start — keep going';
   if (completed < total - 1) return 'Good progress — keep going';
@@ -34,7 +34,7 @@ export function getProgressSummary(sections: JourneySection[]): string {
  * Based on completed sections and verified requirements
  */
 export function calculateReadiness(state: ApplicationState): number {
-  const sections = state.sections.filter((s) => s.id !== 'completion');
+  const sections = state.sections.filter((s) => s.id !== 'collect_keys');
   const completedSections = sections.filter((s) => s.status === 'complete').length;
   const sectionScore = (completedSections / sections.length) * 60; // 60% from sections
   
@@ -52,7 +52,7 @@ export function calculateReadiness(state: ApplicationState): number {
  * Whether the application can be submitted
  */
 export function canSubmitApplication(state: ApplicationState): boolean {
-  const required: SectionId[] = ['welcome', 'financial_profile', 'documents', 'agreements'];
+  const required: SectionId[] = ['welcome', 'about_you', 'property_mortgage', 'employment_income', 'documents', 'agreements'];
   return required.every((sid) => {
     const section = state.sections.find((s) => s.id === sid);
     return section?.status === 'complete';

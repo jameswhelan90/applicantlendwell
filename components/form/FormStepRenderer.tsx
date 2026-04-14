@@ -500,12 +500,14 @@ function RadioGroup({
   onChange,
   options,
   columns = 1,
+  hint,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   options: { value: string; label: string }[];
   columns?: 1 | 2 | 3;
+  hint?: string;
 }) {
   const gridCols = columns === 3 ? 'grid-cols-3' : columns === 2 ? 'grid-cols-2' : 'grid-cols-1';
   
@@ -514,6 +516,7 @@ function RadioGroup({
       <label className="block text-sm font-semibold mb-3" style={{ color: '#182026' }}>
         {label}
       </label>
+      {hint && <p className="text-xs text-muted-foreground font-medium mb-2">{hint}</p>}
       <div className={`grid ${gridCols} gap-2`}>
         {options.map((o) => {
           const isSelected = value === o.value;
@@ -789,11 +792,10 @@ function WelcomeStep() {
     // Move to next message after a pause
     if (index < messages.length - 1) {
       setIsTyping(true);
-      const nextTimer = setTimeout(() => {
+      setTimeout(() => {
         setIsTyping(false);
         setCurrentMessageIndex(index + 1);
       }, 800);
-      return () => clearTimeout(nextTimer);
     }
   };
 
@@ -3581,7 +3583,7 @@ function CompletionStep() {
     setFooter('', () => {});
   }, []);
 
-  const sections = state.sections.filter((s) => s.id !== 'completion');
+  const sections = state.sections.filter((s) => s.id !== 'collect_keys');
   const completedSections = sections.filter((s) => s.status === 'complete');
   const incompleteSections = sections.filter((s) => s.status !== 'complete');
 

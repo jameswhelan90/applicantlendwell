@@ -461,7 +461,7 @@ export function FloatingChat({ hideButton = false }: FloatingChatProps) {
       {/* Floating trigger button — always fixed to bottom-left, independent of panel position */}
       {!isModalOpen && !hideButton && (
         <button
-          onClick={toggleChat}
+          onClick={() => toggleChat()}
           aria-label={isOpen ? 'Close chat' : 'Open chat'}
           className="flex items-center gap-2.5 btn-interactive"
           style={{

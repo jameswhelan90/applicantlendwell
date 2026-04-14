@@ -271,7 +271,7 @@ export function ApplicationHealthSummary() {
       {/* Quick action button */}
       {readinessScore < 100 && (
         <button
-          onClick={openModal}
+          onClick={() => openModal()}
           className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm transition-all hover:opacity-90 active:scale-[0.98]"
           style={{ backgroundColor: '#3126E3', color: '#ffffff' }}
         >

@@ -370,7 +370,7 @@ interface ApplicationContextType {
   goToPrevStep: () => void;
 
   // Data
-  setField: (field: keyof ApplicationData | string, value: any) => void;
+  setField: (field: string, value: any) => void;
   completeStep: (stepId: StepId) => void;
 
   // Documents

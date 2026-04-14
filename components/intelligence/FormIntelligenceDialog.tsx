@@ -225,7 +225,7 @@ export function FormIntelligenceDialog() {
 
   // Check deposit percentage
   if (currentStep === 'fp_deposit' && state.data?.depositAmount && state.data?.propertyValue) {
-    const ltv = (((state.data.propertyValue as number) - (state.data.depositAmount as number)) / (state.data.propertyValue as number)) * 100;
+    const ltv = ((parseFloat(state.data.propertyValue) - parseFloat(state.data.depositAmount)) / parseFloat(state.data.propertyValue)) * 100;
     if (ltv <= 80) {
       dynamicInsights.push({
         id: 'good-ltv',

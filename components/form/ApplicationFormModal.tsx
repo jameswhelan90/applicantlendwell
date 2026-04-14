@@ -173,7 +173,7 @@ function ModalContent() {
 
         {/* Ask LendWell button */}
         <button
-          onClick={toggleChat}
+          onClick={() => toggleChat()}
           aria-label={isChatOpen ? 'Close chat' : 'Ask LendWell'}
           className="inline-flex items-center gap-2 font-semibold text-sm px-6 py-3 rounded-full btn-interactive"
           style={{

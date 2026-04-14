@@ -8,7 +8,7 @@ interface AIActivityFeedProps {
   activities?: AIActivity[];
 }
 
-function formatTime(timestamp: Date): string {
+function formatTime(timestamp: Date | string): string {
   return new Date(timestamp).toLocaleTimeString('en-IE', {
     hour: '2-digit',
     minute: '2-digit',

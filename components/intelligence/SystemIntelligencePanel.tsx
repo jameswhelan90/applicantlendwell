@@ -44,7 +44,7 @@ export function SystemIntelligencePanel() {
 
   // Determine next action based on current step and application state
   useEffect(() => {
-    if (currentStep === 'documents') {
+    if (currentSectionId === 'documents') {
       const incompleteDocReq = state.requirements?.find(
         (req) => req.status === 'required' || req.status === 'issue'
       );
