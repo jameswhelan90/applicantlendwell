@@ -129,12 +129,12 @@ function TextInput({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={placeholder}
-        className="w-full px-4 py-3 rounded-lg border text-sm font-medium transition-colors outline-none"
+        className="w-full px-4 py-3 rounded-lg text-sm font-medium transition-all outline-none"
         style={{
-          borderColor: isFocused ? '#473FE6' : showAutofill ? 'rgba(71,63,230,0.3)' : 'hsl(220 15% 90%)',
-          backgroundColor: showAutofill ? 'rgba(71,63,230,0.02)' : '#ffffff',
+          backgroundColor: isFocused ? '#ffffff' : showAutofill ? 'rgba(71,63,230,0.04)' : '#EDEFF3',
           color: '#182026',
-          boxShadow: isFocused ? '0 0 0 2px rgba(71,63,230,0.12)' : 'none',
+          boxShadow: isFocused ? '0 0 0 2px #3126E3' : 'none',
+          border: 'none',
         }}
       />
       {showAutofill && autofillSource && (
@@ -405,11 +405,11 @@ function CountrySelect({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 rounded-lg border text-sm font-medium transition-colors outline-none"
+        className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-all outline-none"
         style={{
-          borderColor: open ? '#473FE6' : 'hsl(220 15% 90%)',
-          backgroundColor: '#ffffff',
-          boxShadow: open ? '0 0 0 2px rgba(71,63,230,0.15)' : 'none',
+          backgroundColor: open ? '#ffffff' : '#EDEFF3',
+          boxShadow: open ? '0 0 0 2px #3126E3' : 'none',
+          border: 'none',
           color: selected ? '#182026' : '#9CA3AF',
         }}
       >

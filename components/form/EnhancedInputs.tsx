@@ -82,12 +82,12 @@ export function CurrencyInput({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
-          className="w-full pl-8 pr-4 py-3 rounded-lg border text-sm transition-colors outline-none"
+          className="w-full pl-8 pr-4 py-3 rounded-lg text-sm transition-all outline-none"
           style={{
-            borderColor: isFocused ? '#473FE6' : 'hsl(220 15% 90%)',
-            backgroundColor: '#ffffff',
+            backgroundColor: isFocused ? '#ffffff' : '#EDEFF3',
             color: '#182026',
-            boxShadow: isFocused ? '0 0 0 2px rgba(71, 63, 230, 0.15)' : 'none',
+            boxShadow: isFocused ? '0 0 0 2px #3126E3' : 'none',
+            border: 'none',
           }}
         />
       </div>
@@ -181,15 +181,15 @@ export function DOBInput({
     updateValue(day, month, val);
   };
 
-  const inputClass = "w-full px-3 py-3 rounded-lg border text-sm text-center transition-colors outline-none";
+  const inputClass = "w-full px-3 py-3 rounded-lg text-sm text-center transition-all outline-none";
   const [dayFocused, setDayFocused] = useState(false);
   const [monthFocused, setMonthFocused] = useState(false);
   const [yearFocused, setYearFocused] = useState(false);
   const getInputStyle = (focused: boolean) => ({
-    borderColor: focused ? '#473FE6' : 'hsl(220 15% 90%)',
-    backgroundColor: '#ffffff',
+    backgroundColor: focused ? '#ffffff' : '#EDEFF3',
     color: '#182026',
-    boxShadow: focused ? '0 0 0 3px rgba(71, 63, 230, 0.12)' : 'none',
+    boxShadow: focused ? '0 0 0 2px #3126E3' : 'none',
+    border: 'none',
   });
 
   return (
@@ -301,22 +301,22 @@ export function NumberStepper({
           onClick={decrement}
           disabled={value <= min}
           aria-label="Decrease"
-          className="w-12 h-12 rounded-lg border flex items-center justify-center transition-all"
+          className="w-12 h-12 rounded-lg flex items-center justify-center transition-all"
           style={{
-            borderColor: 'hsl(220 15% 90%)',
-            backgroundColor: value <= min ? '#F9FAFB' : '#ffffff',
+            backgroundColor: value <= min ? '#F3F4F6' : '#EDEFF3',
             color: value <= min ? '#D1D5DB' : '#374151',
             cursor: value <= min ? 'not-allowed' : 'pointer',
+            border: 'none',
           }}
         >
           <Minus className="w-4 h-4" />
         </button>
         <div
-          className="flex-1 text-center py-3 rounded-lg border text-lg font-semibold"
+          className="flex-1 text-center py-3 rounded-lg text-lg font-semibold"
           style={{
-            borderColor: 'hsl(220 15% 90%)',
-            backgroundColor: '#ffffff',
+            backgroundColor: '#EDEFF3',
             color: '#182026',
+            border: 'none',
           }}
         >
           {value}
@@ -326,12 +326,12 @@ export function NumberStepper({
           onClick={increment}
           disabled={value >= max}
           aria-label="Increase"
-          className="w-12 h-12 rounded-lg border flex items-center justify-center transition-all"
+          className="w-12 h-12 rounded-lg flex items-center justify-center transition-all"
           style={{
-            borderColor: 'hsl(220 15% 90%)',
-            backgroundColor: value >= max ? '#F9FAFB' : '#ffffff',
+            backgroundColor: value >= max ? '#F3F4F6' : '#EDEFF3',
             color: value >= max ? '#D1D5DB' : '#374151',
             cursor: value >= max ? 'not-allowed' : 'pointer',
+            border: 'none',
           }}
         >
           <Plus className="w-4 h-4" />
@@ -393,11 +393,11 @@ export function DependantAgesInput({
               value={currentAges[index] || ''}
               onChange={(e) => handleAgeChange(index, e.target.value)}
               placeholder="0"
-              className="w-full px-3 py-3 rounded-lg border text-sm text-center transition-colors outline-none"
+              className="w-full px-3 py-3 rounded-lg text-sm text-center transition-all outline-none"
               style={{
-                borderColor: 'hsl(220 15% 90%)',
-                backgroundColor: '#ffffff',
+                backgroundColor: '#EDEFF3',
                 color: '#182026',
+                border: 'none',
               }}
             />
             <p className="text-xs text-muted-foreground font-medium mt-1 text-center">
@@ -565,12 +565,12 @@ export function SearchableSelect({
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className="w-full flex items-center justify-between px-4 py-3 rounded-lg border text-sm transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm transition-all outline-none"
         style={{
-          borderColor: isOpen ? '#473FE6' : 'hsl(220 15% 90%)',
-          backgroundColor: '#ffffff',
+          backgroundColor: isOpen ? '#ffffff' : '#EDEFF3',
           color: selectedOption ? '#182026' : '#9CA3AF',
-          boxShadow: isOpen ? '0 0 0 2px rgba(71, 63, 230, 0.15)' : 'none',
+          boxShadow: isOpen ? '0 0 0 2px #3126E3' : 'none',
+          border: 'none',
         }}
       >
         <span className="font-medium">{selectedOption?.label || placeholder}</span>
@@ -601,11 +601,11 @@ export function SearchableSelect({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={searchPlaceholder}
-                className="w-full pl-9 pr-3 py-2 rounded-lg border text-sm outline-none"
+                className="w-full pl-9 pr-3 py-2 rounded-lg text-sm outline-none"
                 style={{
-                  borderColor: 'hsl(220 15% 90%)',
-                  backgroundColor: '#F9FAFB',
+                  backgroundColor: '#F3F4F6',
                   color: '#182026',
+                  border: 'none',
                 }}
                 autoFocus
               />

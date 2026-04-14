@@ -114,8 +114,9 @@
   /* ─── Global Input Focus ─────────────────────────────────────────── */
   input:focus, textarea:focus, select:focus {
     outline: none;
-    border-color: hsl(var(--ring)) !important;
-    box-shadow: 0 0 0 3px rgba(49, 38, 227, 0.12) !important;
+    border-color: transparent !important;
+    box-shadow: 0 0 0 2px #3126E3 !important;
+    background-color: #ffffff !important;
   }
 
   /* Smooth progress bar transitions */
