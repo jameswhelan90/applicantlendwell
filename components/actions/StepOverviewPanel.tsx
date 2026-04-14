@@ -266,8 +266,7 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
           padding: '24px',
           backgroundColor: '#ffffff',
           borderRadius: '16px',
-          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.04)',
-          border: '1px solid rgba(0, 0, 0, 0.06)',
+          boxShadow: '0 2px 12px rgba(0, 0, 0, 0.07)',
         }}
       >
         <p className="text-sm font-semibold mb-4" style={{ color: '#182026' }}>
@@ -296,8 +295,8 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
           style={{
             backgroundColor: isComplete ? '#F7F8FC' : '#3126E3',
             color: isComplete ? '#374151' : '#ffffff',
-            borderRadius: '8px',
-            border: isComplete ? '1px solid #E1E8EE' : 'none',
+            borderRadius: '999px',
+            border: 'none',
           }}
         >
           {isComplete ? 'Review section' : isInProgress ? 'Continue section' : 'Start section'}

@@ -3714,6 +3714,348 @@ function CompletionStep() {
   );
 }
 
+// ─── Affordability Estimate Step ─────────────────────────────────────────────
+
+function AffordabilityDonut({ ltv }: { ltv: number }) {
+  const r = 34;
+  const cx = 44;
+  const cy = 44;
+  const circ = 2 * Math.PI * r;
+  const ltvClamped = Math.min(Math.max(ltv, 0), 100);
+  const depositPct = 100 - ltvClamped;
+
+  const depositArc = (depositPct / 100) * circ;
+  const loanArc = (ltvClamped / 100) * circ;
+
+  // Start from top (-90°)
+  const toXY = (pct: number) => {
+    const angle = (pct / 100) * 2 * Math.PI - Math.PI / 2;
+    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+  };
+
+  const depositEnd = toXY(depositPct);
+  const largeArcDeposit = depositPct > 50 ? 1 : 0;
+  const depositPath = `M ${cx} ${cy - r} A ${r} ${r} 0 ${largeArcDeposit} 1 ${depositEnd.x} ${depositEnd.y}`;
+
+  const ltvEnd = toXY(100);
+  const largeArcLtv = ltvClamped > 50 ? 1 : 0;
+  const ltvPath = `M ${depositEnd.x} ${depositEnd.y} A ${r} ${r} 0 ${largeArcLtv} 1 ${ltvEnd.x} ${ltvEnd.y}`;
+
+  return (
+    <svg width="88" height="88" viewBox="0 0 88 88" aria-label={`LTV: ${Math.round(ltvClamped)}%`}>
+      {/* Track */}
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#E1E8EE" strokeWidth="9" />
+      {/* Deposit arc (green) */}
+      {depositPct > 0 && (
+        <path d={depositPath} fill="none" stroke="#6CAD0A" strokeWidth="9" strokeLinecap="butt" />
+      )}
+      {/* Loan arc (indigo) */}
+      {ltvClamped > 0 && (
+        <path d={ltvPath} fill="none" stroke="#3126E3" strokeWidth="9" strokeLinecap="butt" />
+      )}
+      {/* Centre label */}
+      <text x={cx} y={cy - 4} textAnchor="middle" style={{ fontSize: '13px', fontWeight: '700', fill: '#182026', fontFamily: 'NeuSans, system-ui' }}>
+        {Math.round(ltvClamped)}%
+      </text>
+      <text x={cx} y={cy + 10} textAnchor="middle" style={{ fontSize: '9px', fontWeight: '600', fill: '#5A7387' }}>
+        LTV
+      </text>
+    </svg>
+  );
+}
+
+function AffordabilityEstimateStep() {
+  const { state, setField, completeStep } = useApplication();
+  const d = state.data;
+
+  const [editMode, setEditMode] = useState(false);
+  const [showAssumptions, setShowAssumptions] = useState(false);
+
+  // Local edit state
+  const [editSalary, setEditSalary] = useState('');
+  const [editDeposit, setEditDeposit] = useState('');
+  const [editPropertyValue, setEditPropertyValue] = useState('');
+
+  const openEdit = () => {
+    setEditSalary(d.annualSalary || '');
+    setEditDeposit(d.depositAmount || '');
+    setEditPropertyValue(d.propertyValue || '');
+    setEditMode(true);
+  };
+
+  const saveEdit = () => {
+    if (editSalary) setField('annualSalary', editSalary);
+    if (editDeposit) setField('depositAmount', editDeposit);
+    if (editPropertyValue) setField('propertyValue', editPropertyValue);
+    setEditMode(false);
+  };
+
+  useStepFooter(() => completeStep('pm_affordability'));
+
+  // ── Irish CBI lending calculations ──────────────────────────────────────────
+  const isJoint = d.applicationMode === 'joint';
+  const isFirstTimeBuyer = d.buyerType === 'first_time';
+  const isBtl = d.buyerType === 'buy_to_let';
+
+  const primarySalary = parseFloat(d.annualSalary || '0');
+  const bonus        = parseFloat(d.bonus || '0') * 0.5; // CBI: 50% of variable
+  const commission   = parseFloat(d.commission || '0') * 0.5;
+  const overtime     = parseFloat(d.overtime || '0') * 0.5;
+  const otherInc     = parseFloat(d.otherIncome || '0');
+  const jointSalary  = isJoint ? parseFloat(d.secondApplicantAnnualSalary || '0') : 0;
+  const totalIncome  = primarySalary + bonus + commission + overtime + otherInc + jointSalary;
+
+  const ltiMultiple  = isFirstTimeBuyer ? 4.0 : isBtl ? 3.5 : 3.5;
+  const maxByLTI     = totalIncome * ltiMultiple;
+
+  const propertyVal  = parseFloat(d.propertyValue || '0');
+  const deposit      = parseFloat(d.depositAmount || '0');
+  const loanNeeded   = Math.max(0, propertyVal - deposit);
+
+  const maxLTVPct    = isBtl ? 70 : isFirstTimeBuyer ? 90 : 80;
+  const maxByLTV     = propertyVal > 0 ? propertyVal * (maxLTVPct / 100) : maxByLTI;
+
+  const maxLoan      = propertyVal > 0 ? Math.min(maxByLTI, maxByLTV) : maxByLTI;
+  const actualLoan   = loanNeeded > 0 ? Math.min(maxLoan, loanNeeded) : maxLoan;
+  const displayLoan  = actualLoan > 0 ? actualLoan : maxLoan;
+
+  const actualLTV    = propertyVal > 0 && displayLoan > 0 ? (displayLoan / propertyVal) * 100 : 0;
+  const depositPctDisplay = propertyVal > 0 && deposit > 0 ? (deposit / propertyVal) * 100 : 0;
+
+  // Monthly repayment: standard annuity at 3.5%, 30yr
+  const monthlyRate  = 0.035 / 12;
+  const termMonths   = 360;
+  const monthlyPmt   = displayLoan > 0
+    ? displayLoan * (monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1)
+    : 0;
+
+  const totalMonthlyCommitments =
+    parseFloat(d.monthlyLoans || '0') +
+    parseFloat(d.monthlyCreditCards || '0') +
+    parseFloat(d.monthlyChildcare || '0') +
+    parseFloat(d.monthlyMaintenance || '0') +
+    parseFloat(d.monthlyCarFinance || '0') +
+    parseFloat(d.monthlyOther || '0');
+
+  const fmt = (n: number) => n > 0 ? `€${Math.round(n).toLocaleString('en-IE')}` : '—';
+  const fmtPct = (n: number) => n > 0 ? `${Math.round(n)}%` : '—';
+  const hasData = totalIncome > 0;
+
+  const buyerLabel = isFirstTimeBuyer ? 'First-time buyer' : isBtl ? 'Buy-to-let' : 'Second/subsequent buyer';
+  const ltiLabel   = isFirstTimeBuyer ? '4× income (FTB)' : '3.5× income';
+
+  // ── Edit input component ──────────────────────────────────────────────────
+  function EditField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <label style={{ fontSize: '11px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          {label}
+        </label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#F7F8FC', borderRadius: '8px', padding: '8px 12px', border: '1.5px solid #3126E3' }}>
+          <span style={{ fontSize: '13px', fontWeight: '600', color: '#5A7387' }}>€</span>
+          <input
+            type="number"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', fontWeight: '600', color: '#182026', outline: 'none' }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+      {/* Hero — max borrowing */}
+      <div
+        style={{
+          backgroundColor: '#3126E3',
+          borderRadius: '16px',
+          padding: '28px 24px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Subtle radial glow */}
+        <div style={{
+          position: 'absolute', top: '-40px', right: '-40px',
+          width: '200px', height: '200px', borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }} />
+        <p style={{ fontSize: '13px', fontWeight: '600', color: 'rgba(255,255,255,0.70)', marginBottom: '8px', letterSpacing: '0.01em' }}>
+          You could borrow up to
+        </p>
+        <p
+          className="font-display"
+          style={{ fontSize: '44px', fontWeight: '500', color: '#ffffff', letterSpacing: '-0.02em', lineHeight: '1', marginBottom: '10px' }}
+        >
+          {hasData ? fmt(displayLoan) : '—'}
+        </p>
+        <p style={{ fontSize: '14px', fontWeight: '600', color: 'rgba(255,255,255,0.80)' }}>
+          {monthlyPmt > 0 ? `Est. monthly repayment: ${fmt(monthlyPmt)}/month` : 'Complete your income and deposit details below'}
+        </p>
+
+        {/* Buyer type badge */}
+        <div style={{ marginTop: '16px', display: 'inline-flex', alignItems: 'center', padding: '4px 12px', borderRadius: '999px', backgroundColor: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}>
+          <span style={{ fontSize: '11px', fontWeight: '700', color: '#ffffff', letterSpacing: '0.04em' }}>
+            {buyerLabel} · LTI {ltiLabel}
+          </span>
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+        {/* Max borrowing */}
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+          <p style={{ fontSize: '10px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+            Max loan
+          </p>
+          <p className="font-display" style={{ fontSize: '18px', fontWeight: '500', color: '#182026', letterSpacing: '-0.02em' }}>
+            {hasData ? fmt(displayLoan) : '—'}
+          </p>
+          {totalMonthlyCommitments > 0 && (
+            <p style={{ fontSize: '10px', fontWeight: '500', color: '#9CA3AF', marginTop: '3px' }}>
+              {fmt(totalMonthlyCommitments)}/mo outgoings
+            </p>
+          )}
+        </div>
+
+        {/* Deposit */}
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+          <p style={{ fontSize: '10px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+            Deposit
+          </p>
+          <p className="font-display" style={{ fontSize: '18px', fontWeight: '500', color: '#182026', letterSpacing: '-0.02em' }}>
+            {fmtPct(depositPctDisplay)}
+          </p>
+          <p style={{ fontSize: '10px', fontWeight: '500', color: '#9CA3AF', marginTop: '3px' }}>
+            {deposit > 0 ? fmt(deposit) : 'Not entered'}
+          </p>
+        </div>
+
+        {/* LTV donut */}
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+          <p style={{ fontSize: '10px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.05em', alignSelf: 'flex-start' }}>
+            LTV
+          </p>
+          <AffordabilityDonut ltv={actualLTV} />
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '9px', fontWeight: '600', color: '#3C6006' }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#6CAD0A', flexShrink: 0 }} />
+              Deposit
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '9px', fontWeight: '600', color: '#3126E3' }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#3126E3', flexShrink: 0 }} />
+              Loan
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Inputs card */}
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+        <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #F1F5F9' }}>
+          <p style={{ fontSize: '13px', fontWeight: '700', color: '#182026', margin: 0 }}>Your inputs</p>
+          {!editMode ? (
+            <button
+              type="button"
+              onClick={openEdit}
+              style={{ fontSize: '12px', fontWeight: '600', color: '#3126E3', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', borderRadius: '999px' }}
+            >
+              Edit
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={saveEdit}
+              style={{ fontSize: '12px', fontWeight: '700', color: '#ffffff', background: '#3126E3', border: 'none', cursor: 'pointer', padding: '4px 12px', borderRadius: '999px' }}
+            >
+              Save
+            </button>
+          )}
+        </div>
+
+        {editMode ? (
+          <div style={{ padding: '16px 20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <EditField label="Annual income" value={editSalary} onChange={setEditSalary} />
+            <EditField label="Property value" value={editPropertyValue} onChange={setEditPropertyValue} />
+            <EditField label="Deposit amount" value={editDeposit} onChange={setEditDeposit} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: '600', color: '#5A7387', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Monthly outgoings
+              </label>
+              <p style={{ fontSize: '14px', fontWeight: '600', color: '#9CA3AF', padding: '8px 0' }}>
+                {totalMonthlyCommitments > 0 ? fmt(totalMonthlyCommitments) : 'Update in previous steps'}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div style={{ padding: '16px 20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0', rowGap: '0' }}>
+            {[
+              { label: 'Annual income', value: primarySalary > 0 ? fmt(primarySalary) : '—', extra: isJoint && jointSalary > 0 ? `+ ${fmt(jointSalary)} joint` : undefined },
+              { label: 'Additional income', value: (bonus + commission + overtime + otherInc) > 0 ? fmt(bonus + commission + overtime + otherInc) : '—' },
+              { label: 'Monthly outgoings', value: totalMonthlyCommitments > 0 ? fmt(totalMonthlyCommitments) : '€0' },
+              { label: 'Deposit', value: deposit > 0 ? fmt(deposit) : '—' },
+            ].map(({ label, value, extra }, i) => (
+              <div
+                key={label}
+                style={{
+                  padding: '12px 0',
+                  borderBottom: i < 2 ? '1px solid #F1F5F9' : 'none',
+                  paddingLeft: i % 2 === 1 ? '16px' : '0',
+                  borderLeft: i % 2 === 1 ? '1px solid #F1F5F9' : 'none',
+                }}
+              >
+                <p style={{ fontSize: '11px', fontWeight: '600', color: '#9CA3AF', marginBottom: '3px' }}>{label}</p>
+                <p style={{ fontSize: '14px', fontWeight: '700', color: '#182026', margin: 0 }}>{value}</p>
+                {extra && <p style={{ fontSize: '10px', fontWeight: '500', color: '#5A7387', marginTop: '2px' }}>{extra}</p>}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Assumptions */}
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+        <button
+          type="button"
+          onClick={() => setShowAssumptions(v => !v)}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer' }}
+        >
+          <p style={{ fontSize: '13px', fontWeight: '600', color: '#182026', margin: 0 }}>Assumptions</p>
+          <span style={{ fontSize: '18px', color: '#9CA3AF', lineHeight: 1, transform: showAssumptions ? 'rotate(180deg)' : 'none', transition: 'transform 200ms' }}>›</span>
+        </button>
+        {showAssumptions && (
+          <div style={{ padding: '0 20px 16px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {[
+              'Interest rate assumed: 3.5% (standard variable)',
+              'Mortgage term: 30 years',
+              `LTI limit: ${ltiLabel} (Central Bank of Ireland rules)`,
+              `Max LTV: ${maxLTVPct}% for your buyer type`,
+              '50% of bonus/commission/overtime included',
+              'No major changes to income assumed',
+              'This is an indicative estimate — not a formal offer',
+            ].map((line, i) => (
+              <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                <span style={{ flexShrink: 0, marginTop: '6px', width: '4px', height: '4px', borderRadius: '50%', backgroundColor: '#CBD5E1' }} />
+                <span style={{ fontSize: '12px', fontWeight: '500', color: '#5A7387', lineHeight: '1.5' }}>{line}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Disclaimer */}
+      <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', textAlign: 'center', lineHeight: '1.5' }}>
+        This is an indicative estimate based on the information provided so far.<br />
+        Complete your full application for a personalised recommendation.
+      </p>
+    </div>
+  );
+}
+
 // ─── Router ──────────────────────────────────────────────────────────────────
 
 export function FormStepRenderer() {
@@ -3788,6 +4130,7 @@ export function FormStepRenderer() {
     case 'dep_gift_details':     return <DepGiftDetailsStep />;
     case 'dep_upload_gift':      return <DepUploadGiftStep />;
     case 'dep_upload_giftor':    return <DepUploadGiftorStep />;
+    case 'pm_affordability':     return <AffordabilityEstimateStep />;
     
     // Documents (main upload area - preserved)
     case 'docs_overview':        return <DocsOverviewStep />;

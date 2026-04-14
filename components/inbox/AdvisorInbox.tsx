@@ -542,10 +542,10 @@ function TaskCard({
           style={{
             width: '100%',
             padding: '8px 12px',
-            backgroundColor: '#3126E3',
-            color: '#ffffff',
+            backgroundColor: '#ffffff',
+            color: '#182026',
             border: 'none',
-            borderRadius: '8px',
+            borderRadius: '999px',
             fontSize: '12px',
             fontWeight: '700',
             cursor: 'pointer',
@@ -553,10 +553,11 @@ function TaskCard({
             alignItems: 'center',
             justifyContent: 'center',
             gap: '6px',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.10)',
           }}
         >
           {ACTION_LABELS[task.type]}
-          <ArrowRight style={{ width: '13px', height: '13px' }} />
+          <ArrowRight style={{ width: '13px', height: '13px', color: '#5A7387' }} />
         </button>
       )}
     </div>
@@ -761,11 +762,14 @@ export function AdvisorInbox() {
           aria-expanded={isOpen}
           className="btn-interactive flex items-center gap-2.5"
           style={{
-            backgroundColor: hasActionNeeded ? '#FFFBEB' : '#ffffff',
-            border: `1px solid ${hasActionNeeded ? '#FFDAAF' : 'rgba(0,0,0,0.08)'}`,
+            backgroundColor: '#ffffff',
+            border: 'none',
             borderRadius: '999px',
             padding: '10px 18px 10px 12px',
             cursor: 'pointer',
+            boxShadow: hasActionNeeded
+              ? '0 4px 16px rgba(224,121,0,0.18), 0 1px 4px rgba(0,0,0,0.08)'
+              : '0 2px 10px rgba(0,0,0,0.08)',
           }}
         >
           <div
@@ -809,9 +813,9 @@ export function AdvisorInbox() {
             {badgeCount > 0 ? `${badgeCount} task${badgeCount > 1 ? 's' : ''} waiting` : 'Adviser inbox'}
           </span>
           {isOpen ? (
-            <ChevronDown style={{ width: '14px', height: '14px', color: '#9CA3AF' }} />
+            <ChevronDown style={{ width: '14px', height: '14px', color: '#5A7387' }} />
           ) : (
-            <ChevronUp style={{ width: '14px', height: '14px', color: '#9CA3AF' }} />
+            <ChevronUp style={{ width: '14px', height: '14px', color: '#5A7387' }} />
           )}
         </button>
       </div>

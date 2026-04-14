@@ -69,9 +69,8 @@ export function TaskList() {
     <div
       style={{
         backgroundColor: '#ffffff',
-        border: '1px solid rgba(0,0,0,0.06)',
         borderRadius: '16px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
         overflow: 'hidden',
       }}
     >

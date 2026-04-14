@@ -78,6 +78,8 @@ export type StepId =
   | 'dep_gift_details'
   | 'dep_upload_gift'
   | 'dep_upload_giftor'
+  // Affordability
+  | 'pm_affordability'
   // Documents (main upload area)
   | 'docs_overview'
   // Agreements
@@ -132,6 +134,7 @@ export const ALL_STEPS: StepId[] = [
   'dep_amount',
   'dep_source',
   'dep_gift_details',
+  'pm_affordability',
   // 4. Employment & Income (Employment + Income + Commitments questions)
   'intro_employment_income',
   'emp_status',
@@ -200,6 +203,7 @@ export const STEP_SECTION: Record<StepId, SectionId> = {
   dep_amount: 'property_mortgage',
   dep_source: 'property_mortgage',
   dep_gift_details: 'property_mortgage',
+  pm_affordability: 'property_mortgage',
   // Employment & Income (Employment + Income + Commitments questions)
   emp_status: 'employment_income',
   emp_details: 'employment_income',
@@ -326,6 +330,7 @@ export const STEP_LABELS: Record<StepId, string> = {
   dep_amount: 'Deposit amount',
   dep_source: 'Source of deposit',
   dep_gift_details: 'Gift details',
+  pm_affordability: 'Your Affordability Estimate',
   dep_upload_gift: 'Gift letter',
   dep_upload_giftor: 'Giftor bank statements',
   // Documents

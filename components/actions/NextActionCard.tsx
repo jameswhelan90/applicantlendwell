@@ -193,8 +193,7 @@ export function NextActionCard() {
       style={{
         backgroundColor: '#ffffff',
         borderRadius: '16px',
-        border: '1px solid rgba(0,0,0,0.06)',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
         overflow: 'hidden',
       }}
     >
@@ -225,8 +224,7 @@ export function NextActionCard() {
           className="mb-6"
           style={{
             backgroundColor: '#F7F8FC',
-            borderRadius: '8px',
-            border: '1px solid #E1E8EE',
+            borderRadius: '10px',
             padding: '12px 16px',
           }}
         >
@@ -245,7 +243,7 @@ export function NextActionCard() {
           style={{
             backgroundColor: '#3126E3',
             color: '#ffffff',
-            borderRadius: '8px',
+            borderRadius: '999px',
             padding: '10px 20px',
           }}
         >

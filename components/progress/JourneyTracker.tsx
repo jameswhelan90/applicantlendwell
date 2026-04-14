@@ -28,8 +28,7 @@ export function JourneyTracker({ compact = false }: JourneyTrackerProps) {
         backgroundColor: '#ffffff',
         borderRadius: '16px',
         width: '100%',
-        border: '1px solid rgba(0, 0, 0, 0.06)',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
       }}
     >
       <p

@@ -235,60 +235,67 @@ export function AIActivityIndicator() {
             top: 'calc(100% + 10px)',
             width: '320px',
             backgroundColor: '#ffffff',
-            borderRadius: '16px',
-            border: '1px solid rgba(0,0,0,0.08)',
-            boxShadow: '0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
+            borderRadius: '20px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06)',
           }}
         >
-          {/* Panel header */}
+          {/* Panel header — branded indigo strip */}
           <div
             style={{
+              background: 'linear-gradient(135deg, #3126E3 0%, #473FE6 100%)',
+              padding: '16px 18px 14px',
               display: 'flex',
               alignItems: 'center',
-              gap: '10px',
-              padding: '14px 16px 12px',
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
+              gap: '12px',
             }}
           >
             <div
               style={{
-                width: '28px',
-                height: '28px',
+                width: '34px',
+                height: '34px',
                 borderRadius: '50%',
-                backgroundColor: 'rgba(49,38,227,0.08)',
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(8px)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexShrink: 0,
               }}
             >
-              <AILogo size={16} />
+              <AILogo size={18} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: '13px', fontWeight: '700', color: '#182026', margin: 0 }}>
+              <p className="font-display" style={{ fontSize: '15px', fontWeight: '500', color: '#ffffff', margin: 0, letterSpacing: '-0.01em' }}>
                 LendWell Intelligence
               </p>
-              <p style={{ fontSize: '11px', fontWeight: '500', color: isConnected ? '#3C6006' : '#7B0024', margin: 0, marginTop: '1px' }}>
-                {isProcessing ? 'Working…' : isConnected ? 'Up to date' : 'Disconnected'}
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '2px' }}>
+                <span style={{
+                  width: '6px', height: '6px', borderRadius: '50%', flexShrink: 0,
+                  backgroundColor: isProcessing ? '#FCD34D' : isConnected ? '#6CAD0A' : '#CC013D',
+                  animation: isProcessing ? 'ping 1.5s ease infinite' : 'none',
+                }} />
+                <p style={{ fontSize: '11px', fontWeight: '600', color: 'rgba(255,255,255,0.80)', margin: 0 }}>
+                  {isProcessing ? 'Working on your application…' : isConnected ? 'Everything looks good' : 'Disconnected'}
+                </p>
+              </div>
             </div>
             <button
               onClick={() => setPanelOpen(false)}
               aria-label="Close activity panel"
               style={{
-                width: '24px',
-                height: '24px',
+                width: '26px',
+                height: '26px',
                 borderRadius: '50%',
                 border: 'none',
-                backgroundColor: 'transparent',
+                backgroundColor: 'rgba(255,255,255,0.15)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#9CA3AF',
+                flexShrink: 0,
               }}
             >
-              <X style={{ width: '14px', height: '14px' }} />
+              <X style={{ width: '13px', height: '13px', color: '#ffffff' }} />
             </button>
           </div>
 
@@ -317,11 +324,16 @@ export function AIActivityIndicator() {
           )}
 
           {/* Activity list */}
-          <div style={{ padding: '8px 0', maxHeight: '280px', overflowY: 'auto' }}>
+          <div style={{ padding: '6px 0 8px', maxHeight: '260px', overflowY: 'auto' }}>
             {activities.length === 0 ? (
-              <p style={{ fontSize: '13px', fontWeight: '500', color: '#9CA3AF', padding: '12px 16px', margin: 0 }}>
-                AI activity will appear here as you complete sections.
-              </p>
+              <div style={{ padding: '20px 18px', textAlign: 'center' }}>
+                <p style={{ fontSize: '13px', fontWeight: '600', color: '#5A7387', margin: 0 }}>
+                  No activity yet
+                </p>
+                <p style={{ fontSize: '12px', fontWeight: '500', color: '#9CA3AF', margin: '4px 0 0' }}>
+                  Updates will appear here as you complete your application.
+                </p>
+              </div>
             ) : (
               activities.map((activity) => (
                 <ActivityRow key={activity.id} activity={activity} />

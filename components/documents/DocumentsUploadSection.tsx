@@ -507,11 +507,11 @@ function DocumentAccordionItem({
         onBlur={() => setIsFocused(false)}
         className="w-full flex items-center gap-4 px-6 py-4 text-left card-interactive group"
         style={{
-          backgroundColor: isDragging 
-            ? 'rgba(255, 255, 255, 0.30)' 
+          backgroundColor: isDragging
+            ? 'rgba(49,38,227,0.03)'
             : '#ffffff',
-          borderRadius: '8px',
-          marginBottom: '8px',
+          borderRadius: '12px',
+          marginBottom: '6px',
         }}
       >
         {/* Chevron with enhanced visibility on hover */}
@@ -843,7 +843,16 @@ function CategorySection({
           </p>
         </div>
         {requiredCount > 0 && (
-          <span className="text-xs font-medium" style={{ color: '#182026' }}>
+          <span
+            style={{
+              fontSize: '11px',
+              fontWeight: '700',
+              padding: '3px 10px',
+              borderRadius: '999px',
+              backgroundColor: completedCount === requiredCount ? '#EEFDD9' : '#F7F8FC',
+              color: completedCount === requiredCount ? '#3C6006' : '#5A7387',
+            }}
+          >
             {completedCount}/{requiredCount} complete
           </span>
         )}
@@ -1274,13 +1283,27 @@ export function DocumentsUploadSection() {
       setUploadPhase('scanning');
       setUploadingFiles(prev => prev.map(f => ({ ...f, phase: 'scanning' as const })));
       
-      // Update requirement statuses to reviewing
+      // Update requirement statuses to reviewing with specific AI extraction messages
+      const AI_EXTRACTION_MESSAGES: Record<string, string> = {
+        'req-passport':         'Detecting document type… reading identity fields',
+        'req-proof-of-address': 'Verifying address details and issue date',
+        'req-payslips':         'Extracting salary, employer, and pay period',
+        'req-p60':              'Reading annual income and PAYE reference',
+        'req-bank-statements':  'Scanning transactions and verifying account holder',
+        'req-employer-reference': 'Confirming employment terms and start date',
+        'req-sa302':            'Extracting self-assessment income figures',
+        'req-business-accounts': 'Analysing company profit and director drawings',
+        'req-contract':         'Reading contract type, salary, and start date',
+        'req-deposit-proof':    'Verifying balance, account holder, and date range',
+        'req-gift-letter':      'Confirming donor details and gift amount',
+        'req-aip':              'Reading lender, reference number, and expiry',
+      };
       newUploadingFiles.forEach(f => {
         const docNames = DOCUMENT_NAME_MAPPINGS[f.assignedDocId] || [f.originalName];
         const realisticName = docNames[Math.floor(Math.random() * docNames.length)];
         updateRequirementStatus(f.assignedDocId, 'reviewing', {
           fileName: realisticName,
-          aiMessage: 'LendWell is reviewing your document...',
+          aiMessage: AI_EXTRACTION_MESSAGES[f.assignedDocId] || 'Classifying document…',
         });
       });
     }, 2500);
@@ -1298,6 +1321,20 @@ export function DocumentsUploadSection() {
             : uf
         ));
 
+        const AI_VERIFIED_MESSAGES: Record<string, string> = {
+          'req-passport':         'Identity confirmed — name and date of birth extracted',
+          'req-proof-of-address': 'Address verified — dated within 3 months',
+          'req-payslips':         'Salary confirmed — income figures sent to your application',
+          'req-p60':              'Annual income verified and cross-referenced',
+          'req-bank-statements':  'Statements accepted — 3 months of transactions reviewed',
+          'req-employer-reference': 'Employment confirmed — start date and role extracted',
+          'req-sa302':            'Self-assessment income verified',
+          'req-business-accounts': 'Accounts verified — net profit figures extracted',
+          'req-contract':         'Contract confirmed — terms and salary extracted',
+          'req-deposit-proof':    'Deposit funds verified — balance and date confirmed',
+          'req-gift-letter':      'Gift letter accepted — donor confirmed as non-repayable',
+          'req-aip':              'AIP confirmed — lender reference recorded',
+        };
         if (hasIssue) {
           updateRequirementStatus(f.assignedDocId, 'issue', {
             fileName: realisticName,
@@ -1307,7 +1344,7 @@ export function DocumentsUploadSection() {
         } else {
           updateRequirementStatus(f.assignedDocId, 'verified', {
             fileName: realisticName,
-            aiMessage: 'Document verified successfully',
+            aiMessage: AI_VERIFIED_MESSAGES[f.assignedDocId] || 'Document verified successfully',
           });
         }
       }, 3500 + (index * 600)); // Stagger each verification
