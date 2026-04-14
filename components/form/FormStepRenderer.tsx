@@ -764,53 +764,28 @@ function TypingIndicator() {
 // Animated text component - types out character by character
 function AnimatedText({ text, onComplete }: { text: string; onComplete?: () => void }) {
   const [displayedText, setDisplayedText] = useState('');
-  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
     setDisplayedText('');
-    setIsComplete(false);
     let currentIndex = 0;
 
     const typeNextChar = () => {
       if (currentIndex < text.length) {
         setDisplayedText(text.slice(0, currentIndex + 1));
         currentIndex++;
-        // Variable speed: faster for spaces and punctuation, slightly random for natural feel
         const char = text[currentIndex - 1];
-        const baseDelay = char === ' ' ? 10 : char === '.' || char === ',' ? 80 : 25;
-        const jitter = Math.random() * 15;
-        setTimeout(typeNextChar, baseDelay + jitter);
+        const delay = char === '.' || char === ',' ? 40 : 8;
+        setTimeout(typeNextChar, delay);
       } else {
-        setIsComplete(true);
         onComplete?.();
       }
     };
 
-    // Small initial delay before starting to type
-    const startTimer = setTimeout(typeNextChar, 100);
+    const startTimer = setTimeout(typeNextChar, 50);
     return () => clearTimeout(startTimer);
   }, [text, onComplete]);
 
-  return (
-    <span>
-      {displayedText}
-      {!isComplete && (
-        <span
-          className="inline-block w-0.5 h-4 ml-0.5 align-middle"
-          style={{
-            backgroundColor: '#473FE6',
-            animation: 'cursorBlink 0.8s ease-in-out infinite',
-          }}
-        />
-      )}
-      <style jsx>{`
-        @keyframes cursorBlink {
-          0%, 50% { opacity: 1; }
-          51%, 100% { opacity: 0; }
-        }
-      `}</style>
-    </span>
-  );
+  return <span>{displayedText}</span>;
 }
 
 // Chat bubble component with animated text support
@@ -828,10 +803,10 @@ function ChatBubble({
   if (!isVisible) return null;
   return (
     <div
-      className="max-w-[85%] px-4 py-3 animate-in fade-in slide-in-from-bottom-2 duration-200"
-      style={{ backgroundColor: '#F1F3F7', borderRadius: '8px' }}
+      className="max-w-[85%] px-4 py-3 animate-in fade-in slide-in-from-bottom-1 duration-150"
+      style={{ backgroundColor: '#F1F3F7', borderRadius: '18px 18px 18px 4px' }}
     >
-      <p className="text-[15px] leading-relaxed" style={{ color: '#182026' }}>
+      <p className="text-sm font-medium leading-relaxed" style={{ color: '#182026' }}>
         {animate ? (
           <AnimatedText text={message} onComplete={onAnimationComplete} />
         ) : (
@@ -863,20 +838,20 @@ function WelcomeStep() {
     const startTimer = setTimeout(() => {
       setIsTyping(false);
       setCurrentMessageIndex(0);
-    }, 1000);
+    }, 300);
     return () => clearTimeout(startTimer);
   }, []);
 
   const handleMessageComplete = (index: number) => {
     setCompletedMessages((prev) => [...prev, index]);
-    
-    // Move to next message after a pause
+
+    // Move to next message after a short pause
     if (index < messages.length - 1) {
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
         setCurrentMessageIndex(index + 1);
-      }, 800);
+      }, 400);
     }
   };
 
@@ -973,10 +948,7 @@ function WelcomeStep() {
                 />
               )}
               {currentMessageIndex >= 0 && <div className="w-6 flex-shrink-0" />}
-              <div
-                className="rounded-2xl rounded-tl-md"
-                style={{ backgroundColor: '#F1F3F7' }}
-              >
+              <div style={{ backgroundColor: '#F1F3F7', borderRadius: '18px 18px 18px 4px' }}>
                 <TypingIndicator />
               </div>
             </div>
