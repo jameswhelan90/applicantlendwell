@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { X, ChevronRight, Send, Sparkles } from 'lucide-react';
+import { X, ChevronRight, Send } from 'lucide-react';
 import { useApplication } from '@/context/ApplicationContext';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
@@ -87,7 +87,7 @@ const STEP_TIPS: Record<string, StepTip> = {
   hh_second_applicant: {
     headline: 'Co-applicant details',
     bullets: [
-      'Enter the co-applicant\'s details exactly as they appear on their ID.',
+      "Enter the co-applicant's details exactly as they appear on their ID.",
       'Both applicants will need to provide identity, employment, and income documents.',
     ],
   },
@@ -95,7 +95,7 @@ const STEP_TIPS: Record<string, StepTip> = {
     headline: 'Dependants',
     bullets: [
       'Include all children and other dependants you financially support.',
-      'Ireland: Central Bank rules require lenders to apply up to 3.5× income multiplier. UK: typically 4–4.5×.',
+      'Ireland: Central Bank rules apply up to a 3.5× income multiplier. UK: typically 4–4.5×.',
       'More dependants can reduce the maximum amount you can borrow.',
     ],
   },
@@ -110,8 +110,8 @@ const STEP_TIPS: Record<string, StepTip> = {
   intent_remortgage: {
     headline: 'Remortgage details',
     bullets: [
-      'You\'ll need your current lender name, outstanding balance, and monthly payment.',
-      'Have your most recent mortgage statement to hand — you\'ll upload it shortly.',
+      "You'll need your current lender name, outstanding balance, and monthly payment.",
+      "Have your most recent mortgage statement to hand — you'll upload it shortly.",
     ],
   },
   intent_btl: {
@@ -169,7 +169,7 @@ const STEP_TIPS: Record<string, StepTip> = {
   dep_gift_details: {
     headline: 'Gifted deposit',
     bullets: [
-      'Lenders require a signed letter from the donor confirming the amount, relationship to you, and that it is non-repayable.',
+      'Lenders require a signed letter from the donor confirming the amount, relationship, and that it is non-repayable.',
       "The donor's bank statements showing the source of funds may also be required.",
     ],
   },
@@ -191,7 +191,7 @@ const STEP_TIPS: Record<string, StepTip> = {
     headline: 'Self-employment',
     bullets: [
       'UK: 2–3 years of SA302 forms (HMRC tax calculations) and tax year overviews are required.',
-      'Ireland: 2–3 years of certified business accounts and often an accountant\'s reference letter.',
+      "Ireland: 2–3 years of certified business accounts and often an accountant's reference letter.",
     ],
   },
   emp_upload_payslips: {
@@ -234,20 +234,20 @@ const STEP_TIPS: Record<string, StepTip> = {
     headline: 'Monthly outgoings',
     bullets: [
       'Include all personal loans, credit card minimum payments, car finance, and hire purchase agreements.',
-      'Lenders use this to calculate your debt-to-income ratio and stress-test affordability.',
+      'Lenders use this to stress-test affordability at higher interest rates.',
     ],
   },
   commit_childcare: {
     headline: 'Childcare costs',
     bullets: [
       'Include nursery fees, childminder costs, after-school clubs, and private school fees.',
-      'This is a significant line item in lenders\' affordability models.',
+      "This is a significant line item in lenders' affordability models.",
     ],
   },
   pm_affordability: {
     headline: 'Affordability overview',
     bullets: [
-      'This gives you an estimate of what you can borrow based on the information you have provided.',
+      'This gives you an estimate of what you can borrow based on the information provided.',
       'Speak to your mortgage adviser for a formal assessment and a personalised recommendation.',
     ],
   },
@@ -269,8 +269,7 @@ const STEP_TIPS: Record<string, StepTip> = {
     headline: 'Documents checklist',
     bullets: [
       'Accepted formats: PDF, JPG, or PNG. All four corners of physical documents must be visible.',
-      'Payslips and bank statements should be dated within the last 3 months.',
-      'Photo ID must be in date.',
+      'Payslips and bank statements should be dated within the last 3 months. Photo ID must be in date.',
     ],
   },
   completion: {
@@ -278,7 +277,6 @@ const STEP_TIPS: Record<string, StepTip> = {
     bullets: [
       'LendWell will review your information and prepare your application for lenders.',
       'Your adviser will be in touch to discuss suitability and next steps.',
-      'You can log back in at any time to check your application status.',
     ],
   },
 };
@@ -300,17 +298,46 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
   const { currentStep, state, currentSectionId } = useApplication();
   const [mode, setMode] = useState<'tip' | 'chat'>('tip');
   const [inputValue, setInputValue] = useState('');
+
+  // Generative reveal state
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [showHeadline, setShowHeadline] = useState(false);
+  const [revealedBullets, setRevealedBullets] = useState(0);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const generateTimerRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const lastAutoStepRef = useRef<string | null>(null);
 
   const tip = STEP_TIPS[currentStep];
 
+  // Trigger the generative reveal sequence
+  const triggerGenerate = (bullets: string[]) => {
+    // Clear any in-progress timers
+    generateTimerRef.current.forEach(clearTimeout);
+    generateTimerRef.current = [];
+    setIsGenerating(true);
+    setShowHeadline(false);
+    setRevealedBullets(0);
+
+    // After thinking delay, cascade reveal
+    const t1 = setTimeout(() => {
+      setIsGenerating(false);
+      setShowHeadline(true);
+      bullets.forEach((_, i) => {
+        const t = setTimeout(() => {
+          setRevealedBullets(i + 1);
+        }, 100 + i * 130);
+        generateTimerRef.current.push(t);
+      });
+    }, 700);
+    generateTimerRef.current.push(t1);
+  };
+
   // Auto-open with 1.5s delay on step change (question steps only)
   useEffect(() => {
     if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
-
     if (SILENT_STEPS.has(currentStep) || !tip) return;
     if (lastAutoStepRef.current === currentStep) return;
 
@@ -326,7 +353,19 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
-  // Reset to tip mode when step changes (even if already open)
+  // Trigger generative animation when panel opens or step changes while open
+  useEffect(() => {
+    if (!isOpen || mode !== 'tip') return;
+    if (tip) {
+      triggerGenerate(tip.bullets);
+    }
+    return () => {
+      generateTimerRef.current.forEach(clearTimeout);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep, isOpen]);
+
+  // Reset to tip mode when step changes
   useEffect(() => {
     setMode('tip');
   }, [currentStep]);
@@ -351,7 +390,7 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
   const { messages, sendMessage, status, setMessages } = useChat({ transport });
   const isTyping = status === 'submitted' || status === 'streaming';
 
-  // Seed intro message when switching to chat mode
+  // Seed intro message when switching to chat
   const handleExpandToChat = () => {
     if (messages.length === 0) {
       const tipHeadline = tip?.headline ?? 'this step';
@@ -359,12 +398,7 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
         {
           id: 'assistant-intro',
           role: 'assistant',
-          parts: [
-            {
-              type: 'text',
-              text: `Happy to help with ${tipHeadline.toLowerCase()}. What would you like to know?`,
-            },
-          ],
+          parts: [{ type: 'text', text: `Happy to help with ${tipHeadline.toLowerCase()}. What would you like to know?` }],
         },
       ]);
     }
@@ -392,44 +426,51 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
       className="form-assistant-panel"
       style={{
         position: 'fixed',
-        top: '72px',
-        right: '36px',
+        top: '68px',
+        right: '12px',
         zIndex: 60,
-        width: '284px',
+        width: '280px',
         borderRadius: '14px',
         backgroundColor: '#ffffff',
-        boxShadow: '0 8px 32px rgba(24,32,38,0.14), 0 2px 8px rgba(24,32,38,0.07)',
+        boxShadow: '0 4px 24px rgba(24,32,38,0.10), 0 1px 4px rgba(24,32,38,0.06)',
+        border: '1px solid rgba(49,38,227,0.10)',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
       }}
     >
-      {/* Header */}
+      {/* Header — light, airy */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
-          padding: '12px 14px 10px',
-          borderBottom: '1px solid #F1F3F7',
-          background: 'linear-gradient(135deg, #3126E3 0%, #473FE6 100%)',
+          padding: '11px 12px 10px',
+          borderBottom: '1px solid rgba(49,38,227,0.07)',
+          backgroundColor: '#F7F8FF',
         }}
       >
+        {/* LendWell AI logo */}
         <div
           style={{
-            width: '24px',
-            height: '24px',
-            borderRadius: '50%',
-            backgroundColor: 'rgba(255,255,255,0.2)',
+            width: '22px',
+            height: '22px',
+            borderRadius: '7px',
+            background: 'linear-gradient(135deg, rgba(49,38,227,0.12) 0%, rgba(71,63,230,0.18) 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0,
+            animation: isGenerating ? 'sparkle-pulse 1s ease-in-out infinite' : 'none',
           }}
         >
-          <Sparkles className="w-3 h-3" style={{ color: '#ffffff' }} />
+          <img
+            src="/images/lendwell-ai-logo.svg"
+            alt=""
+            style={{ width: '13px', height: '13px' }}
+          />
         </div>
-        <span style={{ flex: 1, fontSize: '12px', fontWeight: 600, color: '#ffffff', letterSpacing: '0.01em' }}>
+        <span style={{ flex: 1, fontSize: '12px', fontWeight: 700, color: '#3126E3', letterSpacing: '0.01em' }}>
           Application Guide
         </span>
         <button
@@ -437,10 +478,10 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
           onClick={() => onOpenChange(false)}
           aria-label="Close assistant"
           style={{
-            width: '22px',
-            height: '22px',
+            width: '20px',
+            height: '20px',
             borderRadius: '50%',
-            backgroundColor: 'rgba(255,255,255,0.15)',
+            backgroundColor: 'transparent',
             border: 'none',
             cursor: 'pointer',
             display: 'flex',
@@ -449,97 +490,112 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
             flexShrink: 0,
           }}
         >
-          <X className="w-3 h-3" style={{ color: 'rgba(255,255,255,0.85)' }} />
+          <X className="w-3 h-3" style={{ color: '#9CA3AF' }} />
         </button>
       </div>
 
       {/* Tip mode */}
-      {mode === 'tip' && tip && (
-        <div style={{ padding: '14px' }}>
-          <p style={{ fontSize: '12px', fontWeight: 700, color: '#182026', marginBottom: '8px' }}>
-            {tip.headline}
-          </p>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '5px' }}>
-            {tip.bullets.map((b, i) => (
-              <li key={i} style={{ display: 'flex', gap: '7px', alignItems: 'flex-start' }}>
-                <span
+      {mode === 'tip' && (
+        <div style={{ padding: '13px 14px 12px' }}>
+
+          {/* Generating state — bouncing dots */}
+          {isGenerating && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', paddingBottom: '2px' }}>
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
                   style={{
                     width: '5px',
                     height: '5px',
                     borderRadius: '50%',
-                    backgroundColor: '#3126E3',
-                    flexShrink: 0,
-                    marginTop: '5px',
+                    backgroundColor: 'rgba(49,38,227,0.35)',
+                    animation: 'thinking-bounce 1.2s ease-in-out infinite',
+                    animationDelay: `${i * 0.15}s`,
                   }}
                 />
-                <span style={{ fontSize: '12px', fontWeight: 500, color: '#42535F', lineHeight: '1.55' }}>
-                  {b}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <button
-            type="button"
-            onClick={handleExpandToChat}
-            style={{
-              marginTop: '12px',
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '5px',
-              padding: '8px 12px',
-              borderRadius: '8px',
-              border: '1px solid #E8ECF1',
-              backgroundColor: '#F7F8FC',
-              cursor: 'pointer',
-              fontSize: '12px',
-              fontWeight: 600,
-              color: '#3126E3',
-            }}
-          >
-            Ask a follow-up
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
+              ))}
+            </div>
+          )}
 
-      {/* No tip for this step — show a neutral message */}
-      {mode === 'tip' && !tip && (
-        <div style={{ padding: '14px' }}>
-          <p style={{ fontSize: '12px', fontWeight: 500, color: '#5A7387', lineHeight: '1.55' }}>
-            Have a question about this step? Ask LendWell for help.
-          </p>
-          <button
-            type="button"
-            onClick={handleExpandToChat}
-            style={{
-              marginTop: '12px',
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '5px',
-              padding: '8px 12px',
-              borderRadius: '8px',
-              border: '1px solid #E8ECF1',
-              backgroundColor: '#F7F8FC',
-              cursor: 'pointer',
-              fontSize: '12px',
-              fontWeight: 600,
-              color: '#3126E3',
-            }}
-          >
-            Ask a question
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
+          {/* Headline */}
+          {!isGenerating && tip && showHeadline && (
+            <p
+              className="assistant-reveal"
+              style={{ fontSize: '12px', fontWeight: 700, color: '#182026', marginBottom: '8px' }}
+            >
+              {tip.headline}
+            </p>
+          )}
+
+          {/* Bullets */}
+          {!isGenerating && tip && (
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {tip.bullets.map((b, i) =>
+                i < revealedBullets ? (
+                  <li
+                    key={i}
+                    className="assistant-reveal"
+                    style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}
+                  >
+                    <div
+                      style={{
+                        width: '4px',
+                        height: '4px',
+                        borderRadius: '50%',
+                        backgroundColor: 'rgba(49,38,227,0.4)',
+                        flexShrink: 0,
+                        marginTop: '6px',
+                      }}
+                    />
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#42535F', lineHeight: '1.6' }}>
+                      {b}
+                    </span>
+                  </li>
+                ) : null
+              )}
+            </ul>
+          )}
+
+          {/* No tip fallback */}
+          {!isGenerating && !tip && (
+            <p style={{ fontSize: '12px', fontWeight: 500, color: '#5A7387', lineHeight: '1.6' }}>
+              Have a question about this step? Ask LendWell for help.
+            </p>
+          )}
+
+          {/* Ask a follow-up — only show after content has revealed */}
+          {!isGenerating && (tip ? revealedBullets >= tip.bullets.length : true) && (
+            <button
+              type="button"
+              onClick={handleExpandToChat}
+              className="assistant-reveal"
+              style={{
+                marginTop: '11px',
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '4px',
+                padding: '7px 12px',
+                borderRadius: '8px',
+                border: '1px solid rgba(49,38,227,0.12)',
+                backgroundColor: 'rgba(49,38,227,0.04)',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 600,
+                color: '#3126E3',
+              }}
+            >
+              Ask a follow-up
+              <ChevronRight className="w-3 h-3" />
+            </button>
+          )}
         </div>
       )}
 
       {/* Chat mode */}
       {mode === 'chat' && (
         <>
-          {/* Messages */}
           <div
             style={{
               flex: 1,
@@ -558,16 +614,10 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
                 .join('');
               const isUser = msg.role === 'user';
               return (
-                <div
-                  key={msg.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: isUser ? 'flex-end' : 'flex-start',
-                  }}
-                >
+                <div key={msg.id} style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
                   <div
                     style={{
-                      maxWidth: '85%',
+                      maxWidth: '86%',
                       padding: '7px 10px',
                       borderRadius: isUser ? '10px 10px 2px 10px' : '10px 10px 10px 2px',
                       backgroundColor: isUser ? '#3126E3' : '#F7F8FC',
@@ -586,7 +636,7 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
               <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                 <div
                   style={{
-                    padding: '7px 12px',
+                    padding: '8px 12px',
                     borderRadius: '10px 10px 10px 2px',
                     backgroundColor: '#F7F8FC',
                     display: 'flex',
@@ -601,9 +651,9 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
                         width: '5px',
                         height: '5px',
                         borderRadius: '50%',
-                        backgroundColor: '#9CA3AF',
-                        animation: 'typing-bounce 1.1s ease-in-out infinite',
-                        animationDelay: `${i * 0.18}s`,
+                        backgroundColor: 'rgba(49,38,227,0.35)',
+                        animation: 'thinking-bounce 1.2s ease-in-out infinite',
+                        animationDelay: `${i * 0.15}s`,
                       }}
                     />
                   ))}
@@ -613,14 +663,14 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input */}
           <div
             style={{
               padding: '10px 12px',
-              borderTop: '1px solid #F1F3F7',
+              borderTop: '1px solid rgba(49,38,227,0.07)',
               display: 'flex',
               gap: '7px',
               alignItems: 'center',
+              backgroundColor: '#F7F8FF',
             }}
           >
             <input
@@ -641,8 +691,8 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
                 flex: 1,
                 padding: '7px 10px',
                 borderRadius: '8px',
-                border: '1px solid #E8ECF1',
-                backgroundColor: '#F7F8FC',
+                border: '1px solid rgba(49,38,227,0.12)',
+                backgroundColor: '#ffffff',
                 fontSize: '12px',
                 fontWeight: 500,
                 color: '#182026',
@@ -658,19 +708,19 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
                 width: '30px',
                 height: '30px',
                 borderRadius: '8px',
-                backgroundColor: inputValue.trim() && !isTyping ? '#3126E3' : '#E8ECF1',
+                backgroundColor: inputValue.trim() && !isTyping ? '#3126E3' : 'rgba(49,38,227,0.08)',
                 border: 'none',
                 cursor: inputValue.trim() && !isTyping ? 'pointer' : 'default',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexShrink: 0,
-                transition: 'background-color 120ms ease',
+                transition: 'background-color 150ms ease',
               }}
             >
               <Send
                 className="w-3.5 h-3.5"
-                style={{ color: inputValue.trim() && !isTyping ? '#ffffff' : '#9CA3AF' }}
+                style={{ color: inputValue.trim() && !isTyping ? '#ffffff' : 'rgba(49,38,227,0.3)' }}
               />
             </button>
           </div>
@@ -678,15 +728,26 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
       )}
 
       <style>{`
-        @keyframes typing-bounce {
-          0%, 60%, 100% { transform: translateY(0); }
-          30% { transform: translateY(-4px); }
+        @keyframes thinking-bounce {
+          0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+          30% { transform: translateY(-5px); opacity: 1; }
+        }
+        @keyframes sparkle-pulse {
+          0%, 100% { opacity: 0.6; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.15); }
+        }
+        @keyframes assistant-reveal {
+          from { opacity: 0; transform: translateY(5px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .assistant-reveal {
+          animation: assistant-reveal 180ms ease-out both;
         }
         .form-assistant-panel {
-          animation: assistant-slide-in 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+          animation: assistant-slide-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
         }
         @keyframes assistant-slide-in {
-          from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+          from { opacity: 0; transform: translateY(-6px) scale(0.98); }
           to   { opacity: 1; transform: translateY(0) scale(1); }
         }
       `}</style>

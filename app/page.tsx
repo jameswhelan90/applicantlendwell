@@ -36,7 +36,6 @@ export default function MortgageApplication() {
             backdropFilter: 'blur(24px) saturate(180%)',
             WebkitBackdropFilter: 'blur(24px) saturate(180%)',
             borderRadius: '16px',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(255,255,255,0.6) inset',
           }}
         >
           <div className="flex items-center gap-3">
