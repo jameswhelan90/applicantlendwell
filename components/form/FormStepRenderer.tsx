@@ -152,7 +152,7 @@ function TextInput({
         style={{
           backgroundColor: '#ffffff',
           color: '#182026',
-          boxShadow: isFocused ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
+          boxShadow: isFocused ? '0 0 0 2px rgba(49,38,227,0.45)' : '0 1px 3px rgba(0,0,0,0.08)',
           border: 'none',
           borderRadius: '6px',
         }}
@@ -224,7 +224,9 @@ function PhoneInput({
         className="flex transition-all"
         style={{
           borderRadius: '6px',
-          boxShadow: isFocused ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
+          boxShadow: isFocused ? '0 0 0 2px rgba(49,38,227,0.45)' : '0 1px 3px rgba(0,0,0,0.08)',
+          overflow: 'visible',
+          position: 'relative',
         }}
       >
         {/* Country selector trigger */}
@@ -243,7 +245,7 @@ function PhoneInput({
             }}
           >
             <span style={{ fontSize: '18px', lineHeight: 1 }}>{selectedCountry.flag}</span>
-            <span style={{ color: '#5A7387', fontSize: '13px' }}>{selectedCountry.dial}</span>
+            <span style={{ color: '#182026', fontSize: '13px' }}>{selectedCountry.dial}</span>
             <span style={{ color: '#9CA3AF', fontSize: '10px' }}>▾</span>
           </button>
 
@@ -569,7 +571,7 @@ function CountrySelect({
         className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium transition-all outline-none"
         style={{
           backgroundColor: '#ffffff',
-          boxShadow: open ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
+          boxShadow: open ? '0 0 0 2px rgba(49,38,227,0.45)' : '0 1px 3px rgba(0,0,0,0.08)',
           border: 'none',
           borderRadius: '6px',
           color: '#182026',

@@ -166,7 +166,7 @@ export function AddressAutocomplete({
           style={{
             backgroundColor: '#ffffff',
             color: '#182026',
-            boxShadow: isFocused ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
+            boxShadow: isFocused ? '0 0 0 2px rgba(49,38,227,0.45)' : '0 1px 3px rgba(0,0,0,0.08)',
             border: 'none',
             borderRadius: '6px',
           }}

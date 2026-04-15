@@ -86,7 +86,7 @@ export function CurrencyInput({
           style={{
             backgroundColor: '#ffffff',
             color: '#182026',
-            boxShadow: isFocused ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
+            boxShadow: isFocused ? '0 0 0 2px rgba(49,38,227,0.45)' : '0 1px 3px rgba(0,0,0,0.08)',
             border: 'none',
             borderRadius: '6px',
           }}
@@ -189,7 +189,7 @@ export function DOBInput({
   const getInputStyle = (focused: boolean) => ({
     backgroundColor: '#ffffff',
     color: '#182026',
-    boxShadow: focused ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
+    boxShadow: focused ? '0 0 0 2px rgba(49,38,227,0.45)' : '0 1px 3px rgba(0,0,0,0.08)',
     border: 'none',
     borderRadius: '6px',
   });
@@ -505,6 +505,7 @@ export function RadioCardGroup({
 interface SearchableSelectOption {
   value: string;
   label: string;
+  flag?: string;
 }
 
 interface SearchableSelectProps {
@@ -577,7 +578,7 @@ export function SearchableSelect({
         style={{
           backgroundColor: '#ffffff',
           color: '#182026',
-          boxShadow: isOpen ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
+          boxShadow: isOpen ? '0 0 0 2px rgba(49,38,227,0.45)' : '0 1px 3px rgba(0,0,0,0.08)',
           border: 'none',
           borderRadius: '6px',
         }}
@@ -643,7 +644,10 @@ export function SearchableSelect({
                     }}
                   >
                     <span className="font-medium">{option.label}</span>
-                    {isSelected && <Check className="w-4 h-4" style={{ color: '#473FE6' }} />}
+                    <span className="flex items-center gap-2 flex-shrink-0">
+                      {option.flag && <span style={{ fontSize: '18px', lineHeight: 1 }}>{option.flag}</span>}
+                      {isSelected && <Check className="w-4 h-4" style={{ color: '#473FE6' }} />}
+                    </span>
                   </button>
                 );
               })
@@ -658,32 +662,32 @@ export function SearchableSelect({
 // ─── Common nationality options ─────────────────────────────────────────────
 
 export const NATIONALITY_OPTIONS: SearchableSelectOption[] = [
-  { value: 'british', label: 'British' },
-  { value: 'irish', label: 'Irish' },
-  { value: 'polish', label: 'Polish' },
-  { value: 'romanian', label: 'Romanian' },
-  { value: 'indian', label: 'Indian' },
-  { value: 'pakistani', label: 'Pakistani' },
-  { value: 'bangladeshi', label: 'Bangladeshi' },
-  { value: 'nigerian', label: 'Nigerian' },
-  { value: 'chinese', label: 'Chinese' },
-  { value: 'italian', label: 'Italian' },
-  { value: 'portuguese', label: 'Portuguese' },
-  { value: 'spanish', label: 'Spanish' },
-  { value: 'french', label: 'French' },
-  { value: 'german', label: 'German' },
-  { value: 'american', label: 'American' },
-  { value: 'australian', label: 'Australian' },
-  { value: 'canadian', label: 'Canadian' },
-  { value: 'south_african', label: 'South African' },
-  { value: 'jamaican', label: 'Jamaican' },
-  { value: 'kenyan', label: 'Kenyan' },
-  { value: 'ghanaian', label: 'Ghanaian' },
-  { value: 'brazilian', label: 'Brazilian' },
-  { value: 'filipino', label: 'Filipino' },
-  { value: 'turkish', label: 'Turkish' },
-  { value: 'sri_lankan', label: 'Sri Lankan' },
-  { value: 'other', label: 'Other' },
+  { value: 'british',      label: 'British',      flag: '🇬🇧' },
+  { value: 'irish',        label: 'Irish',        flag: '🇮🇪' },
+  { value: 'polish',       label: 'Polish',       flag: '🇵🇱' },
+  { value: 'romanian',     label: 'Romanian',     flag: '🇷🇴' },
+  { value: 'indian',       label: 'Indian',       flag: '🇮🇳' },
+  { value: 'pakistani',    label: 'Pakistani',    flag: '🇵🇰' },
+  { value: 'bangladeshi',  label: 'Bangladeshi',  flag: '🇧🇩' },
+  { value: 'nigerian',     label: 'Nigerian',     flag: '🇳🇬' },
+  { value: 'chinese',      label: 'Chinese',      flag: '🇨🇳' },
+  { value: 'italian',      label: 'Italian',      flag: '🇮🇹' },
+  { value: 'portuguese',   label: 'Portuguese',   flag: '🇵🇹' },
+  { value: 'spanish',      label: 'Spanish',      flag: '🇪🇸' },
+  { value: 'french',       label: 'French',       flag: '🇫🇷' },
+  { value: 'german',       label: 'German',       flag: '🇩🇪' },
+  { value: 'american',     label: 'American',     flag: '🇺🇸' },
+  { value: 'australian',   label: 'Australian',   flag: '🇦🇺' },
+  { value: 'canadian',     label: 'Canadian',     flag: '🇨🇦' },
+  { value: 'south_african',label: 'South African',flag: '🇿🇦' },
+  { value: 'jamaican',     label: 'Jamaican',     flag: '🇯🇲' },
+  { value: 'kenyan',       label: 'Kenyan',       flag: '🇰🇪' },
+  { value: 'ghanaian',     label: 'Ghanaian',     flag: '🇬🇭' },
+  { value: 'brazilian',    label: 'Brazilian',    flag: '🇧🇷' },
+  { value: 'filipino',     label: 'Filipino',     flag: '🇵🇭' },
+  { value: 'turkish',      label: 'Turkish',      flag: '🇹🇷' },
+  { value: 'sri_lankan',   label: 'Sri Lankan',   flag: '🇱🇰' },
+  { value: 'other',        label: 'Other' },
 ];
 
 // ─── Employment status options ──────────────────────────────────────────────
