@@ -732,7 +732,7 @@ function DocumentAccordionItem({
                     style={{ backgroundColor: '#F7F8FC', color: '#182026', border: '1px solid #E5E7EB' }}
                   >
                     <FileText className="w-3.5 h-3.5" />
-                    Choose from library
+                    Choose
                   </button>
                 </div>
               </>
@@ -864,7 +864,7 @@ function CategorySection({
       {/* Category header */}
       <div className="flex items-center gap-3 mb-4">
         <div
-          className="w-9 h-9 flex-shrink-0 flex items-center justify-center"
+          className="hidden sm:flex w-9 h-9 flex-shrink-0 items-center justify-center"
           style={{
             backgroundColor: '#EEF0FD',
             borderRadius: '999px',
@@ -1417,10 +1417,10 @@ export function DocumentsUploadSection() {
     <div className="w-full">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="font-display font-medium mb-2" style={{ fontSize: '28px', color: '#182026', letterSpacing: '-0.01em' }}>
+        <h2 className="font-display font-medium mb-2 text-xl sm:text-2xl" style={{ color: '#182026', letterSpacing: '-0.01em' }}>
           Upload your documents
         </h2>
-        <p className="text-base" style={{ fontSize: '20px', fontWeight: '500', color: '#182026', lineHeight: '1.5em' }}>
+        <p className="text-sm sm:text-base" style={{ fontWeight: '500', color: '#182026', lineHeight: '1.5em' }}>
           Upload the documents lenders will need to review your application. LendWell will check each one for you.
         </p>
       </div>
