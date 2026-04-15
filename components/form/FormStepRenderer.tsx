@@ -40,6 +40,25 @@ import {
   Wand2,
 } from 'lucide-react';
 
+// ─── Phone country codes ─────────────────────────────────────────────────────
+
+const PHONE_COUNTRIES = [
+  { code: 'IE', flag: '🇮🇪', name: 'Ireland',        dial: '+353' },
+  { code: 'GB', flag: '🇬🇧', name: 'United Kingdom', dial: '+44'  },
+  { code: 'US', flag: '🇺🇸', name: 'United States',  dial: '+1'   },
+  { code: 'AU', flag: '🇦🇺', name: 'Australia',      dial: '+61'  },
+  { code: 'CA', flag: '🇨🇦', name: 'Canada',         dial: '+1'   },
+  { code: 'FR', flag: '🇫🇷', name: 'France',         dial: '+33'  },
+  { code: 'DE', flag: '🇩🇪', name: 'Germany',        dial: '+49'  },
+  { code: 'ES', flag: '🇪🇸', name: 'Spain',          dial: '+34'  },
+  { code: 'IT', flag: '🇮🇹', name: 'Italy',          dial: '+39'  },
+  { code: 'NL', flag: '🇳🇱', name: 'Netherlands',    dial: '+31'  },
+  { code: 'PL', flag: '🇵🇱', name: 'Poland',         dial: '+48'  },
+  { code: 'PT', flag: '🇵🇹', name: 'Portugal',       dial: '+351' },
+  { code: 'IN', flag: '🇮🇳', name: 'India',          dial: '+91'  },
+  { code: 'ZA', flag: '🇿🇦', name: 'South Africa',   dial: '+27'  },
+];
+
 // ─── Shared primitives ──────────────────────────────────────────────────────
 
 function SectionLabel({ text: _text, isSecondary: _isSecondary }: { text: string; isSecondary?: boolean }) {
@@ -138,6 +157,147 @@ function TextInput({
           borderRadius: '6px',
         }}
       />
+      {showAutofill && autofillSource && (
+        <div className="flex items-center gap-1 mt-1.5">
+          <Wand2 style={{ width: '10px', height: '10px', color: '#473FE6', flexShrink: 0 }} />
+          <span style={{ fontSize: '11px', fontWeight: '600', color: '#473FE6' }}>
+            Autofilled · {autofillSource}
+          </span>
+          <span style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: '500' }}>
+            — just type to override
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PhoneInput({
+  label,
+  value,
+  onChange,
+  autoFocus,
+  autofillSource,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  autoFocus?: boolean;
+  autofillSource?: string;
+}) {
+  const [isFocused, setIsFocused] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showAutofill, setShowAutofill] = useState(!!autofillSource);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const matchedCountry = PHONE_COUNTRIES.find((c) => value.startsWith(c.dial + ' ') || value === c.dial);
+  const [selectedCountry, setSelectedCountry] = useState(matchedCountry ?? PHONE_COUNTRIES[0]);
+  const localNumber = matchedCountry ? value.slice(selectedCountry.dial.length + 1) : value;
+
+  useEffect(() => { setShowAutofill(!!autofillSource); }, [autofillSource]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setIsOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const handleSelect = (country: typeof PHONE_COUNTRIES[0]) => {
+    setSelectedCountry(country);
+    setIsOpen(false);
+    onChange(localNumber ? `${country.dial} ${localNumber}` : '');
+  };
+
+  const handleNumberChange = (raw: string) => {
+    setShowAutofill(false);
+    onChange(raw ? `${selectedCountry.dial} ${raw}` : '');
+  };
+
+  return (
+    <div className="mb-5">
+      <label className="block text-sm font-semibold mb-1.5" style={{ color: '#182026' }}>
+        {label}
+      </label>
+      <div
+        className="flex transition-all"
+        style={{
+          borderRadius: '6px',
+          boxShadow: isFocused ? '0 0 0 2px rgba(24,32,38,0.25)' : '0 1px 3px rgba(0,0,0,0.08)',
+        }}
+      >
+        {/* Country selector trigger */}
+        <div ref={dropdownRef} style={{ position: 'relative', flexShrink: 0 }}>
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            className="flex items-center gap-1.5 h-full px-3 text-sm font-semibold transition-colors"
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '6px 0 0 6px',
+              borderRight: '1px solid rgba(24,32,38,0.08)',
+              color: '#182026',
+              whiteSpace: 'nowrap',
+              minWidth: '84px',
+            }}
+          >
+            <span style={{ fontSize: '18px', lineHeight: 1 }}>{selectedCountry.flag}</span>
+            <span style={{ color: '#5A7387', fontSize: '13px' }}>{selectedCountry.dial}</span>
+            <span style={{ color: '#9CA3AF', fontSize: '10px' }}>▾</span>
+          </button>
+
+          {isOpen && (
+            <div
+              className="absolute left-0 z-50 overflow-hidden"
+              style={{
+                top: 'calc(100% + 6px)',
+                minWidth: '220px',
+                backgroundColor: '#ffffff',
+                borderRadius: '10px',
+                boxShadow: '0 8px 24px rgba(24,32,38,0.12), 0 0 0 1px rgba(0,0,0,0.06)',
+              }}
+            >
+              {PHONE_COUNTRIES.map((country) => (
+                <button
+                  key={country.code}
+                  type="button"
+                  onMouseDown={(e) => { e.preventDefault(); handleSelect(country); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-left text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: country.code === selectedCountry.code ? '#F7F8FC' : 'transparent',
+                    color: '#182026',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F7F8FC'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = country.code === selectedCountry.code ? '#F7F8FC' : 'transparent'; }}
+                >
+                  <span style={{ fontSize: '20px', lineHeight: 1, width: '24px', textAlign: 'center' }}>{country.flag}</span>
+                  <span style={{ flex: 1 }}>{country.name}</span>
+                  <span style={{ color: '#9CA3AF', fontWeight: '600', fontSize: '12px' }}>{country.dial}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Number field */}
+        <input
+          autoFocus={autoFocus}
+          type="tel"
+          value={localNumber}
+          onChange={(e) => handleNumberChange(e.target.value)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          placeholder="87 123 4567"
+          className="flex-1 px-4 py-3 text-sm font-medium outline-none"
+          style={{
+            backgroundColor: '#ffffff',
+            color: '#182026',
+            border: 'none',
+            borderRadius: '0 6px 6px 0',
+          }}
+        />
+      </div>
       {showAutofill && autofillSource && (
         <div className="flex items-center gap-1 mt-1.5">
           <Wand2 style={{ width: '10px', height: '10px', color: '#473FE6', flexShrink: 0 }} />
@@ -1211,7 +1371,7 @@ function IdContactStep() {
         title="How can we reach you?"
         description="We'll only contact you about your mortgage application."
       />
-      <TextInput label="Mobile number" value={d.phone} onChange={(v) => setField('phone', v)} placeholder="+44 7700 900000" type="tel" autoFocus autofillSource={af.phone} />
+      <PhoneInput label="Mobile number" value={d.phone} onChange={(v) => setField('phone', v)} autoFocus autofillSource={af.phone} />
       <TextInput label="Email address" value={d.email} onChange={(v) => setField('email', v)} placeholder="sarah@example.com" type="email" autofillSource={af.email} />
     </div>
   );
@@ -1475,7 +1635,7 @@ function HhSecondApplicantContactStep() {
         description="We may need to contact them directly during the application."
       />
       <TextInput label="Email address" value={d.secondApplicantEmail} onChange={(v) => setField('secondApplicantEmail', v)} placeholder="john@example.com" type="email" autoFocus />
-      <TextInput label="Mobile number" value={d.secondApplicantPhone} onChange={(v) => setField('secondApplicantPhone', v)} placeholder="+44 7700 900001" type="tel" />
+      <PhoneInput label="Mobile number" value={d.secondApplicantPhone} onChange={(v) => setField('secondApplicantPhone', v)} />
     </div>
   );
 }
