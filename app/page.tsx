@@ -4,6 +4,7 @@ import { useApplication } from '@/context/ApplicationContext';
 import { getProgressSummary } from '@/utils/taskHelpers';
 
 import { JourneyTracker } from '@/components/progress/JourneyTracker';
+import { MobileJourneyNav } from '@/components/progress/MobileJourneyNav';
 import { StepOverviewPanel } from '@/components/actions/StepOverviewPanel';
 import { NextActionCard } from '@/components/actions/NextActionCard';
 import { TaskList } from '@/components/actions/TaskList';
@@ -63,6 +64,9 @@ export default function MortgageApplication() {
           </div>
         </div>
       </header>
+
+      {/* Mobile journey section nav — select-style, hidden on desktop */}
+      <MobileJourneyNav />
 
       {/* Page — two-column master-detail layout */}
       <main className="flex-1 overflow-hidden w-full" style={{ backgroundColor: '#F7F8FC' }}>

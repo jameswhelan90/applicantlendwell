@@ -179,6 +179,11 @@ export function FloatingChat({ hideButton = false }: FloatingChatProps) {
           .floating-chat-trigger {
             left: auto !important;
             right: 16px !important;
+            width: 52px !important;
+            height: 52px !important;
+            padding: 0 !important;
+            justify-content: center !important;
+            border: none !important;
           }
         }
       `}</style>
