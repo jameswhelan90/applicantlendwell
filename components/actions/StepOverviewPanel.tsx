@@ -216,7 +216,7 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
                       width: '6px',
                       height: '6px',
                       borderRadius: '50%',
-                      backgroundColor: '#CBD5E1',
+                      backgroundColor: '#3126E3',
                     }}
                   />
                   <span className="text-sm font-medium" style={{ color: '#374151' }}>{detail}</span>
