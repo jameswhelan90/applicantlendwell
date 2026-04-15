@@ -393,7 +393,7 @@ export function RequirementsDocuments() {
                       backgroundColor:
                         req.status === 'verified' ? '#F0FBDF' :
                         isProcessing ? '#EEF0FD' :
-                        '#F3F4F6',
+                        '#EEF0F4',
                       color: getStatusColor(req.status),
                     }}
                   >
@@ -403,24 +403,24 @@ export function RequirementsDocuments() {
 
                 {/* Accordion content — expandable section */}
                 {isExpanded && (
-                  <div className="bg-gray-50 px-6 py-4 border-t" style={{ borderColor: '#E5E7EB' }}>
+                  <div className="px-6 py-4 border-t" style={{ backgroundColor: '#F7F8FC', borderColor: '#E1E8EE' }}>
                     <div className="space-y-3">
                       {/* Uploaded file */}
                       {req.uploadedFileName && (
                         <div className="flex items-start gap-3">
-                          <FileText className="w-4 h-4 flex-shrink-0 text-gray-400 mt-0.5" />
+                          <FileText className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#9CA3AF' }} />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">
+                            <p className="text-sm font-medium truncate" style={{ color: '#182026' }}>
                               {req.uploadedFileName}
                             </p>
                             {req.aiMessage && (
-                              <p className="text-xs text-blue-600 mt-1">
+                              <p className="text-xs mt-1" style={{ color: '#3126E3' }}>
                                 {req.aiMessage}
                               </p>
                             )}
                           </div>
                           {isProcessing && (
-                            <Loader2 className="w-4 h-4 animate-spin flex-shrink-0 text-blue-600" />
+                            <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" style={{ color: '#3126E3' }} />
                           )}
                           {req.status === 'verified' && (
                             <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#6CAD0A' }} />
@@ -435,7 +435,7 @@ export function RequirementsDocuments() {
 
                       {/* Empty state */}
                       {!hasFiles && !isProcessing && (
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs" style={{ color: '#5A7387' }}>
                           No file uploaded yet. Drag and drop or click to upload.
                         </p>
                       )}
@@ -450,7 +450,7 @@ export function RequirementsDocuments() {
         {/* Progress bar */}
         <div className="px-6" style={{ borderTop: '1px solid #F1F3F7' }}>
           <div className="py-3">
-            <div className="h-1 rounded-full overflow-hidden" style={{ backgroundColor: '#E5E7EB' }}>
+            <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: '#E1E8EE' }}>
               <div
                 className="h-full rounded-full transition-all duration-700"
                 style={{

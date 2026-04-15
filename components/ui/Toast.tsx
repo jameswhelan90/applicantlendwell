@@ -79,6 +79,7 @@ function Toaster({ toasts, onDismiss }: { toasts: ToastItem[]; onDismiss: (id: s
 
   return (
     <div
+      className="toast-container"
       style={{
         position: 'fixed',
         bottom: '88px',

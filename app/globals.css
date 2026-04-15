@@ -98,6 +98,7 @@
     
     /* Chrome */
     --border: 210 24% 91%;                      /* Primary.Fill-Medium #E1E8EE */
+    --border-soft: 220 24% 95%;                 /* Interior dividers #F1F3F7 */
     --border-strong: 207 23% 75%;               /* Primary.Fill #B5C3CE */
     --input: 220 33% 98%;                       /* Primary.Fill-Soft #F7F8FC */
     --ring: 243 74% 52%;                        /* Indigo.Color #3126E3 (focusRing) */
@@ -381,4 +382,24 @@
   .group:hover .badge-interactive {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   }
+
+  /* ─── Flat List Container (Stripe/Linear list pattern) ────────────── */
+  .list-container {
+    background-color: #ffffff;
+    border: 1px solid hsl(var(--border));
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .list-row {
+    border-bottom: 1px solid hsl(var(--border-soft));
+  }
+
+  .list-row:last-child {
+    border-bottom: none;
+  }
+
+  /* ─── Design Token Utilities ──────────────────────────────────────── */
+  .text-muted     { color: #5A7387; }
+  .text-secondary { color: #42535F; }
 }

@@ -18,13 +18,13 @@ export function ExtractedFieldsGrid({ fields }: ExtractedFieldsGridProps) {
             Extracted by LendWell AI
           </span>
         </div>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
           {Object.entries(fields).map(([key, val]) => (
             <div key={key}>
               <p className="text-xs font-medium capitalize" style={{ color: '#5A7D23' }}>
                 {key.replace(/_/g, ' ')}
               </p>
-              <p className="text-xs font-semibold" style={{ color: '#1F3A0A' }}>
+              <p className="text-xs font-semibold" style={{ color: '#3C6006' }}>
                 {val}
               </p>
             </div>

@@ -474,7 +474,7 @@ function getStatusIcon(status: RequirementStatus) {
     case 'issue':
       return <AlertCircle className="w-5 h-5" style={{ color: '#E07900' }} />;
     case 'needs_update':
-      return <Clock className="w-5 h-5" style={{ color: '#B45309' }} />;
+      return <Clock className="w-5 h-5" style={{ color: '#E07900' }} />;
     default:
       return <div className="w-5 h-5 rounded-full border-2" style={{ borderColor: '#E1E8EE' }} />;
   }
@@ -510,7 +510,7 @@ function getStatusColor(status: RequirementStatus): string {
     case 'issue':
       return '#653701';     // Warning.Text-Soft
     case 'needs_update':
-      return '#92400E';     // Amber text
+      return '#653701';     // Warning.Text-Soft
     default:
       return '#5A7387';     // Primary.Color (textMuted)
   }
@@ -526,9 +526,9 @@ function getStatusBgColor(status: RequirementStatus): string {
     case 'issue':
       return '#FFF6EA';     // Warning.Fill-Soft
     case 'needs_update':
-      return '#FEF3C7';     // Amber fill
+      return '#FFF6EA';     // Warning.Fill-Soft
     default:
-      return '#F7F8FC';     // Primary.Fill-Soft
+      return '#EEF0F4';     // Visible neutral tint
   }
 }
 
@@ -548,8 +548,6 @@ function DocumentAccordionItem({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
 
   const status = requirement?.status || 'required';
   const isComplete = status === 'verified';
@@ -581,6 +579,7 @@ function DocumentAccordionItem({
   return (
     <div
       id={`doc-${doc.id}`}
+      className="list-row"
       onDrop={handleDrop}
       onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
       onDragLeave={() => setIsDragging(false)}
@@ -594,28 +593,20 @@ function DocumentAccordionItem({
         onChange={handleFileChange}
       />
 
-      {/* Accordion header button with card styling */}
+      {/* Accordion header button */}
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        className="w-full flex items-center gap-2 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 text-left card-interactive group"
+        className="w-full flex items-center gap-2 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 text-left row-interactive group"
         style={{
-          backgroundColor: isDragging
-            ? 'rgba(49,38,227,0.03)'
-            : '#ffffff',
-          borderRadius: '12px',
-          marginBottom: '6px',
+          backgroundColor: isDragging ? 'rgba(49,38,227,0.03)' : 'transparent',
         }}
       >
         {/* Chevron with enhanced visibility on hover */}
         <ChevronDown
           className="w-5 h-5 flex-shrink-0 expand-affordance"
-          style={{ 
-            color: '#6B7280',
+          style={{
+            color: '#9CA3AF',
             transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 200ms ease-out, opacity 120ms ease-out',
           }}
@@ -634,7 +625,7 @@ function DocumentAccordionItem({
           >
             {doc.title}
           </p>
-          <p className="text-xs text-gray-500 mt-0.5 transition-colors duration-120 line-clamp-1 sm:line-clamp-none">
+          <p className="text-xs mt-0.5 transition-colors duration-120 line-clamp-1 sm:line-clamp-none" style={{ color: '#5A7387' }}>
             {doc.description}
           </p>
         </div>
@@ -645,6 +636,7 @@ function DocumentAccordionItem({
           style={{
             backgroundColor: getStatusBgColor(status),
             color: getStatusColor(status),
+            border: status === 'required' ? '1px solid #E1E8EE' : 'none',
             display: 'inline-block',
           }}
         >
@@ -655,17 +647,8 @@ function DocumentAccordionItem({
       {/* Accordion content with smooth transition */}
       {isExpanded && (
         <div
-          className="py-4 animate-in fade-in duration-150"
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.00)',
-            paddingLeft: '0px',
-            paddingRight: '0px',
-            borderRadius: '0',
-            marginBottom: '0px',
-            marginLeft: '0',
-            marginRight: '0',
-            marginTop: '-8px',
-          }}
+          className="py-4 px-4 sm:pl-16 sm:pr-6 animate-in fade-in duration-150"
+          style={{ backgroundColor: '#F9FAFB' }}
         >
           <div className="space-y-3" style={{ borderRadius: '8px' }}>
 
@@ -673,7 +656,7 @@ function DocumentAccordionItem({
             {doc.why && !hasFile && (
               <div className="flex items-start gap-2 px-1">
                 <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: '#9CA3AF' }} />
-                <p className="text-xs" style={{ color: '#6B7280', lineHeight: '1.5' }}>
+                <p className="text-xs" style={{ color: '#5A7387', lineHeight: '1.5' }}>
                   {doc.why}
                 </p>
               </div>
@@ -696,10 +679,10 @@ function DocumentAccordionItem({
                   style={{ borderRadius: '8px' }}
                 >
                   <Upload className="w-6 h-6 mx-auto mb-2" style={{ color: '#9CA3AF' }} />
-                  <p className="text-gray-700" style={{ fontSize: '14px', fontWeight: '600' }}>
+                  <p style={{ fontSize: '14px', fontWeight: '600', color: '#182026' }}>
                     Drop file here or click to upload
                   </p>
-                  <p className="text-gray-500 mt-1" style={{ fontSize: '12px', fontWeight: '600' }}>
+                  <p className="mt-1" style={{ fontSize: '12px', fontWeight: '600', color: '#5A7387' }}>
                     PDF, JPG, or PNG{doc.minFiles && doc.minFiles > 1 ? ` · ${doc.minFiles} files needed` : ''}
                   </p>
                 </button>
@@ -715,7 +698,7 @@ function DocumentAccordionItem({
                       }
                     }}
                     className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold"
-                    style={{ backgroundColor: '#F7F8FC', color: '#182026', border: '1px solid #E5E7EB' }}
+                    style={{ backgroundColor: '#F7F8FC', color: '#182026', border: '1px solid #E1E8EE' }}
                   >
                     <Camera className="w-3.5 h-3.5" />
                     Take a photo
@@ -729,7 +712,7 @@ function DocumentAccordionItem({
                       }
                     }}
                     className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold"
-                    style={{ backgroundColor: '#F7F8FC', color: '#182026', border: '1px solid #E5E7EB' }}
+                    style={{ backgroundColor: '#F7F8FC', color: '#182026', border: '1px solid #E1E8EE' }}
                   >
                     <FileText className="w-3.5 h-3.5" />
                     Choose
@@ -748,11 +731,11 @@ function DocumentAccordionItem({
                 >
                   <FileText className="w-4 h-4 flex-shrink-0" style={{ color: isComplete ? '#3C6006' : '#473FE6' }} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate text-gray-900">
+                    <p className="text-sm font-medium truncate" style={{ color: '#182026' }}>
                       {requirement?.uploadedFileName}
                     </p>
                     {requirement?.aiMessage && (
-                      <p className="text-xs mt-1 text-gray-600">
+                      <p className="text-xs mt-1" style={{ color: '#5A7387' }}>
                         {requirement.aiMessage}
                       </p>
                     )}
@@ -770,7 +753,7 @@ function DocumentAccordionItem({
                   <div className="space-y-2">
                     <div
                       className="flex items-start gap-2 p-3 rounded-lg border"
-                      style={{ backgroundColor: '#FFFBEB', borderColor: '#FCD34D' }}
+                      style={{ backgroundColor: '#FFF6EA', borderColor: '#FFDAAF' }}
                     >
                       <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#E07900' }} />
                       <p className="text-xs" style={{ color: '#653701', lineHeight: '1.5' }}>
@@ -781,7 +764,7 @@ function DocumentAccordionItem({
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full"
-                      style={{ backgroundColor: '#FFF6EA', color: '#E07900', border: '1px solid #FCD34D' }}
+                      style={{ backgroundColor: '#FFF6EA', color: '#E07900', border: '1px solid #FFDAAF' }}
                     >
                       <Upload className="w-3.5 h-3.5" />
                       Replace document
@@ -794,10 +777,10 @@ function DocumentAccordionItem({
                   <div className="space-y-2">
                     <div
                       className="flex items-start gap-2 p-3 rounded-lg border"
-                      style={{ backgroundColor: '#FEF3C7', borderColor: '#FDE68A' }}
+                      style={{ backgroundColor: '#FFF6EA', borderColor: '#FFDAAF' }}
                     >
-                      <Clock className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#B45309' }} />
-                      <p className="text-xs" style={{ color: '#92400E', lineHeight: '1.5' }}>
+                      <Clock className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#E07900' }} />
+                      <p className="text-xs" style={{ color: '#653701', lineHeight: '1.5' }}>
                         {requirement.issueMessage}
                       </p>
                     </div>
@@ -805,7 +788,7 @@ function DocumentAccordionItem({
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full"
-                      style={{ backgroundColor: '#FEF3C7', color: '#B45309', border: '1px solid #FDE68A' }}
+                      style={{ backgroundColor: '#FFF6EA', color: '#E07900', border: '1px solid #FFDAAF' }}
                     >
                       <Upload className="w-3.5 h-3.5" />
                       Upload newer document
@@ -815,7 +798,7 @@ function DocumentAccordionItem({
 
                 {/* Success message + extracted fields */}
                 {isComplete && (
-                  <div className="rounded-lg overflow-hidden border" style={{ borderColor: '#BEF264' }}>
+                  <div className="rounded-lg overflow-hidden border" style={{ borderColor: 'rgba(60, 96, 6, 0.18)' }}>
                     <div
                       className="flex items-center gap-2 p-3"
                       style={{ backgroundColor: '#F0FBDF' }}
@@ -873,10 +856,10 @@ function CategorySection({
           <Icon className="w-4 h-4" style={{ color: '#473FE6' }} />
         </div>
         <div className="flex-1">
-          <h3 className="text-base font-semibold mb-0.5" style={{ color: '#182026', marginBottom: '2px' }}>
+          <h3 className="font-semibold mb-0.5" style={{ color: '#182026', fontSize: '15px', marginBottom: '2px' }}>
             {category.title}
           </h3>
-          <p className="font-medium" style={{ color: '#182026', fontSize: '14px' }}>
+          <p className="font-medium" style={{ color: '#5A7387', fontSize: '13px' }}>
             {category.description}
           </p>
         </div>
@@ -896,8 +879,8 @@ function CategorySection({
         )}
       </div>
 
-      {/* Documents accordion list */}
-      <div>
+      {/* Documents accordion list — flat container */}
+      <div className="list-container">
         {documents.map((doc) => (
           <DocumentAccordionItem
             key={doc.id}
@@ -923,8 +906,8 @@ function BottomBar({ onBrowseFiles }: { onBrowseFiles: (files: FileList) => void
       className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4"
       style={{
         backgroundColor: '#ffffff',
-        borderTop: '1px solid #E5E7EB',
-        boxShadow: '0 -4px 16px rgba(24, 32, 38, 0.06)',
+        borderTop: '1px solid #E1E8EE',
+        boxShadow: '0 -2px 12px rgba(24, 32, 38, 0.10), 0 -1px 4px rgba(24, 32, 38, 0.04)',
       }}
     >
       {/* Hidden file input */}
@@ -958,7 +941,7 @@ function BottomBar({ onBrowseFiles }: { onBrowseFiles: (files: FileList) => void
         ref={chatButtonRef}
         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all hover:shadow-md active:scale-95 flex-shrink-0"
         style={{
-          backgroundColor: isChatOpen ? '#182026' : '#F3F4F6',
+          backgroundColor: isChatOpen ? '#182026' : '#F7F8FC',
           color: isChatOpen ? '#ffffff' : '#182026',
           border: 'none',
         }}
@@ -1036,7 +1019,7 @@ function BulkDropZone({
       aria-label="Click or drop files here to upload"
       className="rounded-xl transition-colors duration-200 cursor-pointer"
       style={{
-        border: isDraggingOver ? '2px dashed #473FE6' : '2px dashed #E1E8EE',
+        border: isDraggingOver ? '2px dashed #473FE6' : '1.5px dashed #C5D0DA',
         backgroundColor: isDraggingOver ? 'rgba(71, 63, 230, 0.02)' : 'rgba(250, 251, 252, 0.00)',
         padding: '24px',
         outline: 'none',
@@ -1071,7 +1054,7 @@ function BulkDropZone({
       />
 
       {/* Zone header */}
-      <div className="flex items-center gap-3 mb-6 pb-5 pointer-events-none" style={{ borderBottom: '1px solid #E5E7EB' }}>
+      <div className="flex items-center gap-3 mb-6 pb-5 pointer-events-none" style={{ borderBottom: '1px solid #E1E8EE' }}>
         <div
           className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
           style={{ backgroundColor: isUploading ? '#EEF0FD' : '#EEF0FD' }}
@@ -1111,7 +1094,7 @@ function BulkDropZone({
                 key={file.id}
                 className="flex items-center gap-3 p-3 rounded-lg transition-all duration-300"
                 style={{
-                  backgroundColor: file.phase === 'verified' ? '#F0FBDF' : file.phase === 'issue' ? '#FEF3C7' : '#F7F8FC',
+                  backgroundColor: file.phase === 'verified' ? '#F0FBDF' : file.phase === 'issue' ? '#FFF6EA' : '#F7F8FC',
                   opacity: file.phase === 'sorting' ? 0.7 : 1,
                   transform: file.phase === 'sorting' ? 'translateX(10px)' : 'translateX(0)',
                 }}
@@ -1119,7 +1102,7 @@ function BulkDropZone({
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
                   style={{ 
-                    backgroundColor: file.phase === 'verified' ? '#ECFCCB' : file.phase === 'issue' ? '#FDE68A' : '#EEF0FD' 
+                    backgroundColor: file.phase === 'verified' ? '#ECFCCB' : file.phase === 'issue' ? '#FFDAAF' : '#EEF0FD'
                   }}
                 >
                   {file.phase === 'verified' ? (
@@ -1461,7 +1444,7 @@ export function DocumentsUploadSection() {
           className="p-4 rounded-xl mb-6"
           style={{
             backgroundColor: allComplete ? '#F0FBDF' : '#ffffff',
-            border: `1px solid ${allComplete ? '#BEF264' : '#E5E7EB'}`,
+            border: `1px solid ${allComplete ? 'rgba(60,96,6,0.18)' : '#E1E8EE'}`,
           }}
         >
           <div className="flex items-center justify-between mb-2">
