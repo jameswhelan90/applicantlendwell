@@ -4,6 +4,7 @@ import { useRef, useState, useMemo, useCallback, useEffect } from 'react';
 import { useApplication } from '@/context/ApplicationContext';
 import { useChat } from '@/context/ChatContext';
 import { useActivity } from '@/context/ActivityContext';
+import { useActivityStream } from '@/hooks/useActivityStream';
 import { DocumentRequirement, RequirementStatus } from '@/types/tasks';
 import {
   AI_EXTRACTION_MESSAGES,
@@ -1156,6 +1157,8 @@ export function DocumentsUploadSection() {
   const { state, updateRequirementStatus } = useApplication();
   const toast = useToast();
   const { upsertLocalActivity } = useActivity();
+  const { isProcessing, processingActivity } = useActivityStream();
+  const isDocumentProcessing = isProcessing && processingActivity?.type === 'document_scan';
   const appData = state.data;
   const requirements = state.requirements || [];
 
@@ -1463,6 +1466,19 @@ export function DocumentsUploadSection() {
           Upload the documents lenders will need to review your application. LendWell will check each one for you.
         </p>
       </div>
+
+      {/* Mobile-only processing reassurance — shown when a document scan is running */}
+      {isDocumentProcessing && (
+        <div
+          className="sm:hidden flex items-center gap-2 px-3 py-2.5 rounded-xl mb-4"
+          style={{ backgroundColor: '#EDECFD', border: '1px solid rgba(49,38,227,0.12)' }}
+        >
+          <Loader2 className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#3126E3', animation: 'spin 1s linear infinite' }} />
+          <p className="text-xs font-medium flex-1" style={{ color: '#3126E3', lineHeight: '1.4' }}>
+            You can leave this page — your documents will keep processing.
+          </p>
+        </div>
+      )}
 
       {/* Instructional banner — dismissible, first visit only */}
       {!bannerDismissed && (

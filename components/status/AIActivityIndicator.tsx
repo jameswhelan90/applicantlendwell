@@ -285,16 +285,14 @@ export function AIActivityIndicator() {
             </button>
           </div>
 
-          {/* Document processing reassurance banner */}
+          {/* Document processing reassurance banner — desktop only */}
           {isProcessing && processingActivity?.type === 'document_scan' && (
             <div
+              className="hidden sm:flex items-start gap-2"
               style={{
                 padding: '10px 16px',
                 backgroundColor: '#F8F9FC',
                 borderBottom: '1px solid #F1F3F7',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '8px',
               }}
             >
               <span style={{ fontSize: '15px', lineHeight: 1, flexShrink: 0 }}>💡</span>
