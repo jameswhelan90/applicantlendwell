@@ -34,7 +34,7 @@ export function MobileJourneyNav() {
     <div
       ref={containerRef}
       className="lg:hidden flex-shrink-0 relative z-10"
-      style={{ padding: '0 16px 10px' }}
+      style={{ padding: '16px 16px 10px' }}
     >
       {/* Select trigger */}
       <button
