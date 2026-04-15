@@ -80,8 +80,8 @@ export default function MortgageApplication() {
           </aside>
 
           {/* Main content — scrollable column */}
-          <div className="flex-1 min-w-0 overflow-y-auto px-4 sm:px-6 pb-28 sm:pb-6" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
-            <div className={`mx-auto space-y-8 ${selectedJourneyStep === 'documents' ? 'max-w-6xl' : 'max-w-3xl'}`} style={{ paddingTop: '24px' }}>
+          <div className="flex-1 min-w-0 overflow-y-auto px-4 sm:px-6 pb-28 sm:pb-6 pt-4 sm:pt-6" style={{ paddingBottom: '24px' }}>
+            <div className={`mx-auto space-y-8 ${selectedJourneyStep === 'documents' ? 'max-w-6xl' : 'max-w-3xl'}`} style={{ paddingTop: '16px' }}>
 
               {/* Step overview panel — updates based on selected journey step */}
               <StepOverviewPanel sectionId={selectedJourneyStep} overrideTitle={pageTitle} />
