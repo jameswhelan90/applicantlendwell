@@ -80,7 +80,7 @@ const STEP_TIPS: Record<string, StepTip> = {
   hh_application_mode: {
     headline: 'Sole or joint application',
     bullets: [
-      'A joint application combines both applicants' incomes, which can increase your borrowing power.',
+      "A joint application combines both applicants' incomes, which can increase your borrowing power.",
       'Both applicants will be jointly and severally liable for the mortgage.',
     ],
   },
