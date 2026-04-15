@@ -139,8 +139,8 @@ function ModalContent() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-stretch justify-stretch modal-overlay-enter"
-      style={{ padding: '12px' }}
+      className="fixed inset-0 z-50 flex items-stretch justify-stretch modal-overlay-enter p-1.5 sm:p-3"
+      style={{}}
       role="dialog"
       aria-modal="true"
       aria-label="Mortgage application form"
@@ -182,7 +182,7 @@ function ModalContent() {
               }}
             >
               <MessageSquare className="w-3.5 h-3.5" />
-              Ask LendWell
+              <span className="hidden sm:inline">Ask LendWell</span>
             </button>
 
             {/* Close */}

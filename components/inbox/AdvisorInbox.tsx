@@ -598,12 +598,13 @@ export function AdvisorInbox() {
       )}
 
       <div
+        className="advisor-inbox-container"
         style={{
           position: 'fixed',
           bottom: '96px',
           left: '24px',
           zIndex: 49,
-          width: '360px',
+          width: 'min(360px, calc(100vw - 32px))',
         }}
       >
         {/* Expanded drawer */}
@@ -784,7 +785,7 @@ export function AdvisorInbox() {
               </span>
             )}
           </div>
-          <span style={{ fontSize: '13px', fontWeight: '600', color: hasActionNeeded ? '#653701' : '#182026' }}>
+          <span className="hidden sm:inline" style={{ fontSize: '13px', fontWeight: '600', color: hasActionNeeded ? '#653701' : '#182026' }}>
             {badgeCount > 0 ? `${badgeCount} task${badgeCount > 1 ? 's' : ''} waiting` : 'Adviser inbox'}
           </span>
           {isOpen ? (
@@ -794,6 +795,14 @@ export function AdvisorInbox() {
           )}
         </button>
       </div>
+      <style>{`
+        @media (max-width: 639px) {
+          .advisor-inbox-container {
+            left: auto !important;
+            right: 16px !important;
+          }
+        }
+      `}</style>
     </>
   );
 }

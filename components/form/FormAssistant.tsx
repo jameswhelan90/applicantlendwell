@@ -337,6 +337,7 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
 
   // Auto-open with 1.5s delay on step change (question steps only)
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 640) return;
     if (autoTimerRef.current) clearTimeout(autoTimerRef.current);
     if (SILENT_STEPS.has(currentStep) || !tip) return;
     if (lastAutoStepRef.current === currentStep) return;
@@ -439,6 +440,10 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
         flexDirection: 'column',
       }}
     >
+      {/* Drag handle — mobile only */}
+      <div className="drag-handle" style={{ display: 'flex', justifyContent: 'center', paddingTop: '10px', paddingBottom: '2px' }}>
+        <div style={{ width: '36px', height: '4px', borderRadius: '999px', backgroundColor: 'rgba(0,0,0,0.15)' }} />
+      </div>
       {/* Header — light, airy */}
       <div
         style={{
@@ -746,6 +751,26 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
         @keyframes assistant-slide-in {
           from { opacity: 0; transform: translateY(-6px) scale(0.98); }
           to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @media (min-width: 640px) {
+          .drag-handle { display: none !important; }
+        }
+        @media (max-width: 639px) {
+          .form-assistant-panel {
+            top: auto !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            border-radius: 20px 20px 0 0 !important;
+            max-height: 72dvh !important;
+            overflow-y: auto !important;
+            animation: assistant-sheet-up 300ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+          }
+          @keyframes assistant-sheet-up {
+            from { transform: translateY(100%); opacity: 0.7; }
+            to   { transform: translateY(0); opacity: 1; }
+          }
         }
       `}</style>
     </div>

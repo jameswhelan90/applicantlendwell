@@ -171,8 +171,18 @@ export function FloatingChat({ hideButton = false }: FloatingChatProps) {
           0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
           30% { transform: translateY(-5px); opacity: 1; }
         }
+        @media (max-width: 639px) {
+          .floating-chat-anchor {
+            left: auto !important;
+            right: 16px !important;
+          }
+          .floating-chat-trigger {
+            left: auto !important;
+            right: 16px !important;
+          }
+        }
       `}</style>
-      <div ref={containerRef} style={anchoredStyle}>
+      <div ref={containerRef} style={anchoredStyle} className="floating-chat-anchor">
         {/* Chat window */}
         {isOpen && (
           <div
@@ -340,13 +350,13 @@ export function FloatingChat({ hideButton = false }: FloatingChatProps) {
         <button
           onClick={() => toggleChat()}
           aria-label={isOpen ? 'Close chat' : 'Open chat'}
-          className="flex items-center gap-2.5 btn-interactive"
+          className="floating-chat-trigger btn-interactive flex items-center gap-2.5"
           style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 51, backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '999px', padding: '10px 18px 10px 12px', cursor: 'pointer' }}
         >
           <div className="flex items-center justify-center" style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#3126E3', flexShrink: 0 }}>
             {isOpen ? <X className="w-4 h-4 text-white" /> : <MessageSquare className="w-4 h-4 text-white" />}
           </div>
-          <span className="text-sm font-semibold" style={{ color: '#182026' }}>Chat with us</span>
+          <span className="hidden sm:inline text-sm font-semibold" style={{ color: '#182026' }}>Chat with us</span>
         </button>
       )}
     </>

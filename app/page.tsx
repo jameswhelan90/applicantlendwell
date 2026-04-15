@@ -26,8 +26,8 @@ export default function MortgageApplication() {
     <div className="h-screen overflow-hidden flex flex-col bg-background" style={{ backgroundColor: '#F7F8FC' }}>
       {/* Header — full-width sticky band with inset glass card */}
       <header
-        className="flex-shrink-0 z-20 w-full"
-        style={{ backgroundColor: 'transparent', paddingTop: '24px', paddingLeft: '24px', paddingRight: '24px' }}
+        className="flex-shrink-0 z-20 w-full pt-4 px-4 sm:pt-6 sm:px-6"
+        style={{ backgroundColor: 'transparent' }}
       >
         <div
           className="w-full px-6 py-4 flex items-center justify-between"
@@ -76,7 +76,7 @@ export default function MortgageApplication() {
           </aside>
 
           {/* Main content — scrollable column */}
-          <div className="flex-1 min-w-0 overflow-y-auto px-6" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
+          <div className="flex-1 min-w-0 overflow-y-auto px-4 sm:px-6 pb-28 sm:pb-6" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
             <div className={`mx-auto space-y-8 ${selectedJourneyStep === 'documents' ? 'max-w-6xl' : 'max-w-3xl'}`} style={{ paddingTop: '24px' }}>
 
               {/* Step overview panel — updates based on selected journey step */}
