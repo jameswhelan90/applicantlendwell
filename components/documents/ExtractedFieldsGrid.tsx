@@ -15,7 +15,7 @@ export function ExtractedFieldsGrid({ fields }: ExtractedFieldsGridProps) {
         <div className="flex items-center gap-1.5 mb-2">
           <Sparkles className="w-3 h-3" style={{ color: '#3C6006' }} />
           <span className="text-xs font-semibold" style={{ color: '#3C6006' }}>
-            Extracted by LendWell AI
+            Extracted by LendWell
           </span>
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-2">

@@ -157,7 +157,7 @@ export function AIActivityIndicator() {
       {/* ── Icon button — always visible ── */}
       <button
         onClick={() => setPanelOpen((o) => !o)}
-        aria-label={isProcessing ? 'LendWell AI is working' : 'View AI activity'}
+        aria-label={isProcessing ? 'LendWell is working' : 'View AI activity'}
         aria-expanded={panelOpen}
         style={{
           position: 'relative',
@@ -252,7 +252,7 @@ export function AIActivityIndicator() {
             <AILogo size={20} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{ fontSize: '14px', fontWeight: '600', color: '#182026', margin: 0 }}>
-                LendWell AI
+                LendWell
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '1px' }}>
                 <span style={{
