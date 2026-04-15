@@ -356,7 +356,7 @@ export function FloatingChat({ hideButton = false }: FloatingChatProps) {
           onClick={() => toggleChat()}
           aria-label={isOpen ? 'Close chat' : 'Open chat'}
           className="floating-chat-trigger btn-interactive flex items-center gap-2.5"
-          style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 51, backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '999px', padding: '10px 18px 10px 12px', cursor: 'pointer' }}
+          style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 51, backgroundColor: '#ffffff', border: 'none', borderRadius: '999px', padding: '10px 18px 10px 12px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(49,38,227,0.20), 0 1px 4px rgba(0,0,0,0.08)' }}
         >
           <div className="flex items-center justify-center" style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#3126E3', flexShrink: 0 }}>
             {isOpen ? <X className="w-4 h-4 text-white" /> : <MessageSquare className="w-4 h-4 text-white" />}

@@ -798,8 +798,8 @@ export function AdvisorInbox() {
       <style>{`
         @media (max-width: 639px) {
           .advisor-inbox-container {
-            left: auto !important;
-            right: 16px !important;
+            bottom: 24px !important;
+            left: 16px !important;
           }
         }
       `}</style>
