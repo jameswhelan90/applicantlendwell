@@ -251,58 +251,75 @@ export function StepOverviewPanel({ sectionId, overrideTitle }: StepOverviewPane
       {/* Page title + description */}
       <div>
         <h2
-          className="font-display font-medium mb-2"
-          style={{ fontSize: '24px', color: '#182026', lineHeight: '1.2', letterSpacing: '-0.01em' }}
+          className="font-display font-medium mb-2 text-xl sm:text-2xl"
+          style={{ color: '#182026', lineHeight: '1.2', letterSpacing: '-0.01em' }}
         >
           {overrideTitle || content.title}
         </h2>
-        <p className="text-sm font-medium leading-relaxed" style={{ color: '#5A7387' }}>
+        <p className="text-sm sm:text-base font-medium leading-relaxed" style={{ color: '#5A7387' }}>
           {content.description}
         </p>
       </div>
 
-      {/* Details card */}
+      {/* Details card — Practical UI: crisp border + light shadow, intentional list markers */}
       <div
         style={{
-          padding: '24px',
           backgroundColor: '#ffffff',
-          borderRadius: '16px',
-          boxShadow: '0 2px 12px rgba(0, 0, 0, 0.07)',
+          borderRadius: '14px',
+          border: '1px solid #EAECF0',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+          overflow: 'hidden',
         }}
       >
-        <p className="text-sm font-semibold mb-4" style={{ color: '#182026' }}>
-          What&apos;s in this section
-        </p>
-        <ul className="space-y-3 mb-6">
-          {content.details.map((detail, idx) => (
-            <li key={idx} className="flex items-start gap-3">
-              <div
-                className="flex-shrink-0 mt-[5px]"
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  backgroundColor: '#CBD5E1',
-                }}
-              />
-              <span className="text-sm font-medium leading-snug" style={{ color: '#374151' }}>{detail}</span>
-            </li>
-          ))}
-        </ul>
+        {/* List */}
+        <div style={{ padding: '20px 20px 0' }}>
+          <p style={{
+            fontSize: '11px',
+            fontWeight: '700',
+            color: '#9CA3AF',
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            margin: '0 0 14px',
+          }}>
+            What&apos;s in this section
+          </p>
+          <ul style={{ listStyle: 'none', margin: '0 0 20px', padding: 0, display: 'flex', flexDirection: 'column', gap: '11px' }}>
+            {content.details.map((detail, idx) => (
+              <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                <div
+                  style={{
+                    width: '5px',
+                    height: '5px',
+                    borderRadius: '50%',
+                    backgroundColor: '#3126E3',
+                    flexShrink: 0,
+                    marginTop: '8px',
+                  }}
+                />
+                <span style={{ fontSize: '14px', fontWeight: '500', color: '#182026', lineHeight: '1.5' }}>
+                  {detail}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        <button
-          onClick={handleStartClick}
-          className="w-full py-3 font-semibold text-sm flex items-center justify-center gap-2 btn-interactive"
-          style={{
-            backgroundColor: isComplete ? 'rgba(255,255,255,0.65)' : '#3126E3',
-            color: isComplete ? '#5A7387' : '#ffffff',
-            borderRadius: '999px',
-            border: 'none',
-          }}
-        >
-          {isComplete ? 'Review section' : isInProgress ? 'Continue section' : 'Start section'}
-          <ChevronRight className="w-4 h-4" />
-        </button>
+        {/* Divider + CTA */}
+        <div style={{ borderTop: '1px solid #F0F2F5', padding: '16px 20px' }}>
+          <button
+            onClick={handleStartClick}
+            className="w-full py-3 font-semibold text-sm flex items-center justify-center gap-2 btn-interactive"
+            style={{
+              backgroundColor: isComplete ? '#F9FAFB' : '#3126E3',
+              color: isComplete ? '#5A7387' : '#ffffff',
+              borderRadius: '8px',
+              border: isComplete ? '1px solid #E5E7EB' : 'none',
+            }}
+          >
+            {isComplete ? 'Review section' : isInProgress ? 'Continue section' : 'Start section'}
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );
