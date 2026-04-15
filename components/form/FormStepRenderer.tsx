@@ -1136,48 +1136,63 @@ function OrientationStep() {
   const { completeStep } = useApplication();
   useStepFooter(() => completeStep('orientation'), 'Start application');
 
+  const steps = [
+    { num: '01', text: 'Answer a few questions about yourself and your finances' },
+    { num: '02', text: 'Upload supporting documents when prompted' },
+    { num: '03', text: 'LendWell will verify everything automatically' },
+  ];
+
   return (
-    <div className="text-center py-8">
-      <div
-        className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center"
-        style={{ backgroundColor: '#EDECFD' }}
-      >
-        <CheckCircle2 className="w-8 h-8" style={{ color: '#3126E3' }} />
+    <div style={{ paddingTop: '4px', paddingBottom: '8px' }}>
+      {/* Brand pill */}
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', borderRadius: '999px', backgroundColor: '#EDECFD', marginBottom: '20px' }}>
+        <CheckCircle2 className="w-3.5 h-3.5" style={{ color: '#3126E3' }} />
+        <span style={{ fontSize: '12px', fontWeight: '700', color: '#3126E3' }}>LendWell Mortgage Application</span>
       </div>
+
+      {/* Heading */}
       <h1
-        className="font-display font-medium text-2xl mb-4"
-        style={{ color: '#182026' }}
+        className="font-display font-medium"
+        style={{ fontSize: '28px', color: '#182026', lineHeight: '1.15', letterSpacing: '-0.02em', margin: '0 0 12px' }}
       >
         Let&apos;s get you mortgage-ready
       </h1>
-      <p className="text-base text-muted-foreground leading-relaxed max-w-md mx-auto mb-8">
+
+      {/* Description */}
+      <p style={{ fontSize: '14px', fontWeight: '500', color: '#5A7387', lineHeight: '1.6', margin: '0 0 28px' }}>
         We&apos;ll guide you through each step of your application. Your progress saves automatically, so you can come back any time.
       </p>
-      <div
-        className="space-y-3 text-left max-w-sm mx-auto"
-        style={{
-          padding: '20px',
-          backgroundColor: '#ffffff',
-          borderRadius: '8px',
-        }}
-      >
-        {[
-          'Answer a few questions about yourself and your finances',
-          'Upload supporting documents when prompted',
-          'LendWell will verify everything automatically',
-        ].map((item, idx) => (
-          <div key={idx} className="flex items-start gap-3">
-            <div
-              className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-              style={{ backgroundColor: '#F0FBDF' }}
-            >
-              <Check className="w-3 h-3" style={{ color: '#3C6006' }} />
+
+      {/* Steps card */}
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #EAECF0', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', overflow: 'hidden', marginBottom: '20px' }}>
+        {steps.map(({ num, text }, idx) => (
+          <div
+            key={num}
+            style={{
+              display: 'flex', alignItems: 'flex-start', gap: '14px',
+              padding: '16px 20px',
+              borderBottom: idx < steps.length - 1 ? '1px solid #F0F2F5' : 'none',
+            }}
+          >
+            <div style={{ flexShrink: 0, width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#EDECFD', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: '11px', fontWeight: '700', color: '#3126E3' }}>{num}</span>
             </div>
-            <p className="text-sm font-medium" style={{ color: '#182026' }}>
-              {item}
-            </p>
+            <p style={{ fontSize: '13px', fontWeight: '500', color: '#182026', lineHeight: '1.55', margin: 0, paddingTop: '5px' }}>{text}</p>
           </div>
         ))}
+      </div>
+
+      {/* Footer metadata */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: '600', color: '#5A7387' }}>
+          <Clock className="w-3.5 h-3.5" />
+          ~15 min to complete
+        </span>
+        <span style={{ width: '3px', height: '3px', borderRadius: '50%', backgroundColor: '#CBD5E1', flexShrink: 0 }} />
+        <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: '600', color: '#5A7387' }}>
+          <Shield className="w-3.5 h-3.5" />
+          FCA regulated &amp; secure
+        </span>
       </div>
     </div>
   );
@@ -1191,49 +1206,73 @@ interface SectionIntroProps {
   title: string;
   description: string;
   bullets: string[];
+  estimateMinutes?: number;
   buttonText?: string;
 }
 
-function SectionIntroPanel({ stepId, icon, title, description, bullets, buttonText = 'Start section' }: SectionIntroProps) {
+function SectionIntroPanel({ stepId, icon, title, description, bullets, estimateMinutes = 5, buttonText = 'Start section' }: SectionIntroProps) {
   const { completeStep } = useApplication();
   useStepFooter(() => completeStep(stepId), buttonText);
 
   return (
-    <div className="text-center py-6">
-      <div
-        className="w-14 h-14 mx-auto mb-5 rounded-full flex items-center justify-center"
-        style={{ backgroundColor: '#EDECFD' }}
-      >
-        {icon}
+    <div style={{ paddingTop: '4px', paddingBottom: '8px' }}>
+      {/* Icon + eyebrow */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' }}>
+        <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#EDECFD', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          {icon}
+        </div>
+        <p style={{ fontSize: '11px', fontWeight: '700', color: '#5A7387', letterSpacing: '0.06em', textTransform: 'uppercase', margin: 0 }}>
+          Section overview
+        </p>
       </div>
+
+      {/* Heading */}
       <h1
-        className="font-display font-medium text-2xl mb-3"
-        style={{ color: '#182026' }}
+        className="font-display font-medium"
+        style={{ fontSize: '26px', color: '#182026', lineHeight: '1.15', letterSpacing: '-0.02em', margin: '0 0 10px' }}
       >
         {title}
       </h1>
-      <p className="text-base text-muted-foreground leading-relaxed max-w-md mx-auto mb-6 font-medium">
+
+      {/* Description */}
+      <p style={{ fontSize: '14px', fontWeight: '500', color: '#5A7387', lineHeight: '1.6', margin: '0 0 24px' }}>
         {description}
       </p>
-      <div className="rounded-lg mb-2" style={{ backgroundColor: '#ffffff', padding: '20px' }}>
-        <p className="text-sm font-semibold mb-3 text-left" style={{ color: '#182026' }}>
-          What&apos;s in this section
-        </p>
-        <div className="space-y-2 text-left">
+
+      {/* Bullets card */}
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #EAECF0', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', overflow: 'hidden', marginBottom: '20px' }}>
+        <div style={{ padding: '14px 20px 0' }}>
+          <p style={{ fontSize: '11px', fontWeight: '700', color: '#9CA3AF', letterSpacing: '0.06em', textTransform: 'uppercase', margin: '0 0 14px' }}>
+            What&apos;s in this section
+          </p>
+        </div>
+        <div style={{ padding: '0 20px 20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {bullets.map((item, idx) => (
-            <div key={idx} className="flex items-start gap-3">
-              <div
-                className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                style={{ backgroundColor: '#F0FBDF' }}
-              >
-                <Check className="w-3 h-3" style={{ color: '#3C6006' }} />
+            <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <div style={{ flexShrink: 0, width: '22px', height: '22px', borderRadius: '6px', backgroundColor: '#EDECFD', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: '11px', fontWeight: '700', color: '#3126E3' }}>
+                  {String(idx + 1).padStart(2, '0')}
+                </span>
               </div>
-              <p className="text-sm font-medium" style={{ color: '#182026' }}>
+              <p style={{ fontSize: '13px', fontWeight: '500', color: '#182026', lineHeight: '1.55', margin: 0, paddingTop: '3px' }}>
                 {item}
               </p>
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Footer metadata */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: '600', color: '#5A7387' }}>
+          <Clock className="w-3.5 h-3.5" />
+          ~{estimateMinutes} min to complete
+        </span>
+        <span style={{ width: '3px', height: '3px', borderRadius: '50%', backgroundColor: '#CBD5E1', flexShrink: 0 }} />
+        <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: '600', color: '#5A7387' }}>
+          <Shield className="w-3.5 h-3.5" />
+          Secure &amp; encrypted
+        </span>
       </div>
     </div>
   );
@@ -1243,9 +1282,10 @@ function IntroAboutYouStep() {
   return (
     <SectionIntroPanel
       stepId="intro_about_you"
-      icon={<User className="w-7 h-7" style={{ color: '#3126E3' }} />}
+      icon={<User className="w-5 h-5" style={{ color: '#3126E3' }} />}
       title="About you"
       description="We'll ask for some personal details that lenders need to assess your application."
+      estimateMinutes={8}
       bullets={[
         'Your identity and contact details',
         'Your household situation',
@@ -1259,9 +1299,10 @@ function IntroPropertyMortgageStep() {
   return (
     <SectionIntroPanel
       stepId="intro_property_mortgage"
-      icon={<Home className="w-7 h-7" style={{ color: '#3126E3' }} />}
+      icon={<Home className="w-5 h-5" style={{ color: '#3126E3' }} />}
       title="Property & mortgage"
       description="Tell us about the property you have in mind and how you plan to fund it."
+      estimateMinutes={5}
       bullets={[
         'What you want to buy or remortgage',
         'The estimated property value',
@@ -1275,9 +1316,10 @@ function IntroEmploymentIncomeStep() {
   return (
     <SectionIntroPanel
       stepId="intro_employment_income"
-      icon={<Briefcase className="w-7 h-7" style={{ color: '#3126E3' }} />}
+      icon={<Briefcase className="w-5 h-5" style={{ color: '#3126E3' }} />}
       title="Employment & income"
       description="We'll cover your job or business, how much you earn, and your regular monthly outgoings."
+      estimateMinutes={10}
       bullets={[
         'Your employment type and employer details',
         'Your income from all sources',
@@ -1291,9 +1333,10 @@ function IntroDocumentsStep() {
   return (
     <SectionIntroPanel
       stepId="intro_documents"
-      icon={<FileText className="w-7 h-7" style={{ color: '#3126E3' }} />}
+      icon={<FileText className="w-5 h-5" style={{ color: '#3126E3' }} />}
       title="Documents"
       description="We'll need some supporting documents to verify the information you've given us."
+      estimateMinutes={10}
       bullets={[
         'Photo ID — passport or driving licence',
         'Income evidence — payslips or tax returns',
@@ -1307,9 +1350,10 @@ function IntroAgreementsStep() {
   return (
     <SectionIntroPanel
       stepId="intro_agreements"
-      icon={<CheckCircle2 className="w-7 h-7" style={{ color: '#3126E3' }} />}
+      icon={<CheckCircle2 className="w-5 h-5" style={{ color: '#3126E3' }} />}
       title="Finishing up"
       description="Almost there. Read through the declarations, add your signature, and your application will be ready to send."
+      estimateMinutes={3}
       bullets={[
         'Review the final details of your application',
         'Confirm your consent for lenders to see your information',

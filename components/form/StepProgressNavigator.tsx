@@ -75,7 +75,7 @@ export function StepProgressNavigator() {
     };
   });
 
-  const currentProgressItem = progressItems.find(item => item.status === 'current');
+  const currentProgressItem = progressItems.find(item => item.sectionId === currentSectionId);
 
   const handleStepClick = (item: StepProgressItem) => {
     if (item.sectionId === currentSectionId) {
