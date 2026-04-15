@@ -32,6 +32,7 @@ import {
   PenLine,
   Check,
   ArrowRight,
+  ChevronRight,
   User,
   Home,
   Briefcase,
@@ -4185,114 +4186,92 @@ function AffordabilityEstimateStep() {
     );
   }
 
+  const assumptionLines = [
+    'Interest rate assumed: 3.5% (standard variable)',
+    'Mortgage term: 30 years',
+    `LTI limit: ${ltiLabel} (Central Bank of Ireland rules)`,
+    `Max LTV: ${maxLTVPct}% for your buyer type`,
+    '50% of bonus/commission/overtime included',
+    'No major changes to income assumed',
+    'This is an indicative estimate — not a formal offer',
+  ];
+
+  const ltvOk = actualLTV > 0 && actualLTV <= maxLTVPct;
+  const ltvOver = actualLTV > maxLTVPct;
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
 
-      {/* Hero — max borrowing */}
-      <div
-        style={{
-          backgroundColor: '#3126E3',
-          borderRadius: '16px',
-          padding: '28px 24px',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Subtle radial glow */}
-        <div style={{
-          position: 'absolute', top: '-40px', right: '-40px',
-          width: '200px', height: '200px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-        <p style={{ fontSize: '13px', fontWeight: '500', color: 'rgba(255,255,255,0.70)', marginBottom: '8px' }}>
-          You could borrow up to
-        </p>
-        <p
-          className="font-display"
-          style={{ fontSize: '44px', fontWeight: '500', color: '#ffffff', letterSpacing: '-0.02em', lineHeight: '1', marginBottom: '10px' }}
-        >
-          {hasData ? fmt(displayLoan) : '—'}
-        </p>
-        <p style={{ fontSize: '14px', fontWeight: '600', color: 'rgba(255,255,255,0.80)' }}>
-          {monthlyPmt > 0 ? `Est. monthly repayment: ${fmt(monthlyPmt)}/month` : 'Fill in your income and deposit details to see an estimate'}
-        </p>
+      {/* ── Hero ── */}
+      <div style={{ background: 'linear-gradient(135deg, #3126E3 0%, #2319C8 100%)', borderRadius: '16px', padding: '24px', position: 'relative', overflow: 'hidden' }}>
+        {/* Grid texture */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 28px), repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 28px)', pointerEvents: 'none' }} />
+        {/* Radial glow */}
+        <div style={{ position: 'absolute', top: -60, right: -60, width: '220px', height: '220px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.10) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        {/* Buyer type badge */}
-        <div style={{ marginTop: '16px', display: 'inline-flex', alignItems: 'center', padding: '4px 12px', borderRadius: '999px', backgroundColor: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}>
-          <span style={{ fontSize: '11px', fontWeight: '700', color: '#ffffff', letterSpacing: '0.04em' }}>
-            {buyerLabel} · LTI {ltiLabel}
-          </span>
-        </div>
-      </div>
-
-      {/* Stats row */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
-        {/* Max borrowing */}
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-          <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', marginBottom: '6px' }}>
-            Max loan
+        <div style={{ position: 'relative' }}>
+          <p style={{ fontSize: '11px', fontWeight: '700', color: 'rgba(255,255,255,0.55)', letterSpacing: '0.06em', textTransform: 'uppercase', margin: '0 0 8px' }}>
+            You could borrow up to
           </p>
-          <p className="font-display" style={{ fontSize: '18px', fontWeight: '500', color: '#182026', letterSpacing: '-0.02em' }}>
+          <p className="font-display" style={{ fontSize: '46px', fontWeight: '500', color: '#ffffff', letterSpacing: '-0.03em', lineHeight: '1', margin: '0 0 14px' }}>
             {hasData ? fmt(displayLoan) : '—'}
           </p>
-          {totalMonthlyCommitments > 0 && (
-            <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', marginTop: '3px' }}>
-              {fmt(totalMonthlyCommitments)}/mo outgoings
+          <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.15)', margin: '0 0 14px' }} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+            <p style={{ fontSize: '14px', fontWeight: '600', color: 'rgba(255,255,255,0.80)', margin: 0 }}>
+              {monthlyPmt > 0 ? `${fmt(monthlyPmt)}/month est.` : 'Enter details to see an estimate'}
             </p>
-          )}
-        </div>
-
-        {/* Deposit */}
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-          <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', marginBottom: '6px' }}>
-            Deposit
-          </p>
-          <p className="font-display" style={{ fontSize: '18px', fontWeight: '500', color: '#182026', letterSpacing: '-0.02em' }}>
-            {fmtPct(depositPctDisplay)}
-          </p>
-          <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', marginTop: '3px' }}>
-            {deposit > 0 ? fmt(deposit) : 'Not entered'}
-          </p>
-        </div>
-
-        {/* Loan to value donut */}
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-          <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', alignSelf: 'flex-start' }}>
-            Loan to value
-          </p>
-          <AffordabilityDonut ltv={actualLTV} />
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '9px', fontWeight: '600', color: '#3C6006' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#6CAD0A', flexShrink: 0 }} />
-              Deposit
-            </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '9px', fontWeight: '600', color: '#3126E3' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#3126E3', flexShrink: 0 }} />
-              Loan
-            </span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 10px', borderRadius: '999px', backgroundColor: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.20)' }}>
+              <span style={{ fontSize: '11px', fontWeight: '700', color: 'rgba(255,255,255,0.90)', letterSpacing: '0.03em' }}>
+                {buyerLabel} · LTI {ltiLabel}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Inputs card */}
-      <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
-        <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #F1F5F9' }}>
-          <p style={{ fontSize: '13px', fontWeight: '700', color: '#182026', margin: 0 }}>Your inputs</p>
+      {/* ── Key figures flat list ── */}
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '14px', border: '1px solid #EAECF0', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+        {[
+          {
+            label: 'Max loan',
+            value: hasData ? fmt(displayLoan) : '—',
+            note: totalMonthlyCommitments > 0 ? `${fmt(totalMonthlyCommitments)}/mo outgoings` : undefined,
+            noteColor: '#9CA3AF',
+          },
+          {
+            label: 'Deposit',
+            value: deposit > 0 ? fmtPct(depositPctDisplay) : '—',
+            note: deposit > 0 ? fmt(deposit) : 'Not entered',
+            noteColor: '#9CA3AF',
+          },
+          {
+            label: 'Loan to value',
+            value: actualLTV > 0 ? `${Math.round(actualLTV)}%` : '—',
+            note: ltvOk ? `Within ${maxLTVPct}% limit` : ltvOver ? `Exceeds ${maxLTVPct}% limit` : `Max ${maxLTVPct}% for your type`,
+            noteColor: ltvOver ? '#CC013D' : ltvOk ? '#3C6006' : '#9CA3AF',
+          },
+        ].map(({ label, value, note, noteColor }, idx, arr) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: idx < arr.length - 1 ? '1px solid #F0F2F5' : 'none' }}>
+            <div>
+              <p style={{ fontSize: '12px', fontWeight: '600', color: '#9CA3AF', margin: '0 0 2px', letterSpacing: '0.02em' }}>{label}</p>
+              {note && <p style={{ fontSize: '11px', fontWeight: '500', color: noteColor, margin: 0 }}>{note}</p>}
+            </div>
+            <p className="font-display" style={{ fontSize: '20px', fontWeight: '500', color: '#182026', letterSpacing: '-0.02em', margin: 0 }}>{value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Inputs card ── */}
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '14px', border: '1px solid #EAECF0', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+        <div style={{ padding: '13px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #F0F2F5' }}>
+          <p style={{ fontSize: '11px', fontWeight: '700', color: '#9CA3AF', letterSpacing: '0.06em', textTransform: 'uppercase', margin: 0 }}>Your inputs</p>
           {!editMode ? (
-            <button
-              type="button"
-              onClick={openEdit}
-              style={{ fontSize: '12px', fontWeight: '600', color: '#3126E3', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', borderRadius: '999px' }}
-            >
+            <button type="button" onClick={openEdit} style={{ fontSize: '12px', fontWeight: '600', color: '#3126E3', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', borderRadius: '999px' }}>
               Edit
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={saveEdit}
-              style={{ fontSize: '12px', fontWeight: '700', color: '#ffffff', background: '#3126E3', border: 'none', cursor: 'pointer', padding: '4px 12px', borderRadius: '999px' }}
-            >
+            <button type="button" onClick={saveEdit} style={{ fontSize: '12px', fontWeight: '700', color: '#ffffff', background: '#3126E3', border: 'none', cursor: 'pointer', padding: '4px 12px', borderRadius: '999px' }}>
               Save
             </button>
           )}
@@ -4304,63 +4283,48 @@ function AffordabilityEstimateStep() {
             <EditField label="Property value" value={editPropertyValue} onChange={setEditPropertyValue} />
             <EditField label="Deposit amount" value={editDeposit} onChange={setEditDeposit} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF' }}>
-                Monthly outgoings
-              </label>
-              <p style={{ fontSize: '14px', fontWeight: '600', color: '#9CA3AF', padding: '8px 0' }}>
-                {totalMonthlyCommitments > 0 ? fmt(totalMonthlyCommitments) : 'Update in previous steps'}
+              <label style={{ fontSize: '11px', fontWeight: '700', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Monthly outgoings</label>
+              <p style={{ fontSize: '14px', fontWeight: '600', color: '#9CA3AF', padding: '8px 0', margin: 0 }}>
+                {totalMonthlyCommitments > 0 ? fmt(totalMonthlyCommitments) : 'From previous steps'}
               </p>
             </div>
           </div>
         ) : (
-          <div style={{ padding: '16px 20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0', rowGap: '0' }}>
+          <>
             {[
               { label: 'Annual income', value: primarySalary > 0 ? fmt(primarySalary) : '—', extra: isJoint && jointSalary > 0 ? `+ ${fmt(jointSalary)} joint` : undefined },
               { label: 'Additional income', value: (bonus + commission + overtime + otherInc) > 0 ? fmt(bonus + commission + overtime + otherInc) : '—' },
               { label: 'Monthly outgoings', value: totalMonthlyCommitments > 0 ? fmt(totalMonthlyCommitments) : '€0' },
               { label: 'Deposit', value: deposit > 0 ? fmt(deposit) : '—' },
-            ].map(({ label, value, extra }, i) => (
-              <div
-                key={label}
-                style={{
-                  padding: '12px 0',
-                  borderBottom: i < 2 ? '1px solid #F1F5F9' : 'none',
-                  paddingLeft: i % 2 === 1 ? '16px' : '0',
-                  borderLeft: i % 2 === 1 ? '1px solid #F1F5F9' : 'none',
-                }}
-              >
-                <p style={{ fontSize: '11px', fontWeight: '600', color: '#9CA3AF', marginBottom: '3px' }}>{label}</p>
-                <p style={{ fontSize: '14px', fontWeight: '700', color: '#182026', margin: 0 }}>{value}</p>
-                {extra && <p style={{ fontSize: '10px', fontWeight: '500', color: '#5A7387', marginTop: '2px' }}>{extra}</p>}
+            ].map(({ label, value, extra }, idx, arr) => (
+              <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 20px', borderBottom: idx < arr.length - 1 ? '1px solid #F0F2F5' : 'none' }}>
+                <p style={{ fontSize: '13px', fontWeight: '500', color: '#5A7387', margin: 0 }}>{label}</p>
+                <div style={{ textAlign: 'right' }}>
+                  <p style={{ fontSize: '13px', fontWeight: '700', color: '#182026', margin: 0 }}>{value}</p>
+                  {extra && <p style={{ fontSize: '11px', fontWeight: '500', color: '#5A7387', margin: '2px 0 0' }}>{extra}</p>}
+                </div>
               </div>
             ))}
-          </div>
+          </>
         )}
       </div>
 
-      {/* Assumptions */}
-      <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+      {/* ── Assumptions ── */}
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '14px', border: '1px solid #EAECF0', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
         <button
           type="button"
           onClick={() => setShowAssumptions(v => !v)}
-          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer' }}
+          className="btn-interactive"
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer', borderRadius: '14px' }}
         >
           <p style={{ fontSize: '13px', fontWeight: '600', color: '#182026', margin: 0 }}>Assumptions</p>
-          <span style={{ fontSize: '18px', color: '#9CA3AF', lineHeight: 1, transform: showAssumptions ? 'rotate(180deg)' : 'none', transition: 'transform 200ms' }}>›</span>
+          <ChevronRight className="w-4 h-4" style={{ color: '#9CA3AF', transform: showAssumptions ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 200ms ease' }} />
         </button>
         {showAssumptions && (
-          <div style={{ padding: '0 20px 16px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {[
-              'Interest rate assumed: 3.5% (standard variable)',
-              'Mortgage term: 30 years',
-              `LTI limit: ${ltiLabel} (Central Bank of Ireland rules)`,
-              `Max LTV: ${maxLTVPct}% for your buyer type`,
-              '50% of bonus/commission/overtime included',
-              'No major changes to income assumed',
-              'This is an indicative estimate — not a formal offer',
-            ].map((line, i) => (
+          <div style={{ borderTop: '1px solid #F0F2F5', padding: '12px 20px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {assumptionLines.map((line, i) => (
               <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                <span style={{ flexShrink: 0, marginTop: '6px', width: '4px', height: '4px', borderRadius: '50%', backgroundColor: '#CBD5E1' }} />
+                <span style={{ flexShrink: 0, marginTop: '7px', width: '4px', height: '4px', borderRadius: '50%', backgroundColor: '#CBD5E1' }} />
                 <span style={{ fontSize: '12px', fontWeight: '500', color: '#5A7387', lineHeight: '1.5' }}>{line}</span>
               </div>
             ))}
@@ -4368,10 +4332,9 @@ function AffordabilityEstimateStep() {
         )}
       </div>
 
-      {/* Disclaimer */}
-      <p style={{ fontSize: '11px', fontWeight: '500', color: '#9CA3AF', textAlign: 'center', lineHeight: '1.5' }}>
-        This is an indicative estimate based on the information you've provided so far.<br />
-        Complete your application for a personalised recommendation.
+      {/* ── Disclaimer ── */}
+      <p style={{ fontSize: '11px', fontWeight: '500', color: '#B0BAC4', textAlign: 'center', lineHeight: '1.5', margin: 0 }}>
+        Indicative estimate only — not a formal mortgage offer.
       </p>
     </div>
   );
