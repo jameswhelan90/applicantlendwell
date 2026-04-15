@@ -745,7 +745,8 @@ function RadioGroup({
               key={o.value}
               type="button"
               onClick={() => handleSelect(o.value)}
-              className="flex items-center gap-3 text-left transition-all"
+              data-selected={isSelected ? 'true' : undefined}
+              className="option-btn flex items-center gap-3 text-left transition-all"
               style={{
                 borderRadius: '10px',
                 padding: o.description ? '14px 16px' : '12px 16px',

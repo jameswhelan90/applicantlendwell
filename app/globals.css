@@ -399,6 +399,12 @@
     border-bottom: none;
   }
 
+  /* ─── Option Button Hover ────────────────────────────────────────── */
+  .option-btn:not([data-selected="true"]):hover {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08) !important;
+    border-color: hsl(220 15% 82%) !important;
+  }
+
   /* ─── Design Token Utilities ──────────────────────────────────────── */
   .text-muted     { color: #5A7387; }
   .text-secondary { color: #42535F; }
