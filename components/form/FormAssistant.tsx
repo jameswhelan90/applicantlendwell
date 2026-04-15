@@ -427,7 +427,7 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
       style={{
         position: 'fixed',
         top: '68px',
-        right: '12px',
+        right: '20px',
         zIndex: 60,
         width: '280px',
         borderRadius: '14px',
@@ -450,29 +450,17 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
           backgroundColor: '#F7F8FF',
         }}
       >
-        {/* LendWell AI logo */}
-        <div
+        {/* LendWell AI logo — bare, no container */}
+        <img
+          src="/images/lendwell-ai-logo.svg"
+          alt=""
           style={{
-            width: '22px',
-            height: '22px',
-            borderRadius: '7px',
-            background: 'linear-gradient(135deg, rgba(49,38,227,0.12) 0%, rgba(71,63,230,0.18) 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            width: '20px',
+            height: '20px',
             flexShrink: 0,
+            animation: isGenerating ? 'logo-pulse 1.4s ease-in-out infinite' : 'none',
           }}
-        >
-          <img
-            src="/images/lendwell-ai-logo.svg"
-            alt=""
-            style={{
-              width: '19px',
-              height: '19px',
-              animation: isGenerating ? 'logo-pulse 1.4s ease-in-out infinite' : 'none',
-            }}
-          />
-        </div>
+        />
         <span style={{ flex: 1, fontSize: '12px', fontWeight: 700, color: '#3126E3', letterSpacing: '0.01em' }}>
           Application Guide
         </span>
@@ -580,14 +568,20 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
                 justifyContent: 'center',
                 gap: '4px',
                 padding: '7px 12px',
-                borderRadius: '8px',
-                border: '1px solid rgba(49,38,227,0.12)',
-                backgroundColor: 'rgba(49,38,227,0.04)',
+                borderRadius: '999px',
+                border: 'none',
+                backgroundColor: '#ffffff',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
                 cursor: 'pointer',
                 fontSize: '12px',
                 fontWeight: 600,
                 color: '#3126E3',
+                transition: 'box-shadow 120ms ease, transform 80ms ease',
               }}
+              onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.10)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'; }}
+              onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.98)'; }}
+              onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
             >
               Ask a follow-up
               <ChevronRight className="w-3 h-3" />
