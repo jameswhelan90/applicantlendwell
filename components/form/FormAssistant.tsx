@@ -461,13 +461,16 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0,
-            animation: isGenerating ? 'sparkle-pulse 1s ease-in-out infinite' : 'none',
           }}
         >
           <img
             src="/images/lendwell-ai-logo.svg"
             alt=""
-            style={{ width: '13px', height: '13px' }}
+            style={{
+              width: '19px',
+              height: '19px',
+              animation: isGenerating ? 'logo-pulse 1.4s ease-in-out infinite' : 'none',
+            }}
           />
         </div>
         <span style={{ flex: 1, fontSize: '12px', fontWeight: 700, color: '#3126E3', letterSpacing: '0.01em' }}>
@@ -732,9 +735,9 @@ export function FormAssistant({ isOpen, onOpenChange }: FormAssistantProps) {
           0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
           30% { transform: translateY(-5px); opacity: 1; }
         }
-        @keyframes sparkle-pulse {
-          0%, 100% { opacity: 0.6; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.15); }
+        @keyframes logo-pulse {
+          0%, 100% { opacity: 0.7; transform: scale(0.92); }
+          50% { opacity: 1; transform: scale(1.05); }
         }
         @keyframes assistant-reveal {
           from { opacity: 0; transform: translateY(5px); }
