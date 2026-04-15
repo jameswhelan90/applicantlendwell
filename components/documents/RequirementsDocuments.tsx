@@ -7,13 +7,23 @@ import { DocumentRequirement, RequirementStatus } from '@/types/tasks';
 import {
   CheckCircle2,
   AlertCircle,
+  Clock,
   Loader2,
   Upload,
   FileText,
+  Camera,
   X,
   ChevronDown,
   Paperclip,
 } from 'lucide-react';
+import {
+  AI_EXTRACTION_MESSAGES,
+  AI_VERIFIED_MESSAGES,
+  AI_ISSUE_MESSAGES,
+  DEMO_EXTRACTED_FIELDS,
+} from '@/constants/documentMessages';
+import { ExtractedFieldsGrid } from './ExtractedFieldsGrid';
+import { useToast } from '@/components/ui/Toast';
 
 // ─── Status helpers ──────────────────────────────────────────────────────────
 
@@ -25,8 +35,9 @@ function getStatusIcon(status: RequirementStatus) {
     case 'uploading':
       return <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#3126E3' }} />;
     case 'issue':
-    case 'needs_update':
       return <AlertCircle className="w-4 h-4" style={{ color: '#E07900' }} />;
+    case 'needs_update':
+      return <Clock className="w-4 h-4" style={{ color: '#B45309' }} />;
     default:
       return <div className="w-4 h-4 rounded-full border-2" style={{ borderColor: '#E1E8EE' }} />;
   }
@@ -43,7 +54,7 @@ function getStatusLabel(status: RequirementStatus): string {
     case 'issue':
       return 'Issue detected';
     case 'needs_update':
-      return 'Needs update';
+      return 'Out of date';
     default:
       return 'Needed';
   }
@@ -57,8 +68,9 @@ function getStatusColor(status: RequirementStatus): string {
     case 'uploading':
       return '#3126E3';
     case 'issue':
-    case 'needs_update':
       return '#653701';
+    case 'needs_update':
+      return '#92400E';
     default:
       return '#5A7387';
   }
@@ -163,6 +175,7 @@ function UploadedFilePreview({
 export function RequirementsDocuments() {
   const { state, updateRequirementStatus } = useApplication();
   const { triggerActivity } = useActivityStream();
+  const toast = useToast();
   const requirements = state.requirements || [];
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -235,24 +248,17 @@ export function RequirementsDocuments() {
         const targetReq = pending[index % pending.length];
 
         if (targetReq) {
-          const aiMessages: Record<string, string> = {
-            'req-payslips': 'Detected payslip — extracting salary information',
-            'req-bank-statements': 'Detected bank statement — verifying transaction history',
-            'req-passport': 'Detected ID document — extracting personal details',
-            'req-proof-of-address': 'Detected address proof — verifying address details',
-          };
+          const extractionMsg = AI_EXTRACTION_MESSAGES[targetReq.id] || 'Categorizing document…';
 
           setUploadingFiles((prev) =>
             prev.map((f) =>
-              f.file === file
-                ? { ...f, aiMessage: aiMessages[targetReq.id] || 'Categorizing document...' }
-                : f
+              f.file === file ? { ...f, aiMessage: extractionMsg } : f
             )
           );
 
           updateRequirementStatus(targetReq.id, 'reviewing', {
             fileName: file.name,
-            aiMessage: aiMessages[targetReq.id] || 'LendWell is checking your document',
+            aiMessage: extractionMsg,
           });
         }
 
@@ -268,41 +274,13 @@ export function RequirementsDocuments() {
         const targetReq = pending[0];
 
         if (targetReq) {
-          const verifiedMessages: Record<string, string> = {
-            'req-payslips': 'Verified — income confirmed',
-            'req-bank-statements': 'Verified — statements accepted',
-            'req-passport': 'Verified — identity confirmed',
-            'req-proof-of-address': 'Verified — address confirmed',
-          };
-
-          const extractedFields: Record<string, Record<string, string>> = {
-            'req-payslips': {
-              employer: 'Acme Corporation',
-              gross_salary: '£5,416.67',
-              pay_date: '28 March 2025',
-            },
-            'req-bank-statements': {
-              account_type: 'Current Account',
-              bank_name: 'NatWest',
-              period: 'Jan-Mar 2025',
-            },
-            'req-passport': {
-              full_name: 'Sarah Jane Murphy',
-              date_of_birth: '15 March 1988',
-              document_number: '504839127',
-            },
-            'req-proof-of-address': {
-              address: '14 Elm Street, London SW1A 1AA',
-              document_type: 'Council Tax Bill',
-              date: 'March 2025',
-            },
-          };
-
+          const verifiedMsg = AI_VERIFIED_MESSAGES[targetReq.id] || 'Document verified';
           updateRequirementStatus(targetReq.id, 'verified', {
             fileName: file.name,
-            aiMessage: verifiedMessages[targetReq.id] || 'Document verified',
-            extractedFields: extractedFields[targetReq.id],
+            aiMessage: verifiedMsg,
+            extractedFields: DEMO_EXTRACTED_FIELDS[targetReq.id],
           });
+          toast.success(`${targetReq.title} verified`);
         }
       }, 3500 + index * 500);
     });
@@ -452,23 +430,7 @@ export function RequirementsDocuments() {
 
                       {/* Extracted fields preview */}
                       {req.extractedFields && Object.keys(req.extractedFields).length > 0 && (
-                        <div className="p-3 rounded bg-white border" style={{ borderColor: '#E5E7EB' }}>
-                          <p className="text-xs font-semibold text-gray-900 mb-2">
-                            Extracted Information
-                          </p>
-                          <div className="space-y-1.5">
-                            {Object.entries(req.extractedFields).map(([key, value]) => (
-                              <div key={key} className="flex items-center justify-between text-xs">
-                                <span className="text-gray-600 capitalize">
-                                  {key.replace(/_/g, ' ')}
-                                </span>
-                                <span className="font-medium text-gray-900">
-                                  {value}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
+                        <ExtractedFieldsGrid fields={req.extractedFields} />
                       )}
 
                       {/* Empty state */}
@@ -502,34 +464,62 @@ export function RequirementsDocuments() {
 
         {/* Drop / click target area */}
         {!allComplete && (
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="w-full flex flex-col items-center gap-3 py-8 px-6 transition-colors"
-            style={{
-              borderTop: '1px dashed #D1D5DB',
-              backgroundColor: 'transparent',
-              cursor: 'pointer',
-            }}
-          >
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: isDragging ? '#3126E3' : '#EDECFD' }}
+          <div style={{ borderTop: '1px dashed #D1D5DB' }}>
+            {/* Desktop drag-drop CTA */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="hidden sm:flex w-full flex-col items-center gap-3 py-8 px-6 transition-colors"
+              style={{ backgroundColor: 'transparent', cursor: 'pointer' }}
             >
-              <Upload
-                className="w-5 h-5"
-                style={{ color: isDragging ? '#ffffff' : '#3126E3' }}
-              />
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: isDragging ? '#3126E3' : '#EDECFD' }}
+              >
+                <Upload className="w-5 h-5" style={{ color: isDragging ? '#ffffff' : '#3126E3' }} />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-semibold" style={{ color: '#182026' }}>
+                  {isDragging ? 'Drop your files to upload' : 'Drop files here or click to browse'}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  PDF, JPG, or PNG — you can upload all your documents at once
+                </p>
+              </div>
+            </button>
+
+            {/* Mobile camera / library buttons */}
+            <div className="sm:hidden flex gap-2 px-4 py-4">
+              <button
+                type="button"
+                onClick={() => {
+                  if (fileInputRef.current) {
+                    fileInputRef.current.setAttribute('capture', 'environment');
+                    fileInputRef.current.click();
+                  }
+                }}
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold"
+                style={{ backgroundColor: '#F7F8FC', color: '#182026', border: '1px solid #E5E7EB' }}
+              >
+                <Camera className="w-3.5 h-3.5" />
+                Take a photo
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (fileInputRef.current) {
+                    fileInputRef.current.removeAttribute('capture');
+                    fileInputRef.current.click();
+                  }
+                }}
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold"
+                style={{ backgroundColor: '#F7F8FC', color: '#182026', border: '1px solid #E5E7EB' }}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                Choose
+              </button>
             </div>
-            <div className="text-center">
-              <p className="text-sm font-semibold" style={{ color: '#182026' }}>
-                {isDragging ? 'Drop your files to upload' : 'Drop files here or click to browse'}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                PDF, JPG, or PNG — you can upload all your documents at once
-              </p>
-            </div>
-          </button>
+          </div>
         )}
 
         {/* All complete state */}

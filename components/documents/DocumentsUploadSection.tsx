@@ -1242,61 +1242,71 @@ export function DocumentsUploadSection() {
   const allComplete = requiredDocs.length > 0 && completedDocs.length === requiredDocs.length;
   const progressPct = requiredDocs.length > 0 ? (completedDocs.length / requiredDocs.length) * 100 : 0;
 
-  // Handle single file upload with AI simulation
+  // Handle file upload with AI simulation — supports multi-file (minFiles)
   const handleUpload = useCallback((docId: string, files: FileList) => {
-    const file = files[0];
-    if (!file) return;
+    if (!files.length) return;
 
-    // Get realistic document name
-    const docNames = DOCUMENT_NAME_MAPPINGS[docId] || [file.name];
-    const realisticName = docNames[Math.floor(Math.random() * docNames.length)];
-
-    // Get the document title for toast notifications
     const docDef = allFilteredDocs.find(d => d.id === docId);
     const docTitle = docDef?.title || 'Document';
+    const filesToProcess = Array.from(files).slice(0, docDef?.minFiles || 1);
+    const total = filesToProcess.length;
 
-    // Start uploading
-    updateRequirementStatus(docId, 'uploading', {
-      fileName: realisticName,
-      aiMessage: 'Uploading document...',
-    });
+    filesToProcess.forEach((file, index) => {
+      const isLast = index === total - 1;
+      const offset = index * 700; // stagger each file by 700ms
 
-    // Simulate AI processing
-    setTimeout(() => {
-      updateRequirementStatus(docId, 'reviewing', {
-        fileName: realisticName,
-        aiMessage: AI_EXTRACTION_MESSAGES[docId] || 'LendWell is reviewing your document...',
-      });
-    }, 500);
+      const docNames = DOCUMENT_NAME_MAPPINGS[docId] || [file.name];
+      const realisticName = docNames[Math.floor(Math.random() * docNames.length)];
 
-    // Simulate verification (with occasional issues for realism)
-    setTimeout(() => {
-      const hasIssue = Math.random() < 0.15; // 15% chance of issue
-      if (hasIssue) {
-        const issueMessages = AI_ISSUE_MESSAGES[docId];
-        const issueMessage = issueMessages
-          ? issueMessages[Math.floor(Math.random() * issueMessages.length)]
-          : 'Document appears to be expired or unclear. Please upload a clearer copy.';
-        updateRequirementStatus(docId, 'issue', {
+      // Start uploading
+      setTimeout(() => {
+        updateRequirementStatus(docId, 'uploading', {
           fileName: realisticName,
-          aiMessage: 'Issue detected',
-          issueMessage,
+          aiMessage: total > 1 ? `Uploading file ${index + 1} of ${total}…` : 'Uploading document...',
         });
-        toast.warning(`Issue with ${docTitle} — action needed`, {
-          actionLabel: 'View',
-          onAction: () => {
-            document.getElementById(`doc-${docId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          },
-        });
-      } else {
-        updateRequirementStatus(docId, 'verified', {
+      }, offset);
+
+      // Simulate AI processing
+      setTimeout(() => {
+        updateRequirementStatus(docId, 'reviewing', {
           fileName: realisticName,
-          aiMessage: AI_VERIFIED_MESSAGES[docId] || 'Document verified successfully',
-          extractedFields: DEMO_EXTRACTED_FIELDS[docId],
+          aiMessage: total > 1
+            ? `Checking file ${index + 1} of ${total}…`
+            : (AI_EXTRACTION_MESSAGES[docId] || 'LendWell is reviewing your document...'),
         });
-        toast.success(`${docTitle} verified`);
+      }, offset + 500);
+
+      // Simulate verification — only finalise status on the last file
+      if (isLast) {
+        setTimeout(() => {
+          const hasIssue = Math.random() < 0.15;
+          if (hasIssue) {
+            const issueMessages = AI_ISSUE_MESSAGES[docId];
+            const issueMessage = issueMessages
+              ? issueMessages[Math.floor(Math.random() * issueMessages.length)]
+              : 'Document appears to be expired or unclear. Please upload a clearer copy.';
+            updateRequirementStatus(docId, 'issue', {
+              fileName: realisticName,
+              aiMessage: 'Issue detected',
+              issueMessage,
+            });
+            toast.warning(`Issue with ${docTitle} — action needed`, {
+              actionLabel: 'View',
+              onAction: () => {
+                document.getElementById(`doc-${docId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              },
+            });
+          } else {
+            updateRequirementStatus(docId, 'verified', {
+              fileName: realisticName,
+              aiMessage: AI_VERIFIED_MESSAGES[docId] || 'Document verified successfully',
+              extractedFields: DEMO_EXTRACTED_FIELDS[docId],
+            });
+            toast.success(`${docTitle} verified`);
+          }
+        }, offset + 2500);
       }
-    }, 2500);
+    });
   }, [updateRequirementStatus, allFilteredDocs, toast]);
 
   // Handle bulk file upload with sorting animation
