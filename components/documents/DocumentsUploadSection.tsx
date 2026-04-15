@@ -4,7 +4,14 @@ import { useRef, useState, useMemo, useCallback, useEffect } from 'react';
 import { useApplication } from '@/context/ApplicationContext';
 import { useChat } from '@/context/ChatContext';
 import { DocumentRequirement, RequirementStatus } from '@/types/tasks';
-import { AI_EXTRACTION_MESSAGES, AI_VERIFIED_MESSAGES } from '@/constants/documentMessages';
+import {
+  AI_EXTRACTION_MESSAGES,
+  AI_VERIFIED_MESSAGES,
+  AI_ISSUE_MESSAGES,
+  DEMO_EXTRACTED_FIELDS,
+} from '@/constants/documentMessages';
+import { ExtractedFieldsGrid } from './ExtractedFieldsGrid';
+import { useToast } from '@/components/ui/Toast';
 
 // ─── Upload Flow Types ───────────────────────────────────────────────────────
 
@@ -54,6 +61,10 @@ import {
   Briefcase,
   PoundSterling,
   ChevronDown,
+  Clock,
+  Users,
+  Camera,
+  Info,
 } from 'lucide-react';
 
 // ─── Document category definitions ───────────────────────────────────────────
@@ -72,6 +83,8 @@ interface DocumentDefinition {
   description: string;
   acceptableDocuments: string[];
   required: boolean;
+  why?: string;       // Shown in expanded state to explain why lenders need this
+  minFiles?: number;  // Minimum files required before marking verified (default: 1)
   // Conditions based on ApplicationData fields
   conditions?: {
     field: string;
@@ -95,6 +108,7 @@ const documentCategories: DocumentCategory[] = [
         description: 'Valid passport or driving licence',
         acceptableDocuments: ['Passport', 'Driving licence', 'National ID card'],
         required: true,
+        why: 'Lenders are legally required to verify your identity before processing a mortgage application.',
       },
       {
         id: 'req-proof-of-address',
@@ -102,6 +116,7 @@ const documentCategories: DocumentCategory[] = [
         description: 'Utility bill or bank statement dated within 3 months',
         acceptableDocuments: ['Utility bill', 'Council tax bill', 'Bank statement'],
         required: true,
+        why: 'Lenders need to confirm your current address to comply with anti-money-laundering regulations.',
       },
     ],
   },
@@ -117,7 +132,9 @@ const documentCategories: DocumentCategory[] = [
         description: 'Last 3 months of consecutive payslips',
         acceptableDocuments: ['Payslip PDF', 'Payslip image'],
         required: true,
-        conditions: [{ field: 'employmentStatus', values: ['employed', 'Employed', ''] }],
+        minFiles: 3,
+        why: 'Lenders use your payslips to confirm your income is stable and matches what you\'ve declared in your application.',
+        conditions: [{ field: 'employmentStatus', values: ['employed'] }],
       },
       {
         id: 'req-p60',
@@ -125,7 +142,8 @@ const documentCategories: DocumentCategory[] = [
         description: 'Most recent tax year P60 from your employer',
         acceptableDocuments: ['P60 document'],
         required: true,
-        conditions: [{ field: 'employmentStatus', values: ['employed', 'Employed', ''] }],
+        why: 'Your P60 confirms your total annual earnings and tax paid — lenders use this to cross-reference your declared income.',
+        conditions: [{ field: 'employmentStatus', values: ['employed'] }],
       },
       {
         id: 'req-employment-contract',
@@ -133,7 +151,8 @@ const documentCategories: DocumentCategory[] = [
         description: 'Current contract showing salary and terms',
         acceptableDocuments: ['Employment contract', 'Offer letter'],
         required: false,
-        conditions: [{ field: 'employmentStatus', values: ['employed', 'Employed'] }],
+        why: 'Uploading your contract helps lenders confirm your employment is permanent and verify your salary independently.',
+        conditions: [{ field: 'employmentStatus', values: ['employed'] }],
       },
     ],
   },
@@ -149,7 +168,8 @@ const documentCategories: DocumentCategory[] = [
         description: 'Last 2-3 years of HMRC tax calculations',
         acceptableDocuments: ['SA302 forms', 'Tax calculation summary'],
         required: true,
-        conditions: [{ field: 'employmentStatus', values: ['self-employed', 'Self-employed', 'Self Employed'] }],
+        why: 'Lenders need 2–3 years of SA302s to assess your income stability, as self-employed income can vary year to year.',
+        conditions: [{ field: 'employmentStatus', values: ['self-employed', 'self_employed'] }],
       },
       {
         id: 'req-tax-overview',
@@ -157,7 +177,8 @@ const documentCategories: DocumentCategory[] = [
         description: 'HMRC Tax Year Overview for last 2-3 years',
         acceptableDocuments: ['Tax year overview document'],
         required: true,
-        conditions: [{ field: 'employmentStatus', values: ['self-employed', 'Self-employed', 'Self Employed'] }],
+        why: 'The Tax Year Overview confirms your SA302 figures match HMRC\'s records — most lenders require both together.',
+        conditions: [{ field: 'employmentStatus', values: ['self-employed', 'self_employed'] }],
       },
       {
         id: 'req-company-accounts',
@@ -165,7 +186,8 @@ const documentCategories: DocumentCategory[] = [
         description: 'Last 2-3 years of certified accounts (Ltd companies)',
         acceptableDocuments: ['Certified accounts', 'Accountant letter'],
         required: false,
-        conditions: [{ field: 'employmentStatus', values: ['self-employed', 'Self-employed', 'Self Employed'] }],
+        why: 'For limited companies, certified accounts help lenders understand the business\'s financial health alongside your personal drawings.',
+        conditions: [{ field: 'employmentStatus', values: ['self-employed', 'self_employed'] }],
       },
       {
         id: 'req-accountant-reference',
@@ -173,7 +195,8 @@ const documentCategories: DocumentCategory[] = [
         description: 'Letter from your accountant confirming income',
         acceptableDocuments: ['Accountant letter', 'Accountant certificate'],
         required: false,
-        conditions: [{ field: 'employmentStatus', values: ['self-employed', 'Self-employed', 'Self Employed'] }],
+        why: 'An accountant reference can strengthen your application by providing a professional third-party confirmation of your income.',
+        conditions: [{ field: 'employmentStatus', values: ['self-employed', 'self_employed'] }],
       },
     ],
   },
@@ -213,6 +236,8 @@ const documentCategories: DocumentCategory[] = [
         description: 'Last 3 months from your main salary account',
         acceptableDocuments: ['Bank statement PDF', 'Online banking export'],
         required: true,
+        minFiles: 3,
+        why: 'Lenders review 3 months of transactions to verify your salary is paid regularly and assess your overall spending habits.',
       },
       {
         id: 'req-savings-statements',
@@ -244,6 +269,7 @@ const documentCategories: DocumentCategory[] = [
         description: 'Declaration letter from person gifting funds',
         acceptableDocuments: ['Signed gift letter', 'Solicitor letter'],
         required: true,
+        why: 'Lenders need written confirmation that gifted funds don\'t need to be repaid, as repayable gifts affect your affordability.',
         conditions: [{ field: 'isGiftedDeposit', values: ['yes', 'Yes', 'true'] }],
       },
       {
@@ -345,6 +371,72 @@ const documentCategories: DocumentCategory[] = [
     ],
   },
   {
+    id: 'joint-applicant',
+    title: 'Second applicant documents',
+    description: 'Supporting documents for your co-applicant',
+    icon: Users,
+    documents: [
+      {
+        id: 'req-joint-passport',
+        title: 'Co-applicant photo ID',
+        description: 'Valid passport or driving licence for your co-applicant',
+        acceptableDocuments: ['Passport', 'Driving licence'],
+        required: true,
+        why: 'Lenders must verify the identity of all applicants named on the mortgage.',
+        conditions: [{ field: 'applicationMode', values: ['joint'] }],
+      },
+      {
+        id: 'req-joint-payslips',
+        title: 'Co-applicant payslips',
+        description: 'Last 3 months of payslips for your co-applicant',
+        acceptableDocuments: ['Payslip PDF', 'Payslip image'],
+        required: true,
+        minFiles: 3,
+        why: 'Lenders need to verify your co-applicant\'s income independently to calculate joint affordability.',
+        conditions: [
+          { field: 'applicationMode', values: ['joint'] },
+          { field: 'secondApplicantEmploymentStatus', values: ['employed'] },
+        ],
+      },
+      {
+        id: 'req-joint-bank-statements',
+        title: 'Co-applicant bank statements',
+        description: 'Last 3 months from co-applicant\'s main account',
+        acceptableDocuments: ['Bank statement PDF'],
+        required: true,
+        minFiles: 3,
+        why: 'Lenders review both applicants\' bank statements to assess the combined financial picture.',
+        conditions: [{ field: 'applicationMode', values: ['joint'] }],
+      },
+    ],
+  },
+  {
+    id: 'remortgage',
+    title: 'Remortgage documents',
+    description: 'Documents relating to your existing mortgage',
+    icon: Home,
+    documents: [
+      {
+        id: 'req-mortgage-statement',
+        title: 'Current mortgage statement',
+        description: 'Most recent annual statement from your current lender',
+        acceptableDocuments: ['Annual mortgage statement'],
+        required: true,
+        why: 'Your current mortgage statement shows the outstanding balance and remaining term — essential information for your new lender.',
+        conditions: [{ field: 'buyerType', values: ['remortgage'] }],
+      },
+      {
+        id: 'req-redemption-statement',
+        title: 'Redemption statement',
+        description: 'Up-to-date figure from your lender (valid for 30 days)',
+        acceptableDocuments: ['Redemption statement'],
+        required: false,
+        why: 'A redemption statement shows the exact amount needed to pay off your current mortgage, including any early repayment charges.',
+        conditions: [{ field: 'buyerType', values: ['remortgage'] }],
+      },
+    ],
+  },
+  {
     id: 'legal',
     title: 'Legal & Residency',
     description: 'Visa and legal documentation',
@@ -380,8 +472,9 @@ function getStatusIcon(status: RequirementStatus) {
     case 'uploading':
       return <Loader2 className="w-5 h-5 animate-spin" style={{ color: '#473FE6' }} />;
     case 'issue':
-    case 'needs_update':
       return <AlertCircle className="w-5 h-5" style={{ color: '#E07900' }} />;
+    case 'needs_update':
+      return <Clock className="w-5 h-5" style={{ color: '#B45309' }} />;
     default:
       return <div className="w-5 h-5 rounded-full border-2" style={{ borderColor: '#E1E8EE' }} />;
   }
@@ -399,9 +492,9 @@ function getStatusLabel(status: RequirementStatus, filesCount?: { uploaded: numb
     case 'uploading':
       return 'Uploading...';
     case 'issue':
-      return 'Issues Found';
+      return 'Issue found';
     case 'needs_update':
-      return 'Update needed';
+      return 'Out of date';
     default:
       return 'Required';
   }
@@ -415,8 +508,9 @@ function getStatusColor(status: RequirementStatus): string {
     case 'uploading':
       return '#3126E3';     // Indigo.Color (processing)
     case 'issue':
-    case 'needs_update':
       return '#653701';     // Warning.Text-Soft
+    case 'needs_update':
+      return '#92400E';     // Amber text
     default:
       return '#5A7387';     // Primary.Color (textMuted)
   }
@@ -430,8 +524,9 @@ function getStatusBgColor(status: RequirementStatus): string {
     case 'uploading':
       return '#EDECFD';     // Indigo.Fill-Soft
     case 'issue':
-    case 'needs_update':
       return '#FFF6EA';     // Warning.Fill-Soft
+    case 'needs_update':
+      return '#FEF3C7';     // Amber fill
     default:
       return '#F7F8FC';     // Primary.Fill-Soft
   }
@@ -485,6 +580,7 @@ function DocumentAccordionItem({
 
   return (
     <div
+      id={`doc-${doc.id}`}
       onDrop={handleDrop}
       onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
       onDragLeave={() => setIsDragging(false)}
@@ -552,15 +648,15 @@ function DocumentAccordionItem({
             display: 'inline-block',
           }}
         >
-          {doc.required ? getStatusLabel(status) : 'Optional'}
+          {doc.required ? getStatusLabel(status) : 'Recommended'}
         </span>
       </button>
 
       {/* Accordion content with smooth transition */}
       {isExpanded && (
-        <div 
+        <div
           className="py-4 animate-in fade-in duration-150"
-          style={{ 
+          style={{
             backgroundColor: 'rgba(255, 255, 255, 0.00)',
             paddingLeft: '0px',
             paddingRight: '0px',
@@ -572,30 +668,80 @@ function DocumentAccordionItem({
           }}
         >
           <div className="space-y-3" style={{ borderRadius: '8px' }}>
+
+            {/* Why this document is needed */}
+            {doc.why && !hasFile && (
+              <div className="flex items-start gap-2 px-1">
+                <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: '#9CA3AF' }} />
+                <p className="text-xs" style={{ color: '#6B7280', lineHeight: '1.5' }}>
+                  {doc.why}
+                </p>
+              </div>
+            )}
+
+            {/* Optional document nudge */}
+            {!doc.required && !hasFile && (
+              <p className="text-xs px-1" style={{ color: '#9CA3AF' }}>
+                Uploading this can strengthen your application and may increase the income lenders consider.
+              </p>
+            )}
+
             {/* Drop zone or file display */}
             {!hasFile ? (
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className={`w-full p-6 text-center dropzone-interactive ${isDragging ? 'dragging' : ''}`}
-                style={{
-                  borderRadius: '8px',
-                }}
-              >
-                <Upload className="w-6 h-6 mx-auto mb-2" style={{ color: '#9CA3AF' }} />
-                <p className="text-gray-700" style={{ fontSize: '14px', fontWeight: '600' }}>
-                  Drop file here or click to upload
-                </p>
-                <p className="text-gray-500 mt-1" style={{ fontSize: '12px', fontWeight: '600' }}>
-                  PDF, JPG, or PNG
-                </p>
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`w-full p-6 text-center dropzone-interactive ${isDragging ? 'dragging' : ''}`}
+                  style={{ borderRadius: '8px' }}
+                >
+                  <Upload className="w-6 h-6 mx-auto mb-2" style={{ color: '#9CA3AF' }} />
+                  <p className="text-gray-700" style={{ fontSize: '14px', fontWeight: '600' }}>
+                    Drop file here or click to upload
+                  </p>
+                  <p className="text-gray-500 mt-1" style={{ fontSize: '12px', fontWeight: '600' }}>
+                    PDF, JPG, or PNG{doc.minFiles && doc.minFiles > 1 ? ` · ${doc.minFiles} files needed` : ''}
+                  </p>
+                </button>
+
+                {/* Mobile camera CTA — only on touch devices */}
+                <div className="sm:hidden flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (fileInputRef.current) {
+                        fileInputRef.current.setAttribute('capture', 'environment');
+                        fileInputRef.current.click();
+                      }
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold"
+                    style={{ backgroundColor: '#F7F8FC', color: '#182026', border: '1px solid #E5E7EB' }}
+                  >
+                    <Camera className="w-3.5 h-3.5" />
+                    Take a photo
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (fileInputRef.current) {
+                        fileInputRef.current.removeAttribute('capture');
+                        fileInputRef.current.click();
+                      }
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold"
+                    style={{ backgroundColor: '#F7F8FC', color: '#182026', border: '1px solid #E5E7EB' }}
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    Choose from library
+                  </button>
+                </div>
+              </>
             ) : (
               <div className="space-y-3">
                 {/* Uploaded file */}
-                <div 
+                <div
                   className="flex items-center gap-3 p-3 rounded-lg bg-white border transition-all duration-120"
-                  style={{ 
+                  style={{
                     borderColor: '#E5E7EB',
                     boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                   }}
@@ -619,35 +765,69 @@ function DocumentAccordionItem({
                   )}
                 </div>
 
-                {/* Issue message */}
+                {/* Issue message + replace CTA */}
                 {status === 'issue' && requirement?.issueMessage && (
-                  <div 
-                    className="flex items-center gap-2 p-3 rounded-lg border"
-                    style={{ 
-                      backgroundColor: '#FFFBEB',
-                      borderColor: '#FCD34D',
-                    }}
-                  >
-                    <AlertCircle className="w-4 h-4 flex-shrink-0" style={{ color: '#E07900' }} />
-                    <p className="text-xs" style={{ color: '#E07900' }}>
-                      {requirement.issueMessage}
-                    </p>
+                  <div className="space-y-2">
+                    <div
+                      className="flex items-start gap-2 p-3 rounded-lg border"
+                      style={{ backgroundColor: '#FFFBEB', borderColor: '#FCD34D' }}
+                    >
+                      <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#E07900' }} />
+                      <p className="text-xs" style={{ color: '#653701', lineHeight: '1.5' }}>
+                        {requirement.issueMessage}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full"
+                      style={{ backgroundColor: '#FFF6EA', color: '#E07900', border: '1px solid #FCD34D' }}
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      Replace document
+                    </button>
                   </div>
                 )}
 
-                {/* Success message */}
+                {/* Needs update message + replace CTA */}
+                {status === 'needs_update' && requirement?.issueMessage && (
+                  <div className="space-y-2">
+                    <div
+                      className="flex items-start gap-2 p-3 rounded-lg border"
+                      style={{ backgroundColor: '#FEF3C7', borderColor: '#FDE68A' }}
+                    >
+                      <Clock className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#B45309' }} />
+                      <p className="text-xs" style={{ color: '#92400E', lineHeight: '1.5' }}>
+                        {requirement.issueMessage}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full"
+                      style={{ backgroundColor: '#FEF3C7', color: '#B45309', border: '1px solid #FDE68A' }}
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      Upload newer document
+                    </button>
+                  </div>
+                )}
+
+                {/* Success message + extracted fields */}
                 {isComplete && (
-                  <div 
-                    className="flex items-center gap-2 p-3 rounded-lg border"
-                    style={{ 
-                      backgroundColor: '#F0FBDF',
-                      borderColor: '#BEF264',
-                    }}
-                  >
-                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#3C6006' }} />
-                    <p className="text-xs font-medium" style={{ color: '#3C6006' }}>
-                      Document verified successfully
-                    </p>
+                  <div className="rounded-lg overflow-hidden border" style={{ borderColor: '#BEF264' }}>
+                    <div
+                      className="flex items-center gap-2 p-3"
+                      style={{ backgroundColor: '#F0FBDF' }}
+                    >
+                      <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#3C6006' }} />
+                      <p className="text-xs font-medium" style={{ color: '#3C6006' }}>
+                        {AI_VERIFIED_MESSAGES[doc.id] || 'Document verified successfully'}
+                      </p>
+                    </div>
+                    {requirement?.extractedFields && (
+                      <ExtractedFieldsGrid fields={requirement.extractedFields} />
+                    )}
                   </div>
                 )}
               </div>
@@ -655,149 +835,6 @@ function DocumentAccordionItem({
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-// ─── Document Card Component (keeping for reference) ─────────��────────────────
-
-function DocumentCard({
-  doc,
-  requirement,
-  onUpload,
-}: {
-  doc: DocumentDefinition;
-  requirement?: DocumentRequirement;
-  onUpload: (docId: string, files: FileList) => void;
-}) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-
-  const status = requirement?.status || 'required';
-  const isComplete = status === 'verified';
-  const isProcessing = status === 'reviewing' || status === 'uploading';
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      onUpload(doc.id, e.dataTransfer.files);
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      onUpload(doc.id, e.target.files);
-    }
-    e.target.value = '';
-  };
-
-  return (
-    <div
-      className="relative p-5 transition-all duration-200 h-full"
-      style={{
-        backgroundColor: isDragging ? 'rgba(71, 63, 230, 0.03)' : '#ffffff',
-        borderRadius: '8px',
-        border: 'none',
-        boxShadow: isComplete ? 'none' : '0 1px 3px rgba(0,0,0,0.04)',
-      }}
-      onDrop={handleDrop}
-      onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-      onDragLeave={() => setIsDragging(false)}
-    >
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".pdf,.jpg,.jpeg,.png"
-        multiple
-        className="hidden"
-        onChange={handleFileChange}
-      />
-
-      {/* Content ��� full height flex column so badge anchors to bottom */}
-      <div className="flex flex-col h-full">
-        {/* Top content */}
-        <div className="flex-1">
-          {/* Title */}
-          <h4
-            className="text-sm font-semibold"
-            style={{ color: '#182026', marginBottom: '4px' }}
-          >
-            {doc.title}
-          </h4>
-          <p
-            className="text-xs line-clamp-2"
-            style={{ color: '#182026', fontWeight: '500' }}
-          >
-            {doc.description}
-          </p>
-
-          {/* Uploaded file info */}
-          {requirement?.uploadedFileName && (
-            <div className="flex items-center gap-2 mt-3">
-              <FileText className="w-3.5 h-3.5 flex-shrink-0" style={{ color: isComplete ? '#3C6006' : '#473FE6' }} />
-              <span className="text-xs truncate font-medium" style={{ color: isComplete ? '#3C6006' : '#473FE6' }}>
-                {requirement.uploadedFileName}
-              </span>
-            </div>
-          )}
-
-          {/* Scanning & Verifying indicator */}
-          {status === 'reviewing' && (
-            <div 
-              className="flex items-center gap-2 mt-3 p-2 rounded-lg"
-              style={{ backgroundColor: 'rgba(71, 63, 230, 0.05)' }}
-            >
-              <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" style={{ color: '#473FE6' }} />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium" style={{ color: '#473FE6' }}>
-                  Scanning & Verifying
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  LendWell is reviewing your document...
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Issue message */}
-          {status === 'issue' && requirement?.issueMessage && (
-            <div 
-              className="flex items-center gap-2 mt-3 p-2 rounded-lg"
-              style={{ backgroundColor: '#FFF6EA' }}
-            >
-              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#E07900' }} />
-              <p className="text-xs" style={{ color: '#E07900' }}>
-                {requirement.issueMessage}
-              </p>
-            </div>
-          )}
-
-          {/* Success message */}
-          {isComplete && (
-            <div className="flex items-center gap-1.5 mt-3">
-              <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#3C6006' }} />
-              <p className="text-xs font-medium" style={{ color: '#3C6006' }}>
-                Document verified successfully
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Status badge anchored to bottom */}
-        <div className="mt-4">
-          <span
-            className="text-xs font-semibold px-2.5 py-1 rounded-full"
-            style={{
-              backgroundColor: getStatusBgColor(status),
-              color: getStatusColor(status),
-              display: 'inline-block',
-            }}
-          >
-            {doc.required ? getStatusLabel(status) : 'Optional'}
-          </span>
-        </div>
-      </div>
     </div>
   );
 }
@@ -827,13 +864,13 @@ function CategorySection({
       {/* Category header */}
       <div className="flex items-center gap-3 mb-4">
         <div
-          className="w-9 h-9 flex items-center justify-center hidden"
+          className="w-9 h-9 flex-shrink-0 flex items-center justify-center"
           style={{
             backgroundColor: '#EEF0FD',
             borderRadius: '999px',
           }}
         >
-          <Icon className="w-3 h-3" style={{ color: '#473FE6', fontSize: '12px' }} />
+          <Icon className="w-4 h-4" style={{ color: '#473FE6' }} />
         </div>
         <div className="flex-1">
           <h3 className="text-base font-semibold mb-0.5" style={{ color: '#182026', marginBottom: '2px' }}>
@@ -1121,11 +1158,8 @@ function BulkDropZone({
         </div>
       )}
 
-      {/* Document category cards — hidden during upload, restored after */}
-      <div 
-        className="pointer-events-auto transition-opacity duration-300"
-        style={{ opacity: isUploading ? 0.3 : 1, pointerEvents: isUploading ? 'none' : 'auto' }}
-      >
+      {/* Document category cards */}
+      <div className="pointer-events-auto" style={{ pointerEvents: isUploading ? 'none' : 'auto' }}>
         {children}
       </div>
     </div>
@@ -1136,12 +1170,22 @@ function BulkDropZone({
 
 export function DocumentsUploadSection() {
   const { state, updateRequirementStatus } = useApplication();
+  const toast = useToast();
   const appData = state.data;
   const requirements = state.requirements || [];
 
   // Upload flow state
   const [uploadPhase, setUploadPhase] = useState<UploadPhase>('idle');
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
+
+  // Dismissible instructional banner
+  const [bannerDismissed, setBannerDismissed] = useState<boolean>(
+    () => typeof window !== 'undefined' && localStorage.getItem('docs-banner-dismissed') === '1'
+  );
+  const dismissBanner = () => {
+    setBannerDismissed(true);
+    localStorage.setItem('docs-banner-dismissed', '1');
+  };
 
   // Filter documents based on user's application data
   const filteredCategories = useMemo(() => {
@@ -1153,22 +1197,22 @@ export function DocumentsUploadSection() {
             return true;
           }
 
-          // Check all conditions
+          // Check all conditions (AND logic across multiple conditions)
           return doc.conditions.every((condition) => {
             const fieldValue = appData[condition.field as keyof typeof appData];
-            
+
             if (condition.notEmpty) {
               return fieldValue && String(fieldValue).trim() !== '' && String(fieldValue) !== '0';
             }
-            
+
             if (condition.values) {
-              // If field is empty and we're checking for specific values, 
-              // show if empty string is in the allowed values (for default/universal docs)
+              // If field is empty, don't show conditionally-gated documents
               if (!fieldValue || String(fieldValue).trim() === '') {
-                return condition.values.includes('');
+                return false;
               }
-              return condition.values.some(v => 
-                String(fieldValue).toLowerCase().includes(v.toLowerCase())
+              // Exact match (case-insensitive) — prevents 'self-employed'.includes('employed') bug
+              return condition.values.some(v =>
+                String(fieldValue).toLowerCase().trim() === v.toLowerCase().trim()
               );
             }
 
@@ -1191,6 +1235,12 @@ export function DocumentsUploadSection() {
     const req = requirements.find(r => r.id === doc.id);
     return req?.status === 'verified';
   });
+  const issueDocs = requiredDocs.filter(doc => {
+    const req = requirements.find(r => r.id === doc.id);
+    return req?.status === 'issue' || req?.status === 'needs_update';
+  });
+  const allComplete = requiredDocs.length > 0 && completedDocs.length === requiredDocs.length;
+  const progressPct = requiredDocs.length > 0 ? (completedDocs.length / requiredDocs.length) * 100 : 0;
 
   // Handle single file upload with AI simulation
   const handleUpload = useCallback((docId: string, files: FileList) => {
@@ -1200,6 +1250,10 @@ export function DocumentsUploadSection() {
     // Get realistic document name
     const docNames = DOCUMENT_NAME_MAPPINGS[docId] || [file.name];
     const realisticName = docNames[Math.floor(Math.random() * docNames.length)];
+
+    // Get the document title for toast notifications
+    const docDef = allFilteredDocs.find(d => d.id === docId);
+    const docTitle = docDef?.title || 'Document';
 
     // Start uploading
     updateRequirementStatus(docId, 'uploading', {
@@ -1211,7 +1265,7 @@ export function DocumentsUploadSection() {
     setTimeout(() => {
       updateRequirementStatus(docId, 'reviewing', {
         fileName: realisticName,
-        aiMessage: 'LendWell is reviewing your document...',
+        aiMessage: AI_EXTRACTION_MESSAGES[docId] || 'LendWell is reviewing your document...',
       });
     }, 500);
 
@@ -1219,19 +1273,31 @@ export function DocumentsUploadSection() {
     setTimeout(() => {
       const hasIssue = Math.random() < 0.15; // 15% chance of issue
       if (hasIssue) {
+        const issueMessages = AI_ISSUE_MESSAGES[docId];
+        const issueMessage = issueMessages
+          ? issueMessages[Math.floor(Math.random() * issueMessages.length)]
+          : 'Document appears to be expired or unclear. Please upload a clearer copy.';
         updateRequirementStatus(docId, 'issue', {
           fileName: realisticName,
           aiMessage: 'Issue detected',
-          issueMessage: 'Document appears to be expired or unclear. Please upload a clearer copy.',
+          issueMessage,
+        });
+        toast.warning(`Issue with ${docTitle} — action needed`, {
+          actionLabel: 'View',
+          onAction: () => {
+            document.getElementById(`doc-${docId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          },
         });
       } else {
         updateRequirementStatus(docId, 'verified', {
           fileName: realisticName,
-          aiMessage: 'Document verified successfully',
+          aiMessage: AI_VERIFIED_MESSAGES[docId] || 'Document verified successfully',
+          extractedFields: DEMO_EXTRACTED_FIELDS[docId],
         });
+        toast.success(`${docTitle} verified`);
       }
     }, 2500);
-  }, [updateRequirementStatus]);
+  }, [updateRequirementStatus, allFilteredDocs, toast]);
 
   // Handle bulk file upload with sorting animation
   const handleBulkUpload = useCallback((files: FileList) => {
@@ -1309,16 +1375,28 @@ export function DocumentsUploadSection() {
         ));
 
         if (hasIssue) {
+          const issueMessages = AI_ISSUE_MESSAGES[f.assignedDocId];
+          const issueMessage = issueMessages
+            ? issueMessages[Math.floor(Math.random() * issueMessages.length)]
+            : 'Document appears to be expired or unclear. Please upload a clearer copy.';
           updateRequirementStatus(f.assignedDocId, 'issue', {
             fileName: realisticName,
             aiMessage: 'Issue detected',
-            issueMessage: 'Document appears to be expired or unclear. Please upload a clearer copy.',
+            issueMessage,
+          });
+          toast.warning(`Issue with ${f.assignedDocTitle} — action needed`, {
+            actionLabel: 'View',
+            onAction: () => {
+              document.getElementById(`doc-${f.assignedDocId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            },
           });
         } else {
           updateRequirementStatus(f.assignedDocId, 'verified', {
             fileName: realisticName,
             aiMessage: AI_VERIFIED_MESSAGES[f.assignedDocId] || 'Document verified successfully',
+            extractedFields: DEMO_EXTRACTED_FIELDS[f.assignedDocId],
           });
+          toast.success(`${f.assignedDocTitle} verified`);
         }
       }, 3500 + (index * 600)); // Stagger each verification
     });
@@ -1332,33 +1410,76 @@ export function DocumentsUploadSection() {
       }, 1500);
     }, 3500 + (newUploadingFiles.length * 600) + 500);
 
-  }, [allFilteredDocs, requirements, updateRequirementStatus]);
+  }, [allFilteredDocs, requirements, updateRequirementStatus, toast]);
 
   return (
     <>
     <div className="w-full">
-      {/* Header with progress */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="font-display font-medium mb-2" style={{ fontSize: '28px', color: '#182026', letterSpacing: '-0.01em' }}>
-              Upload your documents
-            </h2>
-            <p 
-              className="text-base"
-              style={{ 
-                fontSize: '20px',
-                fontWeight: '500',
-                color: '#182026',
-                lineHeight: '1.5em'
-              }}
-            >
-              Upload the documents lenders will need to review your application. LendWell will check each one for you.
-            </p>
-          </div>
-        </div>
-
+      {/* Header */}
+      <div className="mb-6">
+        <h2 className="font-display font-medium mb-2" style={{ fontSize: '28px', color: '#182026', letterSpacing: '-0.01em' }}>
+          Upload your documents
+        </h2>
+        <p className="text-base" style={{ fontSize: '20px', fontWeight: '500', color: '#182026', lineHeight: '1.5em' }}>
+          Upload the documents lenders will need to review your application. LendWell will check each one for you.
+        </p>
       </div>
+
+      {/* Instructional banner — dismissible, first visit only */}
+      {!bannerDismissed && (
+        <div
+          className="flex items-start gap-3 p-4 rounded-xl mb-6"
+          style={{ backgroundColor: '#EDECFD', border: '1px solid rgba(49,38,227,0.10)' }}
+        >
+          <Info className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#3126E3' }} />
+          <p className="text-sm font-medium flex-1" style={{ color: '#3126E3', lineHeight: '1.5' }}>
+            <span className="font-semibold">Two ways to upload:</span> Drop all your documents at once and LendWell will sort them automatically, or expand each item below to upload individually.
+          </p>
+          <button
+            type="button"
+            onClick={dismissBanner}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3126E3', padding: 0, flexShrink: 0 }}
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Overall progress summary */}
+      {requiredDocs.length > 0 && (
+        <div
+          className="p-4 rounded-xl mb-6"
+          style={{
+            backgroundColor: allComplete ? '#F0FBDF' : '#ffffff',
+            border: `1px solid ${allComplete ? '#BEF264' : '#E5E7EB'}`,
+          }}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-semibold" style={{ color: allComplete ? '#3C6006' : '#182026' }}>
+              {allComplete
+                ? 'All required documents verified — your application is ready to progress'
+                : `${completedDocs.length} of ${requiredDocs.length} required documents verified`}
+            </p>
+            {allComplete && <CheckCircle2 className="w-4 h-4" style={{ color: '#3C6006' }} />}
+          </div>
+
+          {/* Progress bar */}
+          {!allComplete && (
+            <div className="w-full h-1.5 rounded-full overflow-hidden mb-2" style={{ backgroundColor: '#E5E7EB' }}>
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${progressPct}%`, backgroundColor: '#3126E3' }}
+              />
+            </div>
+          )}
+
+          {issueDocs.length > 0 && (
+            <p className="text-xs font-semibold" style={{ color: '#E07900' }}>
+              {issueDocs.length} document{issueDocs.length > 1 ? 's' : ''} need{issueDocs.length === 1 ? 's' : ''} attention
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Drag-and-drop zone containing all document upload cards */}
       <BulkDropZone 

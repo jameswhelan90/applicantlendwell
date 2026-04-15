@@ -32,6 +32,7 @@ export interface DocumentRequirement {
   aiMessage?: string;               // contextual AI feedback
   issueMessage?: string;            // specific error if status === 'issue'
   extractedFields?: Record<string, string>;  // AI-extracted data from document
+  uploadedFileCount?: number;                // for multi-file requirements (e.g. 3 payslips)
 }
 
 // ─── Document ──────────────────────────────────────────────────────────────

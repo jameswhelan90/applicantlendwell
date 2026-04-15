@@ -10,8 +10,8 @@ import {
   Loader2,
   Upload,
   FileText,
-  Sparkles,
 } from 'lucide-react';
+import { ExtractedFieldsGrid } from './ExtractedFieldsGrid';
 import {
   AI_EXTRACTION_MESSAGES,
   AI_VERIFIED_MESSAGES,
@@ -167,31 +167,7 @@ export function InlineDocumentPrompt({
           </div>
         </div>
         {/* Extracted fields */}
-        {fields && Object.keys(fields).length > 0 && (
-          <div
-            className="px-4 pb-3"
-            style={{ borderTop: '1px solid rgba(60,96,6,0.1)' }}
-          >
-            <div className="flex items-center gap-1.5 pt-2.5 mb-2">
-              <Sparkles className="w-3 h-3" style={{ color: '#3C6006' }} />
-              <span className="text-xs font-semibold" style={{ color: '#3C6006' }}>
-                Extracted by LendWell AI
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-              {Object.entries(fields).map(([key, val]) => (
-                <div key={key}>
-                  <p className="text-xs font-medium capitalize" style={{ color: '#5A7D23' }}>
-                    {key.replace(/_/g, ' ')}
-                  </p>
-                  <p className="text-xs font-semibold" style={{ color: '#1F3A0A' }}>
-                    {val}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {fields && <ExtractedFieldsGrid fields={fields} />}
       </div>
     );
   }

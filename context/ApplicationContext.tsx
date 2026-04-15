@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import {
   ApplicationState,
   ApplicationData,
@@ -405,6 +405,40 @@ export function ApplicationProvider({ children }: { children: ReactNode }) {
   const [selectedJourneyStep, setSelectedJourneyStep] = useState<SectionId>('welcome');
 
   const currentSectionId = STEP_SECTION[currentStep];
+
+  // ── Staleness check — mark time-sensitive docs as needs_update ─────────
+  const TIME_SENSITIVE_DOCS = new Set([
+    'req-proof-of-address',
+    'req-bank-statements',
+    'req-payslips',
+    'req-joint-bank-statements',
+  ]);
+  const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
+
+  useEffect(() => {
+    setState(prev => ({
+      ...prev,
+      requirements: prev.requirements.map(r => {
+        if (
+          r.uploadedAt &&
+          r.status === 'verified' &&
+          TIME_SENSITIVE_DOCS.has(r.id) &&
+          Date.now() - new Date(r.uploadedAt).getTime() > NINETY_DAYS_MS
+        ) {
+          const monthsAgo = Math.round(
+            (Date.now() - new Date(r.uploadedAt).getTime()) / (30 * 24 * 60 * 60 * 1000)
+          );
+          return {
+            ...r,
+            status: 'needs_update' as RequirementStatus,
+            issueMessage: `This document was uploaded ${monthsAgo} months ago. Please upload a more recent copy — lenders require documents dated within the last 3 months.`,
+          };
+        }
+        return r;
+      }),
+    }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Derived readiness ──────────────────────────────────────────────────
 

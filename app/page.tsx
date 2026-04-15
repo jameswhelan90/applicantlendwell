@@ -13,6 +13,7 @@ import { ApplicationFormModal } from '@/components/form/ApplicationFormModal';
 import { FloatingChat } from '@/components/chat/FloatingChat';
 import { AdvisorInbox } from '@/components/inbox/AdvisorInbox';
 import { ActivityProvider } from '@/context/ActivityContext';
+import { ToastProvider } from '@/components/ui/Toast';
 
 export default function MortgageApplication() {
   const { state, selectedJourneyStep } = useApplication();
@@ -23,6 +24,7 @@ export default function MortgageApplication() {
     : undefined;
 
   return (
+    <ToastProvider>
     <ActivityProvider>
     <div className="h-screen overflow-hidden flex flex-col bg-background" style={{ backgroundColor: '#F7F8FC' }}>
       {/* Header — full-width sticky band with inset glass card */}
@@ -109,6 +111,7 @@ export default function MortgageApplication() {
 
     </div>
     </ActivityProvider>
+    </ToastProvider>
   );
 }
 
