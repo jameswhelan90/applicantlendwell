@@ -174,15 +174,14 @@ function ModalContent() {
               type="button"
               onClick={() => setIsAssistantOpen((v) => !v)}
               aria-label={isAssistantOpen ? 'Close assistant' : 'Ask LendWell'}
-              className="inline-flex items-center gap-1.5 font-semibold text-xs px-3 py-1.5 rounded-full btn-interactive"
+              className="w-8 h-8 rounded-full flex items-center justify-center btn-interactive flex-shrink-0"
               style={{
                 backgroundColor: isAssistantOpen ? '#3126E3' : 'transparent',
                 color: isAssistantOpen ? '#ffffff' : '#5A7387',
                 border: 'none',
               }}
             >
-              <MessageSquare className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Ask LendWell</span>
+              <MessageSquare className="w-4 h-4" />
             </button>
 
             {/* Close */}
