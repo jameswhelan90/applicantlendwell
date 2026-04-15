@@ -10,6 +10,8 @@ interface ActivityContextValue {
   isConnected: boolean;
   connectionError: string | null;
   triggerActivity: (type: ActivityType, metadata?: ActivityTriggerPayload['metadata']) => Promise<{ success: boolean; activityId?: string; error?: string }>;
+  upsertLocalActivity: (activity: AIActivity) => void;
+  removeLocalActivity: (id: string) => void;
   clearActivities: () => void;
   retryConnection: () => void;
 }
@@ -163,6 +165,27 @@ export function ActivityProvider({ children, sessionId = 'default-session' }: Ac
     }
   }, [sessionId]);
 
+  // ─── Local (client-side) activity upsert/remove ─────────────────────────
+  // These bypass the SSE stream and directly update local state — used for
+  // client-driven simulations (e.g. document processing) that don't need
+  // a server round-trip for every progress update.
+
+  const upsertLocalActivity = useCallback((activity: AIActivity) => {
+    setActivities((prev) => {
+      const idx = prev.findIndex((a) => a.id === activity.id);
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = activity;
+        return updated;
+      }
+      return [...prev, activity];
+    });
+  }, []);
+
+  const removeLocalActivity = useCallback((id: string) => {
+    setActivities((prev) => prev.filter((a) => a.id !== id));
+  }, []);
+
   // ─── Clear all activities ────────────────────────────────────────────────
 
   const clearActivities = useCallback(async () => {
@@ -212,6 +235,8 @@ export function ActivityProvider({ children, sessionId = 'default-session' }: Ac
     isConnected,
     connectionError,
     triggerActivity,
+    upsertLocalActivity,
+    removeLocalActivity,
     clearActivities,
     retryConnection,
   };

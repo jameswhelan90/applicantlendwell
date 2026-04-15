@@ -3,6 +3,7 @@
 import { useRef, useState, useMemo, useCallback, useEffect } from 'react';
 import { useApplication } from '@/context/ApplicationContext';
 import { useChat } from '@/context/ChatContext';
+import { useActivity } from '@/context/ActivityContext';
 import { DocumentRequirement, RequirementStatus } from '@/types/tasks';
 import {
   AI_EXTRACTION_MESSAGES,
@@ -1154,6 +1155,7 @@ function BulkDropZone({
 export function DocumentsUploadSection() {
   const { state, updateRequirementStatus } = useApplication();
   const toast = useToast();
+  const { upsertLocalActivity } = useActivity();
   const appData = state.data;
   const requirements = state.requirements || [];
 
@@ -1234,9 +1236,21 @@ export function DocumentsUploadSection() {
     const filesToProcess = Array.from(files).slice(0, docDef?.minFiles || 1);
     const total = filesToProcess.length;
 
+    // Single activity entry in the header indicator for this upload session
+    const activityId = `doc-scan-${docId}-${Date.now()}`;
+
+    upsertLocalActivity({
+      id: activityId,
+      timestamp: new Date().toISOString(),
+      type: 'document_scan',
+      description: `Uploading ${docTitle}…`,
+      status: 'processing',
+      progress: 10,
+    });
+
     filesToProcess.forEach((file, index) => {
       const isLast = index === total - 1;
-      const offset = index * 700; // stagger each file by 700ms
+      const offset = index * 1200; // stagger each file by 1.2s
 
       const docNames = DOCUMENT_NAME_MAPPINGS[docId] || [file.name];
       const realisticName = docNames[Math.floor(Math.random() * docNames.length)];
@@ -1247,9 +1261,19 @@ export function DocumentsUploadSection() {
           fileName: realisticName,
           aiMessage: total > 1 ? `Uploading file ${index + 1} of ${total}…` : 'Uploading document...',
         });
+        if (total > 1) {
+          upsertLocalActivity({
+            id: activityId,
+            timestamp: new Date().toISOString(),
+            type: 'document_scan',
+            description: `Uploading ${docTitle} (${index + 1} of ${total})…`,
+            status: 'processing',
+            progress: Math.round(10 + (index / total) * 30),
+          });
+        }
       }, offset);
 
-      // Simulate AI processing
+      // Simulate AI review — slower for realism
       setTimeout(() => {
         updateRequirementStatus(docId, 'reviewing', {
           fileName: realisticName,
@@ -1257,7 +1281,15 @@ export function DocumentsUploadSection() {
             ? `Checking file ${index + 1} of ${total}…`
             : (AI_EXTRACTION_MESSAGES[docId] || 'LendWell is reviewing your document...'),
         });
-      }, offset + 500);
+        upsertLocalActivity({
+          id: activityId,
+          timestamp: new Date().toISOString(),
+          type: 'document_scan',
+          description: AI_EXTRACTION_MESSAGES[docId] || `Reviewing ${docTitle}…`,
+          status: 'processing',
+          progress: Math.round(40 + (index / total) * 40),
+        });
+      }, offset + 2500);
 
       // Simulate verification — only finalise status on the last file
       if (isLast) {
@@ -1273,6 +1305,13 @@ export function DocumentsUploadSection() {
               aiMessage: 'Issue detected',
               issueMessage,
             });
+            upsertLocalActivity({
+              id: activityId,
+              timestamp: new Date().toISOString(),
+              type: 'document_scan',
+              description: `Issue found in ${docTitle} — action needed`,
+              status: 'needs_review',
+            });
             toast.warning(`Issue with ${docTitle} — action needed`, {
               actionLabel: 'View',
               onAction: () => {
@@ -1285,12 +1324,19 @@ export function DocumentsUploadSection() {
               aiMessage: AI_VERIFIED_MESSAGES[docId] || 'Document verified successfully',
               extractedFields: DEMO_EXTRACTED_FIELDS[docId],
             });
+            upsertLocalActivity({
+              id: activityId,
+              timestamp: new Date().toISOString(),
+              type: 'document_scan',
+              description: AI_VERIFIED_MESSAGES[docId] || `${docTitle} verified`,
+              status: 'complete',
+            });
             toast.success(`${docTitle} verified`);
           }
-        }, offset + 2500);
+        }, offset + 8000);
       }
     });
-  }, [updateRequirementStatus, allFilteredDocs, toast]);
+  }, [updateRequirementStatus, allFilteredDocs, toast, upsertLocalActivity]);
 
   // Handle bulk file upload with sorting animation
   const handleBulkUpload = useCallback((files: FileList) => {

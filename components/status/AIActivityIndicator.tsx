@@ -285,6 +285,25 @@ export function AIActivityIndicator() {
             </button>
           </div>
 
+          {/* Document processing reassurance banner */}
+          {isProcessing && processingActivity?.type === 'document_scan' && (
+            <div
+              style={{
+                padding: '10px 16px',
+                backgroundColor: '#F8F9FC',
+                borderBottom: '1px solid #F1F3F7',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '8px',
+              }}
+            >
+              <span style={{ fontSize: '15px', lineHeight: 1, flexShrink: 0 }}>💡</span>
+              <p style={{ fontSize: '12px', fontWeight: '500', color: '#5A7387', margin: 0, lineHeight: '1.5' }}>
+                You can leave this page — your documents will keep processing in the background.
+              </p>
+            </div>
+          )}
+
           {/* Connection error banner */}
           {connectionError && (
             <div
