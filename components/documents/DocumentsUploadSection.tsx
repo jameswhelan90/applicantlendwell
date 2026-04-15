@@ -602,7 +602,7 @@ function DocumentAccordionItem({
         onMouseLeave={() => setIsHovered(false)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        className="w-full flex items-center gap-4 px-6 py-4 text-left card-interactive group"
+        className="w-full flex items-center gap-2 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 text-left card-interactive group"
         style={{
           backgroundColor: isDragging
             ? 'rgba(49,38,227,0.03)'
@@ -634,7 +634,7 @@ function DocumentAccordionItem({
           >
             {doc.title}
           </p>
-          <p className="text-xs text-gray-500 mt-0.5 transition-colors duration-120">
+          <p className="text-xs text-gray-500 mt-0.5 transition-colors duration-120 line-clamp-1 sm:line-clamp-none">
             {doc.description}
           </p>
         </div>
