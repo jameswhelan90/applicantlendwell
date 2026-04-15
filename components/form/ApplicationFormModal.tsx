@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useApplication, ALL_STEPS, STEP_SECTION, StepId } from '@/context/ApplicationContext';
 import { X, ArrowLeft, ArrowRight, MessageSquare } from 'lucide-react';
-import { useChat } from '@/context/ChatContext';
 import { FormStepRenderer } from './FormStepRenderer';
 import { FormFooterProvider, useFormFooter } from './FormFooterContext';
 import { StepProgressNavigator } from './StepProgressNavigator';
+import { FormAssistant } from './FormAssistant';
 
 const STEP_LABELS: Partial<Record<StepId, string>> = {
   id_name: 'Your name', id_dob: 'Date of birth', id_contact: 'Contact details',
@@ -104,7 +104,7 @@ function ModalContent() {
   } = useApplication();
 
   const { label: continueLabel, onContinue } = useFormFooter();
-  const { isChatOpen, toggleChat } = useChat();
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
 
   // Close on Escape, lock body scroll, Enter to submit
   useEffect(() => {
@@ -172,12 +172,12 @@ function ModalContent() {
             {/* Ask LendWell */}
             <button
               type="button"
-              onClick={() => toggleChat()}
-              aria-label={isChatOpen ? 'Close chat' : 'Ask LendWell'}
+              onClick={() => setIsAssistantOpen((v) => !v)}
+              aria-label={isAssistantOpen ? 'Close assistant' : 'Ask LendWell'}
               className="inline-flex items-center gap-1.5 font-semibold text-xs px-3 py-1.5 rounded-full btn-interactive"
               style={{
-                backgroundColor: isChatOpen ? '#3126E3' : 'transparent',
-                color: isChatOpen ? '#ffffff' : '#5A7387',
+                backgroundColor: isAssistantOpen ? '#3126E3' : 'transparent',
+                color: isAssistantOpen ? '#ffffff' : '#5A7387',
                 border: 'none',
               }}
             >
@@ -280,6 +280,9 @@ function ModalContent() {
       </footer>
 
       </div>
+
+      {/* Application Assistant — floats above the modal card, not clipped by overflow-hidden */}
+      <FormAssistant isOpen={isAssistantOpen} onOpenChange={setIsAssistantOpen} />
 
     </div>
   );
