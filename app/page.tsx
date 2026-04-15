@@ -91,17 +91,6 @@ export default function MortgageApplication() {
                 <div className="space-y-8" style={{ marginTop: '24px', paddingTop: '24px' }}>
                   <TaskList />
 
-                  {/* Mobile sidebar */}
-                  <div className="lg:hidden pt-2">
-                    <JourneyTracker />
-                  </div>
-                </div>
-              )}
-
-              {/* Mobile sidebar for documents page */}
-              {selectedJourneyStep === 'documents' && (
-                <div className="lg:hidden pt-2">
-                  <JourneyTracker />
                 </div>
               )}
             </div>
