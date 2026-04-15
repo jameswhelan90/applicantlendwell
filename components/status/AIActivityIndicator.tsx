@@ -230,7 +230,7 @@ export function AIActivityIndicator() {
       {/* ── Dropdown panel ── */}
       {panelOpen && (
         <div
-          className="absolute right-0 z-50 overflow-hidden"
+          className="ai-activity-panel absolute right-0 z-50 overflow-hidden"
           style={{
             top: 'calc(100% + 10px)',
             width: '320px',
@@ -239,6 +239,17 @@ export function AIActivityIndicator() {
             boxShadow: '0 8px 32px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06)',
           }}
         >
+          <style>{`
+            @media (max-width: 639px) {
+              .ai-activity-panel {
+                position: fixed !important;
+                top: 64px !important;
+                left: 16px !important;
+                right: 16px !important;
+                width: auto !important;
+              }
+            }
+          `}</style>
           {/* Panel header */}
           <div
             style={{

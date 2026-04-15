@@ -614,11 +614,6 @@ function DocumentAccordionItem({
           }}
         />
 
-        {/* Status icon */}
-        <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
-          {getStatusIcon(status)}
-        </div>
-
         {/* Title and description */}
         <div className="flex-1 min-w-0">
           <p
@@ -731,7 +726,6 @@ function DocumentAccordionItem({
                     boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                   }}
                 >
-                  <FileText className="w-4 h-4 flex-shrink-0" style={{ color: isComplete ? '#3C6006' : '#473FE6' }} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate" style={{ color: '#182026' }}>
                       {requirement?.uploadedFileName}

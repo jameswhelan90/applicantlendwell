@@ -151,7 +151,7 @@ function Toaster({ toasts, onDismiss }: { toasts: ToastItem[]; onDismiss: (id: s
           .toast-container {
             right: 16px !important;
             left: 16px !important;
-            bottom: 96px !important;
+            bottom: 112px !important;
           }
         }
       `}</style>
