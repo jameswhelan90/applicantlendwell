@@ -110,8 +110,14 @@ function ModalContent() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeModal();
-      // Enter to submit current step (when not in a textarea)
-      if (e.key === 'Enter' && onContinue && e.target instanceof HTMLInputElement && !e.shiftKey) {
+      // Enter to submit current step — except when focus is in a textarea or select
+      if (
+        e.key === 'Enter' &&
+        onContinue &&
+        !e.shiftKey &&
+        !(e.target instanceof HTMLTextAreaElement) &&
+        !(e.target instanceof HTMLSelectElement)
+      ) {
         e.preventDefault();
         onContinue();
       }
