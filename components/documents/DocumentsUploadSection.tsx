@@ -1458,7 +1458,7 @@ export function DocumentsUploadSection() {
 
           {/* Progress bar */}
           {!allComplete && (
-            <div className="w-full h-1.5 rounded-full overflow-hidden mb-2" style={{ backgroundColor: '#E5E7EB' }}>
+            <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: '#E5E7EB' }}>
               <div
                 className="h-full rounded-full transition-all duration-500"
                 style={{ width: `${progressPct}%`, backgroundColor: '#3126E3' }}
@@ -1467,7 +1467,7 @@ export function DocumentsUploadSection() {
           )}
 
           {issueDocs.length > 0 && (
-            <p className="text-xs font-semibold" style={{ color: '#E07900' }}>
+            <p className="text-xs font-semibold mt-2" style={{ color: '#E07900' }}>
               {issueDocs.length} document{issueDocs.length > 1 ? 's' : ''} need{issueDocs.length === 1 ? 's' : ''} attention
             </p>
           )}
